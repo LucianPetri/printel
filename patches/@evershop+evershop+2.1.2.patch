@@ -1,0 +1,1706 @@
+diff --git a/node_modules/@evershop/evershop/dist/components/common/ui/Dialog.js b/node_modules/@evershop/evershop/dist/components/common/ui/Dialog.js
+index 52831b5..2455c76 100644
+--- a/node_modules/@evershop/evershop/dist/components/common/ui/Dialog.js
++++ b/node_modules/@evershop/evershop/dist/components/common/ui/Dialog.js
+@@ -1,5 +1,6 @@
+ import { Dialog as DialogPrimitive } from '@base-ui/react/dialog';
+ import { Button } from '@components/common/ui/Button.js';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import { cn } from '@evershop/evershop/lib/util/cn';
+ import { XIcon } from 'lucide-react';
+ import * as React from 'react';
+@@ -25,7 +26,7 @@ function DialogContent({ className, children, showCloseButton = true, ...props }
+             children,
+             showCloseButton && (React.createElement(DialogPrimitive.Close, { "data-slot": "dialog-close", render: React.createElement(Button, { variant: "ghost", className: "absolute top-4 right-4", size: "icon-sm" }) },
+                 React.createElement(XIcon, null),
+-                React.createElement("span", { className: "sr-only" }, "Close"))))));
++                React.createElement("span", { className: "sr-only" }, _('Close')))))));
+ }
+ function DialogHeader({ className, ...props }) {
+     return (React.createElement("div", { "data-slot": "dialog-header", className: cn('gap-2 flex flex-col', className), ...props }));
+@@ -33,7 +34,7 @@ function DialogHeader({ className, ...props }) {
+ function DialogFooter({ className, showCloseButton = false, children, ...props }) {
+     return (React.createElement("div", { "data-slot": "dialog-footer", className: cn('gap-2 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end', className), ...props },
+         children,
+-        showCloseButton && (React.createElement(DialogPrimitive.Close, { render: React.createElement(Button, { variant: "outline" }) }, "Close"))));
++    showCloseButton && (React.createElement(DialogPrimitive.Close, { render: React.createElement(Button, { variant: "outline" }) }, _('Close')))));
+ }
+ function DialogTitle({ className, ...props }) {
+     return (React.createElement(DialogPrimitive.Title, { "data-slot": "dialog-title", className: cn('leading-none font-medium', className), ...props }));
+diff --git a/node_modules/@evershop/evershop/dist/components/common/ui/Sheet.js b/node_modules/@evershop/evershop/dist/components/common/ui/Sheet.js
+index ad7d0b8..8c9ddde 100644
+--- a/node_modules/@evershop/evershop/dist/components/common/ui/Sheet.js
++++ b/node_modules/@evershop/evershop/dist/components/common/ui/Sheet.js
+@@ -1,5 +1,6 @@
+ import { Dialog as SheetPrimitive } from '@base-ui/react/dialog';
+ import { Button } from '@components/common/ui/Button.js';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import { cn } from '@evershop/evershop/lib/util/cn';
+ import { XIcon } from 'lucide-react';
+ import * as React from 'react';
+@@ -25,7 +26,7 @@ function SheetContent({ className, children, side = 'right', showCloseButton = t
+             children,
+             showCloseButton && (React.createElement(SheetPrimitive.Close, { "data-slot": "sheet-close", render: React.createElement(Button, { variant: "ghost", className: "absolute top-4 right-4", size: "icon-sm" }) },
+                 React.createElement(XIcon, null),
+-                React.createElement("span", { className: "sr-only" }, "Close"))))));
++                React.createElement("span", { className: "sr-only" }, _('Close')))))));
+ }
+ function SheetHeader({ className, ...props }) {
+     return (React.createElement("div", { "data-slot": "sheet-header", className: cn('gap-1.5 p-4 flex flex-col', className), ...props }));
+diff --git a/node_modules/@evershop/evershop/dist/components/frontStore/cart/CartSummaryItems.js b/node_modules/@evershop/evershop/dist/components/frontStore/cart/CartSummaryItems.js
+index 51c3e1b..5520cb5 100644
+--- a/node_modules/@evershop/evershop/dist/components/frontStore/cart/CartSummaryItems.js
++++ b/node_modules/@evershop/evershop/dist/components/frontStore/cart/CartSummaryItems.js
+@@ -3,6 +3,20 @@ import { ProductNoThumbnail } from '@components/common/ProductNoThumbnail.js';
+ import { Skeleton } from '@components/common/ui/Skeleton.js';
+ import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import React from 'react';
++const translateProductOption = (value) => {
++    switch (value) {
++        case 'Color':
++            return _('Color');
++        case 'White':
++            return _('White');
++        case 'Black':
++            return _('Black');
++        case 'Yellow':
++            return _('Yellow');
++        default:
++            return value;
++    }
++};
+ const CartSummarySkeleton = ({ rows = 2 }) => {
+     return (React.createElement("ul", { className: "divide-y divide-border" }, Array.from({ length: rows }).map((_, i) => (React.createElement("li", { key: i, className: "flex items-center py-6 animate-pulse" },
+         React.createElement("div", { className: "relative mr-4" },
+@@ -23,22 +37,22 @@ const CartSummaryItemsList = ({ items, loading, showPriceIncludingTax }) => {
+             React.createElement("p", { className: "text-base" }, _('Your cart is empty')),
+             React.createElement("p", { className: "text-sm mt-2" }, _('Add some items to get started'))));
+     }
+-    return (React.createElement("ul", { className: "item__summary__list divide-y divide-divider mb-3" }, items.map((item) => (React.createElement("li", { key: item.uuid, className: "flex items-start py-3" },
++    return React.createElement("ul", { className: "item__summary__list divide-y divide-divider mb-3" }, items.map((item) => React.createElement("li", { key: item.uuid, className: "flex items-start py-3" },
+         React.createElement("div", { className: "relative mr-4 self-center" },
+-            item.thumbnail && (React.createElement(Image, { width: 100, height: 100, src: item.thumbnail, alt: item.productName, className: "w-16 h-16 object-cover rounded border border-border p-2 box-border" })),
+-            !item.thumbnail && (React.createElement(ProductNoThumbnail, { className: "w-16 h-16 rounded border border-border p-2 box-border" })),
++            item.thumbnail ? React.createElement(Image, { width: 100, height: 100, src: item.thumbnail, alt: item.productName, className: "w-16 h-16 object-cover rounded border border-border p-2 box-border" }) : null,
++            !item.thumbnail ? React.createElement(ProductNoThumbnail, { className: "w-16 h-16 rounded border border-border p-2 box-border" }) : null,
+             React.createElement("span", { className: "absolute -top-2 -right-2 bg-muted text-muted-foreground rounded-full w-6 h-6 flex items-center justify-center text-sm" }, item.qty)),
+         React.createElement("div", { className: "flex-1 min-w-0 items-start align-top" },
+             React.createElement("div", { className: "font-semibold text-sm mb-1" }, item.productName),
+-            item.variantOptions && item.variantOptions.length > 0 && (React.createElement("div", { className: "space-y-1" }, item.variantOptions.map((option) => (React.createElement("div", { key: option.attributeCode, className: "text-xs" },
+-                React.createElement("span", null, option.attributeName),
+-                ":",
+-                ' ',
+-                React.createElement("span", { className: "text-muted-foreground" }, option.optionText))))))),
++            item.variantOptions && item.variantOptions.length > 0
++                ? React.createElement("div", { className: "space-y-1" }, item.variantOptions.map((option) => React.createElement("div", { key: option.attributeCode, className: "text-xs" },
++                    React.createElement("span", null, translateProductOption(option.attributeName)),
++                    ":",
++                    ' ',
++                    React.createElement("span", { className: "text-muted-foreground" }, translateProductOption(option.optionText)))))
++                : null),
+         React.createElement("div", { className: "ml-auto text-right self-center" },
+-            React.createElement("div", { className: "font-semibold" }, showPriceIncludingTax
+-                ? item.lineTotalInclTax.text
+-                : item.lineTotal.text)))))));
++            React.createElement("div", { className: "font-semibold" }, showPriceIncludingTax ? item.lineTotalInclTax.text : item.lineTotal.text)))));
+ };
+ export { CartSummaryItemsList };
+ //# sourceMappingURL=CartSummaryItems.js.map
+\ No newline at end of file
+diff --git a/node_modules/@evershop/evershop/dist/components/frontStore/cart/DefaultCartItemList.js b/node_modules/@evershop/evershop/dist/components/frontStore/cart/DefaultCartItemList.js
+index fc36999..623e82a 100644
+--- a/node_modules/@evershop/evershop/dist/components/frontStore/cart/DefaultCartItemList.js
++++ b/node_modules/@evershop/evershop/dist/components/frontStore/cart/DefaultCartItemList.js
+@@ -5,6 +5,16 @@ import { ProductNoThumbnail } from '@components/common/ProductNoThumbnail.js';
+ import { ItemQuantity } from '@components/frontStore/cart/ItemQuantity.js';
+ import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import React from 'react';
++const translateOptionLabel = (value) => {
++    switch (value) {
++        case 'Color':
++            return _('Color');
++        case 'White':
++            return _('White');
++        default:
++            return value;
++    }
++};
+ export const DefaultCartItemList = ({ items, showPriceIncludingTax = true, loading = false, onSort, currentSort, onRemoveItem }) => {
+     const columns = [
+         {
+@@ -22,10 +32,10 @@ export const DefaultCartItemList = ({ items, showPriceIncludingTax = true, loadi
+                     React.createElement("div", { className: "font-medium flex flex-col gap-1 items-start h-full min-w-0 flex-1" },
+                         React.createElement("div", { className: "font-semibold wrap-break-word w-full" }, row.productName), (_c = row.variantOptions) === null || _c === void 0 ? void 0 :
+                         _c.map((option) => (React.createElement("span", { key: option.optionId, className: "text-xs" },
+-                            React.createElement("span", null, option.attributeName),
++                            React.createElement("span", null, translateOptionLabel(option.attributeName)),
+                             ":",
+                             ' ',
+-                            React.createElement("span", { className: "text-muted-foreground" }, option.optionText)))),
++                            React.createElement("span", { className: "text-muted-foreground" }, translateOptionLabel(option.optionText))))),
+                         React.createElement("span", { className: "text-sm text-muted-foreground" },
+                             priceValue,
+                             " x ",
+diff --git a/node_modules/@evershop/evershop/dist/components/frontStore/cart/DefaultMiniCartIcon.js b/node_modules/@evershop/evershop/dist/components/frontStore/cart/DefaultMiniCartIcon.js
+index 9a2e7e9..92099a5 100644
+--- a/node_modules/@evershop/evershop/dist/components/frontStore/cart/DefaultMiniCartIcon.js
++++ b/node_modules/@evershop/evershop/dist/components/frontStore/cart/DefaultMiniCartIcon.js
+@@ -1,7 +1,10 @@
+ import { ShoppingBag } from 'lucide-react';
+ import React from 'react';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ export const DefaultMiniCartIcon = ({ totalQty, onClick, isOpen, disabled = false, showItemCount = true, syncStatus }) => {
+-    return (React.createElement("button", { type: "button", onClick: onClick, disabled: disabled, className: `mini-cart-icon relative ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${isOpen ? 'active' : ''}`, "aria-label": `Shopping cart with ${totalQty} items` },
++    return (React.createElement("button", { type: "button", onClick: onClick, disabled: disabled, className: `mini-cart-icon relative ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${isOpen ? 'active' : ''}`, "aria-label": _('Shopping cart with ${count} items', {
++            count: totalQty.toString()
++        }) },
+         syncStatus.syncing ? (React.createElement("div", { className: "w-6 h-6 flex items-center justify-center" },
+             React.createElement("div", { className: "animate-spin rounded-full h-4 w-4 border-2 border-border" }))) : (React.createElement(ShoppingBag, { className: "w-5 h-5 text-foreground hover:text-primary" })),
+         showItemCount && totalQty > 0 && !syncStatus.syncing && (React.createElement("span", { className: "absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full h-4 w-4 flex items-center justify-center font-normal" }, totalQty > 99 ? '99+' : totalQty))));
+diff --git a/node_modules/@evershop/evershop/dist/components/frontStore/catalog/DefaultVariantSelectorRender.js b/node_modules/@evershop/evershop/dist/components/frontStore/catalog/DefaultVariantSelectorRender.js
+index 228784a..f941637 100644
+--- a/node_modules/@evershop/evershop/dist/components/frontStore/catalog/DefaultVariantSelectorRender.js
++++ b/node_modules/@evershop/evershop/dist/components/frontStore/catalog/DefaultVariantSelectorRender.js
+@@ -1,5 +1,20 @@
+ import { Button } from '@components/common/ui/Button.js';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import React from 'react';
++const translateProductOption = (value) => {
++    switch (value) {
++        case 'Color':
++            return _('Color');
++        case 'White':
++            return _('White');
++        case 'Black':
++            return _('Black');
++        case 'Yellow':
++            return _('Yellow');
++        default:
++            return value;
++    }
++};
+ const DefaultVariantOptionItem = ({ option, attribute, isSelected, onSelect }) => {
+     let className = 'group ';
+     if (isSelected) {
+@@ -15,12 +30,12 @@ const DefaultVariantOptionItem = ({ option, attribute, isSelected, onSelect }) =
+                     return;
+                 }
+                 await onSelect(attribute.attributeCode, option.optionId);
+-            }, className: 'group-[.selected]:border-primary' }, option.optionText)));
++            }, className: 'group-[.selected]:border-primary' }, translateProductOption(option.optionText))));
+ };
+ const DefaultVariantAttribute = ({ attribute, options, onSelect, OptionItem = DefaultVariantOptionItem }) => {
+     return (React.createElement("div", { key: attribute.attributeCode },
+         React.createElement("div", { className: "mb-2 text-textSubdued uppercase" },
+-            React.createElement("span", null, attribute.attributeName)),
++            React.createElement("span", null, translateProductOption(attribute.attributeName))),
+         React.createElement("ul", { className: "variant-option-list flex justify-start gap-2 flex-wrap" }, options.map((option) => (React.createElement(OptionItem, { key: option.optionId, option: option, attribute: attribute, isSelected: attribute.selected && attribute.selectedOption === option.optionId, onSelect: onSelect }))))));
+ };
+ export { DefaultVariantAttribute, DefaultVariantOptionItem };
+diff --git a/node_modules/@evershop/evershop/dist/components/frontStore/catalog/Media.js b/node_modules/@evershop/evershop/dist/components/frontStore/catalog/Media.js
+index bceea01..02a4947 100644
+--- a/node_modules/@evershop/evershop/dist/components/frontStore/catalog/Media.js
++++ b/node_modules/@evershop/evershop/dist/components/frontStore/catalog/Media.js
+@@ -1,6 +1,7 @@
+ /* eslint-disable jsx-a11y/click-events-have-key-events */
+ /* eslint-disable jsx-a11y/no-static-element-interactions */
+ import React, { useState, useRef } from 'react';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import Slider from 'react-slick';
+ import 'slick-carousel/slick/slick.css';
+ import 'slick-carousel/slick/slick-theme.css';
+@@ -11,13 +12,13 @@ import { ProductNoThumbnail } from '@components/common/ProductNoThumbnail.js';
+ const SliderComponent = Slider;
+ const PrevArrow = (props) => {
+     const { className, onClick } = props;
+-    return (React.createElement("button", { className: `${className} custom-arrow prev-arrow`, onClick: onClick, "aria-label": "Previous slide" },
++    return (React.createElement("button", { className: `${className} custom-arrow prev-arrow`, onClick: onClick, "aria-label": _('Previous slide') },
+         React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+             React.createElement("path", { d: "M15 18l-6-6 6-6" }))));
+ };
+ const NextArrow = (props) => {
+     const { className, onClick } = props;
+-    return (React.createElement("button", { className: `${className} custom-arrow next-arrow`, onClick: onClick, "aria-label": "Next slide" },
++    return (React.createElement("button", { className: `${className} custom-arrow next-arrow`, onClick: onClick, "aria-label": _('Next slide') },
+         React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+             React.createElement("path", { d: "M9 18l6-6-6-6" }))));
+ };
+diff --git a/node_modules/@evershop/evershop/dist/components/frontStore/catalog/ProductSingleAttributes.js b/node_modules/@evershop/evershop/dist/components/frontStore/catalog/ProductSingleAttributes.js
+index 81ec78d..4ada79c 100644
+--- a/node_modules/@evershop/evershop/dist/components/frontStore/catalog/ProductSingleAttributes.js
++++ b/node_modules/@evershop/evershop/dist/components/frontStore/catalog/ProductSingleAttributes.js
+@@ -1,6 +1,21 @@
+ import Area from '@components/common/Area.js';
+ import { useProduct } from '@components/frontStore/catalog/ProductContext.js';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import React from 'react';
++const translateProductOption = (value) => {
++    switch (value) {
++        case 'Color':
++            return _('Color');
++        case 'White':
++            return _('White');
++        case 'Black':
++            return _('Black');
++        case 'Yellow':
++            return _('Yellow');
++        default:
++            return value;
++    }
++};
+ export const ProductSingleAttributes = () => {
+     const { attributes, sku } = useProduct();
+     const list = attributes
+@@ -12,15 +27,15 @@ export const ProductSingleAttributes = () => {
+     if (!list || list.length === 0) {
+         return null;
+     }
+-    return (React.createElement(React.Fragment, null,
++    return React.createElement(React.Fragment, null,
+         React.createElement(Area, { id: "productAttributesBefore", noOuter: true }),
+         React.createElement("div", { className: "product__single__attributes py-3" },
+-            React.createElement("ul", { className: "list-none" }, list.map((attribute) => (React.createElement("li", { key: attribute.attributeCode, className: "py-1" },
++            React.createElement("ul", { className: "list-none" }, list.map((attribute) => React.createElement("li", { key: attribute.attributeCode, className: "py-1" },
+                 React.createElement("strong", null,
+-                    attribute.attributeName,
++                    translateProductOption(attribute.attributeName),
+                     ": "),
+                 ' ',
+-                React.createElement("span", null, attribute.optionText)))))),
+-        React.createElement(Area, { id: "productAttributesAfter", noOuter: true })));
++                React.createElement("span", null, translateProductOption(attribute.optionText)))))),
++        React.createElement(Area, { id: "productAttributesAfter", noOuter: true }));
+ };
+ //# sourceMappingURL=ProductSingleAttributes.js.map
+\ No newline at end of file
+diff --git a/node_modules/@evershop/evershop/dist/components/frontStore/checkout/CheckoutContext.js b/node_modules/@evershop/evershop/dist/components/frontStore/checkout/CheckoutContext.js
+index 2a4cb99..8be7fc2 100644
+--- a/node_modules/@evershop/evershop/dist/components/frontStore/checkout/CheckoutContext.js
++++ b/node_modules/@evershop/evershop/dist/components/frontStore/checkout/CheckoutContext.js
+@@ -88,7 +88,7 @@ export function CheckoutProvider({ children, placeOrderApi, checkoutSuccessUrl,
+                 return methods.map((method) => ({
+                     code: method.code,
+                     name: method.name,
+-                    cost: method.cost || { value: 0, text: 'Free' }
++                    cost: method.cost || { value: 0, text: _('Free') }
+                 }));
+             }
+             catch (error) {
+@@ -101,7 +101,7 @@ export function CheckoutProvider({ children, placeOrderApi, checkoutSuccessUrl,
+             return (((_b = cartState.data) === null || _b === void 0 ? void 0 : _b.availableShippingMethods) || []).map((method) => ({
+                 code: method.code,
+                 name: method.name,
+-                cost: method.cost || { value: 0, text: 'Free' }
++                cost: method.cost || { value: 0, text: _('Free') }
+             }));
+         }
+     }, [cartDispatch, (_c = cartState.data) === null || _c === void 0 ? void 0 : _c.availableShippingMethods]);
+diff --git a/node_modules/@evershop/evershop/dist/components/frontStore/checkout/OrderSummaryItems.js b/node_modules/@evershop/evershop/dist/components/frontStore/checkout/OrderSummaryItems.js
+index 6525ad1..623ae60 100644
+--- a/node_modules/@evershop/evershop/dist/components/frontStore/checkout/OrderSummaryItems.js
++++ b/node_modules/@evershop/evershop/dist/components/frontStore/checkout/OrderSummaryItems.js
+@@ -1,29 +1,42 @@
+ import { useAppState } from '@components/common/context/app.js';
+ import { Image } from '@components/common/Image.js';
+ import { ProductNoThumbnail } from '@components/common/ProductNoThumbnail.js';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import React from 'react';
++const translateProductOption = (value) => {
++    switch (value) {
++        case 'Color':
++            return _('Color');
++        case 'White':
++            return _('White');
++        case 'Black':
++            return _('Black');
++        case 'Yellow':
++            return _('Yellow');
++        default:
++            return value;
++    }
++};
+ const OrderSummaryItems = ({ items }) => {
+     const { config: { tax: { priceIncludingTax } } } = useAppState();
+     if (items.length === 0) {
+         return null;
+     }
+-    return (React.createElement("ul", { className: "order__item__summary__list divide-y divide-border border-b border-border mb-3" }, items.map((item) => (React.createElement("li", { key: item.uuid, className: "flex items-start py-3" },
++    return React.createElement("ul", { className: "order__item__summary__list divide-y divide-border border-b border-border mb-3" }, items.map((item) => React.createElement("li", { key: item.uuid, className: "flex items-start py-3" },
+         React.createElement("div", { className: "relative mr-4 self-center" },
+-            item.thumbnail && (React.createElement(Image, { width: 100, height: 100, src: item.thumbnail, alt: item.productName, className: "w-16 h-16 object-cover rounded border p-2 box-border border-border" })),
+-            !item.thumbnail && (React.createElement(ProductNoThumbnail, { className: "w-16 h-16 rounded border border-border p-2 box-border" })),
++            item.thumbnail ? React.createElement(Image, { width: 100, height: 100, src: item.thumbnail, alt: item.productName, className: "w-16 h-16 object-cover rounded border p-2 box-border border-border" }) : null,
++            !item.thumbnail ? React.createElement(ProductNoThumbnail, { className: "w-16 h-16 rounded border border-border p-2 box-border" }) : null,
+             React.createElement("span", { className: "absolute -top-2 -right-2 bg-muted rounded-full w-6 h-6 flex items-center justify-center text-muted-foreground text-sm" }, item.qty)),
+         React.createElement("div", { className: "flex-1 min-w-0 items-start align-top" },
+-            React.createElement("div", { className: "font-semibold text-sm mb-1", title: item.productName }, item.productName.length > 50
+-                ? `${item.productName.substring(0, 50)}...`
+-                : item.productName),
+-            item.variantOptions && item.variantOptions.length > 0 && (React.createElement("div", { className: "space-y-1" }, item.variantOptions.map((option) => (React.createElement("div", { key: option.attributeCode, className: "text-xs text-gray-700" },
+-                option.attributeName,
+-                ": ",
+-                option.optionText)))))),
++            React.createElement("div", { className: "font-semibold text-sm mb-1", title: item.productName }, item.productName.length > 50 ? `${item.productName.substring(0, 50)}...` : item.productName),
++            item.variantOptions && item.variantOptions.length > 0
++                ? React.createElement("div", { className: "space-y-1" }, item.variantOptions.map((option) => React.createElement("div", { key: option.attributeCode, className: "text-xs text-gray-700" },
++                    translateProductOption(option.attributeName),
++                    ": ",
++                    translateProductOption(option.optionText))))
++                : null),
+         React.createElement("div", { className: "ml-auto text-right self-center" },
+-            React.createElement("div", { className: "font-semibold" }, priceIncludingTax
+-                ? item.lineTotalInclTax.text
+-                : item.lineTotal.text)))))));
++            React.createElement("div", { className: "font-semibold" }, priceIncludingTax ? item.lineTotalInclTax.text : item.lineTotal.text)))));
+ };
+ export { OrderSummaryItems };
+ //# sourceMappingURL=OrderSummaryItems.js.map
+\ No newline at end of file
+diff --git a/node_modules/@evershop/evershop/dist/components/frontStore/checkout/payment/PaymentMethods.js b/node_modules/@evershop/evershop/dist/components/frontStore/checkout/payment/PaymentMethods.js
+index 1975a8c..2b0adc8 100644
+--- a/node_modules/@evershop/evershop/dist/components/frontStore/checkout/payment/PaymentMethods.js
++++ b/node_modules/@evershop/evershop/dist/components/frontStore/checkout/payment/PaymentMethods.js
+@@ -29,32 +29,34 @@ export function PaymentMethods({ methods, isLoading }) {
+     const renderComponent = (component, props) => {
+         return component ? React.createElement(component, props) : null;
+     };
++    const paymentMethodList = (methods === null || methods === void 0 ? void 0 : methods.length) === 0
++        ? React.createElement("div", { className: "text-muted-foreground text-center py-8" }, React.createElement("div", { className: "mb-2" }, _('No payment methods available')))
++        : React.createElement(RadioGroup, { value: selectedPaymentMethod !== null && selectedPaymentMethod !== void 0 ? selectedPaymentMethod : '', onValueChange: (value) => {
++                setValue('paymentMethod', value);
++            } }, methods.map((method) => {
++                const isSelected = selectedPaymentMethod === method.code;
++                const component = getPaymentComponent(method.code);
++                const labelContent = (component === null || component === void 0 ? void 0 : component.nameRenderer)
++                    ? renderComponent(component.nameRenderer, { isSelected })
++                    : method.name;
++                return React.createElement(Item, { key: method.code, variant: 'outline', className: isSelected ? 'border-primary' : '' }, React.createElement(ItemContent, null,
++                    React.createElement(ItemTitle, { className: "w-full" }, React.createElement("div", { className: "flex items-center space-x-3 w-full" },
++                        React.createElement(RadioGroupItem, { id: `payment-method-${method.code}`, value: method.code }),
++                        React.createElement(Label, { htmlFor: `payment-method-${method.code}`, className: "w-full" }, labelContent))),
++                    (component === null || component === void 0 ? void 0 : component.formRenderer) && isSelected
++                        ? React.createElement(ItemDescription, { className: "text-inherit overflow-visible" }, renderComponent(component.formRenderer, { isSelected }))
++                        : null));
++            }));
+     return (React.createElement("div", { className: "checkout-payment-methods mt-6" },
+         React.createElement(Item, { className: "px-0 py-0" },
+             React.createElement(ItemContent, { className: "gap-2" },
+                 React.createElement(ItemTitle, null, _('Pick a payment method')),
+-                React.createElement(ItemDescription, null, isLoading ? (React.createElement(PaymentMethodSkeleton, null)) : (React.createElement(React.Fragment, null,
+-                    React.createElement("div", { className: "payment-methods-list" }, (methods === null || methods === void 0 ? void 0 : methods.length) === 0 ? (React.createElement("div", { className: "text-muted-foreground text-center py-8" },
+-                        React.createElement("div", { className: "mb-2" }, _('No payment methods available')))) : (React.createElement(RadioGroup, { value: selectedPaymentMethod !== null && selectedPaymentMethod !== void 0 ? selectedPaymentMethod : '', onValueChange: (value) => {
+-                            setValue('paymentMethod', value);
+-                        } }, methods.map((method) => {
+-                        const isSelected = selectedPaymentMethod === method.code;
+-                        const component = getPaymentComponent(method.code);
+-                        return (React.createElement(Item, { key: method.code, variant: 'outline', className: isSelected ? 'border-primary' : '' },
+-                            React.createElement(ItemContent, null,
+-                                React.createElement(ItemTitle, { className: "w-full" },
+-                                    React.createElement("div", { className: "flex items-center space-x-3 w-full" },
+-                                        React.createElement(RadioGroupItem, { id: `payment-method-${method.code}`, value: method.code }),
+-                                        React.createElement(Label, { htmlFor: `payment-method-${method.code}`, className: "w-full" }, (component === null || component === void 0 ? void 0 : component.nameRenderer)
+-                                            ? renderComponent(component.nameRenderer, {
+-                                                isSelected
+-                                            })
+-                                            : _(method.name)))),
+-                                (component === null || component === void 0 ? void 0 : component.formRenderer) && isSelected && (React.createElement(ItemDescription, { className: "text-inherit overflow-visible" }, renderComponent(component.formRenderer, {
+-                                    isSelected
+-                                }))))));
+-                    })))),
+-                    formState.errors.paymentMethod && (React.createElement("div", { className: "text-destructive text-sm mt-2" }, ((_b = (_a = formState.errors.paymentMethod) === null || _a === void 0 ? void 0 : _a.message) === null || _b === void 0 ? void 0 : _b.toString()) ||
+-                        _('Please select a payment method'))))))))));
++                React.createElement(ItemDescription, null, isLoading
++                    ? React.createElement(PaymentMethodSkeleton, null)
++                    : React.createElement(React.Fragment, null,
++                        React.createElement("div", { className: "payment-methods-list" }, paymentMethodList),
++                        formState.errors.paymentMethod
++                            ? React.createElement("div", { className: "text-destructive text-sm mt-2" }, ((_b = (_a = formState.errors.paymentMethod) === null || _a === void 0 ? void 0 : _a.message) === null || _b === void 0 ? void 0 : _b.toString()) || _('Please select a payment method'))
++                            : null))))));
+ }
+ //# sourceMappingURL=PaymentMethods.js.map
+\ No newline at end of file
+diff --git a/node_modules/@evershop/evershop/dist/components/frontStore/customer/LoginForm.js b/node_modules/@evershop/evershop/dist/components/frontStore/customer/LoginForm.js
+index 9637a42..2ed364b 100644
+--- a/node_modules/@evershop/evershop/dist/components/frontStore/customer/LoginForm.js
++++ b/node_modules/@evershop/evershop/dist/components/frontStore/customer/LoginForm.js
+@@ -13,15 +13,15 @@ const SubmitButton = ({ formId }) => {
+     return (React.createElement("div", { className: "form-submit-button flex border-t border-border mt-4 pt-4 justify-between" },
+         React.createElement(Button, { className: 'w-full', size: 'lg', onClick: () => {
+                 document.getElementById(formId).dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+-            }, isLoading: isSubmitting }, _(isSubmitting ? 'Signing In...' : 'Sign In'))));
++            }, isLoading: isSubmitting }, isSubmitting ? _('Signing In...') : _('Sign In'))));
+ };
+ export const CustomerLoginForm = ({ title, subtitle, redirectUrl, onError, className }) => {
+     const { login } = useCustomerDispatch();
+     return (React.createElement("div", { className: cn(`login__form`, className) },
+         React.createElement("div", { className: "login__form__inner w-full" },
+             React.createElement(Area, { id: "customerLoginFormTitleBefore", noOuter: true }),
+-            title && (React.createElement("h1", { className: "login__form__title text-2xl text-center mb-6" }, _(title))),
+-            subtitle && (React.createElement("p", { className: "login__form__subtitle text-center mb-6" }, _(subtitle))),
++            title && (React.createElement("h1", { className: "login__form__title text-2xl text-center mb-6" }, title)),
++            subtitle && (React.createElement("p", { className: "login__form__subtitle text-center mb-6" }, subtitle)),
+             React.createElement(Area, { id: "customerLoginFormTitleAfter", noOuter: true }),
+             React.createElement(Area, { id: "customerLoginFormBefore", noOuter: true }),
+             React.createElement(Form, { id: "loginForm", method: "POST", onSubmit: async (data) => {
+diff --git a/node_modules/@evershop/evershop/dist/components/frontStore/customer/RegistrationForm.js b/node_modules/@evershop/evershop/dist/components/frontStore/customer/RegistrationForm.js
+index 21afb84..1211cfa 100644
+--- a/node_modules/@evershop/evershop/dist/components/frontStore/customer/RegistrationForm.js
++++ b/node_modules/@evershop/evershop/dist/components/frontStore/customer/RegistrationForm.js
+@@ -13,16 +13,16 @@ const SubmitButton = ({ formId }) => {
+     return (React.createElement("div", { className: "form-submit-button flex border-t border-border mt-4 pt-4 justify-between" },
+         React.createElement(Button, { className: 'w-full', size: 'lg', onClick: () => {
+                 document.getElementById(formId).dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+-            }, isLoading: isSubmitting }, _(isSubmitting ? 'Signing Up...' : 'Sign Up'))));
++            }, isLoading: isSubmitting }, isSubmitting ? _('Signing Up...') : _('Sign Up'))));
+ };
+ export const CustomerRegistrationForm = ({ title, subtitle, redirectUrl, onError, className }) => {
+     const { register } = useCustomerDispatch();
+     return (React.createElement("div", { className: `register__form ${className}` },
+         React.createElement("div", { className: "register__form__inner w-full" },
+             React.createElement(Area, { id: "customerRegisterFormTitleBefore", noOuter: true }),
+-            title && (React.createElement("h1", { className: "register__form__title text-2xl text-center mb-6" }, _(title))),
++            title && (React.createElement("h1", { className: "register__form__title text-2xl text-center mb-6" }, title)),
+             React.createElement(Area, { id: "customerRegisterFormTitleAfter", noOuter: true }),
+-            subtitle && (React.createElement("p", { className: "register__form__subtitle text-center mb-6" }, _(subtitle))),
++            subtitle && (React.createElement("p", { className: "register__form__subtitle text-center mb-6" }, subtitle)),
+             React.createElement(Area, { id: "customerRegisterFormBefore", noOuter: true }),
+             React.createElement(Form, { id: "registerForm", method: "POST", onSubmit: async (data) => {
+                     try {
+diff --git a/node_modules/@evershop/evershop/dist/lib/webpack/prod/createConfigClient.js b/node_modules/@evershop/evershop/dist/lib/webpack/prod/createConfigClient.js
+index dc98dec..2124ee4 100644
+--- a/node_modules/@evershop/evershop/dist/lib/webpack/prod/createConfigClient.js
++++ b/node_modules/@evershop/evershop/dist/lib/webpack/prod/createConfigClient.js
+@@ -1,7 +1,6 @@
+ import path from 'path';
+ import HtmlWebpackPlugin from 'html-webpack-plugin';
+ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+-import WebpackBar from 'webpackbar';
+ import { getEnabledExtensions } from '../../../bin/extension/index.js';
+ import { CONSTANTS } from '../../helpers.js';
+ import { createBaseConfig } from '../createBaseConfig.js';
+@@ -121,7 +120,6 @@ export function createConfigClient(routes) {
+             }
+         ]
+     });
+-    plugins.push(new WebpackBar({ name: 'Client' }));
+     plugins.push(new MiniCssExtractPlugin({
+         filename: '[name]/client/[contenthash].css',
+         chunkFilename: '[name]/client/[id].[contenthash].css'
+diff --git a/node_modules/@evershop/evershop/dist/lib/webpack/prod/createConfigServer.js b/node_modules/@evershop/evershop/dist/lib/webpack/prod/createConfigServer.js
+index 1ac78a1..8479888 100644
+--- a/node_modules/@evershop/evershop/dist/lib/webpack/prod/createConfigServer.js
++++ b/node_modules/@evershop/evershop/dist/lib/webpack/prod/createConfigServer.js
+@@ -1,5 +1,4 @@
+ import path from 'path';
+-import WebpackBar from 'webpackbar';
+ import { CONSTANTS } from '../../helpers.js';
+ import { createBaseConfig } from '../createBaseConfig.js';
+ import { getRouteBuildSubPath } from '../getRouteBuildSubPath.js';
+@@ -17,7 +16,6 @@ export function createConfigServer(routes) {
+     });
+     const config = createBaseConfig(true);
+     const { plugins } = config;
+-    plugins.push(new WebpackBar({ name: 'Server', color: 'orange' }));
+     const loaders = config.module.rules;
+     loaders.push({
+         test: /\.(css|scss)$/i,
+diff --git a/node_modules/@evershop/evershop/dist/modules/auth/pages/admin/adminLogin/LoginForm.js b/node_modules/@evershop/evershop/dist/modules/auth/pages/admin/adminLogin/LoginForm.js
+index fdb8376..b74dc7b 100644
+--- a/node_modules/@evershop/evershop/dist/modules/auth/pages/admin/adminLogin/LoginForm.js
++++ b/node_modules/@evershop/evershop/dist/modules/auth/pages/admin/adminLogin/LoginForm.js
+@@ -5,11 +5,12 @@ import { EmailField } from '@components/common/form/EmailField.js';
+ import { Form, useFormContext } from '@components/common/form/Form.js';
+ import { PasswordField } from '@components/common/form/PasswordField.js';
+ import { Button } from '@components/common/ui/Button.js';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import { LockKeyhole, Mail } from 'lucide-react';
+ const SubmitButton = () => {
+     const { formState: { isSubmitting } } = useFormContext();
+     return (React.createElement("div", { className: "form-submit-button flex border-t border-border mt-4 pt-4 justify-between" },
+-        React.createElement(Button, { type: "submit", size: "lg", isLoading: isSubmitting }, "SIGN IN")));
++    React.createElement(Button, { type: "submit", size: "lg", isLoading: isSubmitting }, _('Sign In'))));
+ };
+ export default function LoginForm({ authUrl, dashboardUrl }) {
+     const [error, setError] = React.useState(null);
+@@ -28,25 +29,22 @@ export default function LoginForm({ authUrl, dashboardUrl }) {
+         }
+       `),
+         React.createElement("div", { className: "flex items-center justify-center mb-7" },
+-            React.createElement("svg", { width: "60", height: "61", viewBox: "0 0 251 276", fill: "none", xmlns: "http://www.w3.org/2000/svg" },
+-                React.createElement("path", { d: "M62.2402 34.2864L0.329313 68.5728L0.131725 137.524L0 206.538L62.306 240.95C96.5546 259.858 124.81 275.363 125.139 275.363C125.468 275.363 142.527 266.035 163.142 254.69C183.691 243.282 211.748 227.841 225.448 220.277L250.278 206.538V191.789V176.978L248.829 177.735C247.973 178.176 219.915 193.617 186.457 212.147C152.933 230.677 125.205 245.677 124.81 245.614C124.349 245.488 102.219 233.387 75.5444 218.639L27.0037 191.853V137.65V83.4471L48.9359 71.346C60.9229 64.7282 82.9211 52.6271 97.7401 44.4337C112.493 36.2402 124.876 29.5594 125.139 29.5594C125.402 29.5594 142.593 38.9504 163.339 50.4212L223.801 83.447L233.337 78.0776L250.278 68.5728L223.801 54.1398C202.857 42.2908 125.6 -0.0629883 124.941 6.10352e-05C124.546 6.10352e-05 96.2912 15.4415 62.2402 34.2864Z", fill: "#008060" }),
+-                React.createElement("path", { d: "M188.367 102.796C154.514 121.515 126.325 137.019 125.732 137.146C125.073 137.335 108.542 128.511 87.0045 116.662L49.397 95.8632V110.8L49.4628 125.675L86.0166 145.843C106.105 156.936 123.229 166.264 124.085 166.579C125.402 167.02 134.623 162.167 187.445 132.986C221.43 114.141 249.488 98.5734 249.817 98.3213C250.08 98.0691 250.212 91.3253 250.146 83.321L249.949 68.7618L188.367 102.796Z", fill: "#008060" }),
+-                React.createElement("path", { d: "M243.362 126.557C239.74 128.511 211.814 143.953 181.254 160.844C150.694 177.735 125.468 191.537 125.139 191.537C124.81 191.537 107.751 182.21 87.1363 170.865L49.7263 150.192L49.5288 164.688C49.397 175.781 49.5946 179.373 50.1874 179.941C51.4388 181.012 124.349 221.16 125.139 221.16C125.798 221.16 248.763 153.406 249.817 152.524C250.08 152.272 250.212 145.528 250.146 137.461L249.949 122.902L243.362 126.557Z", fill: "#008060" }))),
++                        React.createElement("img", { src: "/assets/branding/printel-logo.jpeg", alt: "Printel", className: "h-24 w-auto object-contain" })),
+         error && React.createElement("div", { className: "text-destructive py-2" }, error),
+         React.createElement(Form, { action: authUrl, method: "POST", id: "adminLoginForm", onSuccess: onSuccess, submitBtn: false },
+             React.createElement(Area, { id: "adminLoginForm", className: "space-y-3", coreComponents: [
+                     {
+                         component: {
+-                            default: (React.createElement(EmailField, { prefixIcon: React.createElement(Mail, { className: "h-5 w-5" }), label: "Email", name: "email", placeholder: "Email", required: true, validation: {
+-                                    required: 'Email is required'
++                            default: (React.createElement(EmailField, { prefixIcon: React.createElement(Mail, { className: "h-5 w-5" }), label: 'Email', name: "email", placeholder: 'Email', required: true, validation: {
++                                    required: _('Email is required')
+                                 } }))
+                         },
+                         sortOrder: 10
+                     },
+                     {
+                         component: {
+-                            default: (React.createElement(PasswordField, { prefixIcon: React.createElement(LockKeyhole, { className: "h-5 w-5" }), label: "Password", name: "password", placeholder: "Password", required: true, validation: {
+-                                    required: 'Password is required'
++                            default: (React.createElement(PasswordField, { prefixIcon: React.createElement(LockKeyhole, { className: "h-5 w-5" }), label: 'Parola', name: "password", placeholder: 'Parola', required: true, validation: {
++                                    required: _('Password is required')
+                                 }, showToggle: true }))
+                         },
+                         sortOrder: 20
+diff --git a/node_modules/@evershop/evershop/dist/modules/auth/pages/admin/adminLogin/index.js b/node_modules/@evershop/evershop/dist/modules/auth/pages/admin/adminLogin/index.js
+index 6e83cc7..2cfcb81 100644
+--- a/node_modules/@evershop/evershop/dist/modules/auth/pages/admin/adminLogin/index.js
++++ b/node_modules/@evershop/evershop/dist/modules/auth/pages/admin/adminLogin/index.js
+@@ -1,4 +1,5 @@
+ import { buildUrl } from '../../../../../lib/router/buildUrl.js';
++import { translate } from '../../../../../lib/locale/translate/translate.js';
+ import { setPageMetaInfo } from '../../../../cms/services/pageMetaInfo.js';
+ export default (request, response, next) => {
+     // Check if the user is logged in
+@@ -9,8 +10,8 @@ export default (request, response, next) => {
+     }
+     else {
+         setPageMetaInfo(request, {
+-            title: 'Admin Login',
+-            description: 'Admin Login'
++            title: translate('Autentificare administrator'),
++            description: translate('Autentificare administrator')
+         });
+         next();
+     }
+diff --git a/node_modules/@evershop/evershop/dist/modules/auth/services/loginUserWithEmail.js b/node_modules/@evershop/evershop/dist/modules/auth/services/loginUserWithEmail.js
+index b4137f0..00523a5 100644
+--- a/node_modules/@evershop/evershop/dist/modules/auth/services/loginUserWithEmail.js
++++ b/node_modules/@evershop/evershop/dist/modules/auth/services/loginUserWithEmail.js
+@@ -1,5 +1,6 @@
+ import { select } from '@evershop/postgres-query-builder';
+ import { pool } from '../../../lib/postgres/connection.js';
++import { translate } from '../../../lib/locale/translate/translate.js';
+ import { hookable, hookBefore, hookAfter } from '../../../lib/util/hookable.js';
+ import { comparePassword } from '../../../lib/util/passwordHelper.js';
+ import { buildAdminUserPayload } from './buildAdminUserPayload.js';
+@@ -19,7 +20,7 @@ const _loginUserWithEmail = async function loginUserWithEmail(email, password) {
+         .load(pool);
+     const result = comparePassword(password, user ? user.password : '');
+     if (!user || !result) {
+-        throw new Error('Invalid email or password');
++        throw new Error(translate('Invalid email or password'));
+     }
+     if (this.session) {
+         this.session.userID = user.admin_user_id;
+diff --git a/node_modules/@evershop/evershop/dist/modules/catalog/pages/admin/all/CatalogMenuGroup.js b/node_modules/@evershop/evershop/dist/modules/catalog/pages/admin/all/CatalogMenuGroup.js
+index 4c4203a..34c55e7 100644
+--- a/node_modules/@evershop/evershop/dist/modules/catalog/pages/admin/all/CatalogMenuGroup.js
++++ b/node_modules/@evershop/evershop/dist/modules/catalog/pages/admin/all/CatalogMenuGroup.js
+@@ -7,22 +7,22 @@ export default function CatalogMenuGroup({ productGrid, categoryGrid, attributeG
+             {
+                 Icon: Box,
+                 url: productGrid,
+-                title: 'Products'
++                title: 'Produse'
+             },
+             {
+                 Icon: Link,
+                 url: categoryGrid,
+-                title: 'Categories'
++                title: 'Categorii'
+             },
+             {
+                 Icon: Tag,
+                 url: collectionGrid,
+-                title: 'Collections'
++                title: 'Colecții'
+             },
+             {
+                 Icon: Hash,
+                 url: attributeGrid,
+-                title: 'Attributes'
++                title: 'Atribute'
+             }
+         ] }));
+ }
+diff --git a/node_modules/@evershop/evershop/dist/modules/catalog/pages/admin/all/NewProductQuickLink.js b/node_modules/@evershop/evershop/dist/modules/catalog/pages/admin/all/NewProductQuickLink.js
+index 5c685e0..0b03c55 100644
+--- a/node_modules/@evershop/evershop/dist/modules/catalog/pages/admin/all/NewProductQuickLink.js
++++ b/node_modules/@evershop/evershop/dist/modules/catalog/pages/admin/all/NewProductQuickLink.js
+@@ -3,7 +3,7 @@ import { BoxIcon } from 'lucide-react';
+ import PropTypes from 'prop-types';
+ import React from 'react';
+ export default function NewProductQuickLink({ productNew }) {
+-    return React.createElement(NavigationItem, { Icon: BoxIcon, title: "New Product", url: productNew });
++  return React.createElement(NavigationItem, { Icon: BoxIcon, title: "Produs nou", url: productNew });
+ }
+ NewProductQuickLink.propTypes = {
+     productNew: PropTypes.string.isRequired
+diff --git a/node_modules/@evershop/evershop/dist/modules/cms/components/Slideshow.js b/node_modules/@evershop/evershop/dist/modules/cms/components/Slideshow.js
+index 95473e2..40416a6 100644
+--- a/node_modules/@evershop/evershop/dist/modules/cms/components/Slideshow.js
++++ b/node_modules/@evershop/evershop/dist/modules/cms/components/Slideshow.js
+@@ -1,16 +1,17 @@
+ import { Image } from '@components/common/Image.js';
+ import React from 'react';
+ import Slider from 'react-slick';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import 'slick-carousel/slick/slick.css';
+ function PrevArrow(props) {
+     const { onClick } = props;
+-    return (React.createElement("button", { className: "absolute bottom-[20px] right-[70px] z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white transition-all hover:bg-black/70 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/50 md:bottom-[20px] md:right-[70px] md:h-10 md:w-10", onClick: onClick, "aria-label": "Previous slide", type: "button" },
++  return (React.createElement("button", { className: "absolute bottom-[20px] right-[70px] z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white transition-all hover:bg-black/70 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/50 md:bottom-[20px] md:right-[70px] md:h-10 md:w-10", onClick: onClick, "aria-label": _('Previous slide'), type: "button" },
+         React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", width: "24", height: "24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "h-6 w-6 md:h-6 md:w-6" },
+             React.createElement("polyline", { points: "15 18 9 12 15 6" }))));
+ }
+ function NextArrow(props) {
+     const { onClick } = props;
+-    return (React.createElement("button", { className: "absolute bottom-[20px] right-5 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white transition-all hover:bg-black/70 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/50 md:bottom-[20px] md:right-5 md:h-10 md:w-10", onClick: onClick, "aria-label": "Next slide", type: "button" },
++  return (React.createElement("button", { className: "absolute bottom-[20px] right-5 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white transition-all hover:bg-black/70 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/50 md:bottom-[20px] md:right-5 md:h-10 md:w-10", onClick: onClick, "aria-label": _('Next slide'), type: "button" },
+         React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", width: "24", height: "24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "h-6 w-6 md:h-6 md:w-6" },
+             React.createElement("polyline", { points: "9 18 15 12 9 6" }))));
+ }
+@@ -19,7 +20,7 @@ function CustomDot(props) {
+     const isActive = active || (className && className.includes('active'));
+     return (React.createElement("button", { onClick: onClick, className: `mx-1 my-0 h-3 w-3 rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-white/50 md:h-3 md:w-3 ${isActive
+             ? '!bg-black scale-125 shadow-md'
+-            : '!bg-black/70 !hover:bg-black/90'}`, "aria-label": "Go to slide", type: "button" }));
++          : '!bg-black/70 !hover:bg-black/90'}`, "aria-label": _('Go to slide'), type: "button" }));
+ }
+ const SliderComponent = Slider;
+ export default function Slideshow({ slideshowWidget: { slides = [], autoplay = true, autoplaySpeed = 3000, arrows = true, dots = true } }) {
+diff --git a/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/CmsMenuGroup.js b/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/CmsMenuGroup.js
+index e7c4448..968dcdc 100644
+--- a/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/CmsMenuGroup.js
++++ b/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/CmsMenuGroup.js
+@@ -7,12 +7,12 @@ export default function CmsMenuGroup({ cmsPageGrid, widgetGrid }) {
+             {
+                 Icon: Book,
+                 url: cmsPageGrid,
+-                title: 'Pages'
++                title: 'Pagini'
+             },
+             {
+                 Icon: Puzzle,
+                 url: widgetGrid,
+-                title: 'Widgets'
++                title: 'Widgeturi'
+             }
+         ] }));
+ }
+diff --git a/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/Logo.js b/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/Logo.js
+index 0a013c3..c7d0869 100644
+--- a/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/Logo.js
++++ b/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/Logo.js
+@@ -1,11 +1,8 @@
+ import React from 'react';
+ export default function Logo({ dashboardUrl }) {
+     return (React.createElement("div", { className: "logo w-9 h-auto flex items-center" },
+-        React.createElement("a", { href: dashboardUrl, className: "flex items-end" },
+-            React.createElement("svg", { width: "256", height: "282", viewBox: "0 0 256 282", fill: "none", className: "w-8 h-auto", xmlns: "http://www.w3.org/2000/svg" },
+-                React.createElement("path", { d: "M63.6632 35.0703L0.336842 70.1406L0.134737 140.668L0 211.26L63.7305 246.459C98.7621 265.799 127.663 281.658 128 281.658C128.337 281.658 145.785 272.117 166.872 260.513C187.891 248.844 216.589 233.05 230.602 225.314L256 211.26V196.174V181.024L254.518 181.798C253.642 182.249 224.943 198.044 190.72 216.997C156.429 235.951 128.067 251.294 127.663 251.229C127.192 251.101 104.556 238.723 77.2716 223.637L27.6211 196.239V140.797V85.3549L50.0547 72.9771C62.3158 66.2081 84.8168 53.8303 99.9747 45.4496C115.065 37.0688 127.731 30.2353 128 30.2353C128.269 30.2353 145.853 39.8409 167.074 51.574L228.918 85.3549L238.672 79.8626L256 70.1406L228.918 55.3775C207.495 43.2577 128.472 -0.0643921 127.798 9.15527e-05C127.394 9.15527e-05 98.4926 15.7946 63.6632 35.0703Z", fill: "#008060" }),
+-                React.createElement("path", { d: "M192.674 105.146C158.046 124.293 129.213 140.152 128.606 140.281C127.933 140.475 111.023 131.449 88.9937 119.329L50.5263 98.055V113.334L50.5937 128.548L87.9832 149.178C108.531 160.524 126.046 170.065 126.922 170.387C128.269 170.839 137.701 165.875 191.731 136.026C226.493 116.751 255.192 100.827 255.528 100.569C255.798 100.311 255.933 93.4133 255.865 85.226L255.663 70.334L192.674 105.146Z", fill: "#008060" }),
+-                React.createElement("path", { d: "M248.926 129.451C245.221 131.449 216.657 147.244 185.398 164.521C154.139 181.798 128.337 195.917 128 195.917C127.663 195.917 110.215 186.375 89.1284 174.771L50.8632 153.626L50.6611 168.453C50.5263 179.8 50.7284 183.474 51.3347 184.055C52.6147 185.15 127.192 226.216 128 226.216C128.674 226.216 254.451 156.914 255.528 156.011C255.798 155.753 255.933 148.855 255.865 140.603L255.663 125.712L248.926 129.451Z", fill: "#008060" })))));
++    React.createElement("a", { href: dashboardUrl, className: "flex items-center", "aria-label": "Printel admin" },
++      React.createElement("img", { src: "/assets/branding/printel-logo.jpeg", alt: "Printel", className: "h-11 w-auto object-contain" }))));
+ }
+ export const layout = {
+     areaId: 'header',
+diff --git a/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/QuickLinks.js b/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/QuickLinks.js
+index 6752c08..b3780c6 100644
+--- a/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/QuickLinks.js
++++ b/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/QuickLinks.js
+@@ -3,11 +3,11 @@ import { HomeIcon } from 'lucide-react';
+ import PropTypes from 'prop-types';
+ import React from 'react';
+ export default function QuickLinks({ dashboard }) {
+-    return (React.createElement(NavigationItemGroup, { id: "quickLinks", name: "Quick links", items: [
++  return (React.createElement(NavigationItemGroup, { id: "quickLinks", name: "Linkuri rapide", items: [
+             {
+                 Icon: HomeIcon,
+                 url: dashboard,
+-                title: 'Dashboard'
++        title: 'Panou de control'
+             }
+         ] }));
+ }
+diff --git a/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/SearchBox.js b/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/SearchBox.js
+index 592551a..9c08df6 100644
+--- a/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/SearchBox.js
++++ b/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/SearchBox.js
+@@ -90,12 +90,12 @@ export default function SearchBox({ resourceLinks }) {
+         React.createElement(InputGroup, { className: "bg-[#f1f2f3] rounded-[3px] border-[#f1f2f3]" },
+             React.createElement(InputGroupAddon, null,
+                 React.createElement(Search, null)),
+-            React.createElement(InputGroupInput, { type: "text", placeholder: "Search", ref: InputRef, onChange: (e) => setKeyword(e.target.value) })),
++            React.createElement(InputGroupInput, { type: "text", placeholder: "Căutare", ref: InputRef, onChange: (e) => setKeyword(e.target.value) })),
+         showResult && (React.createElement("div", { className: "absolute top-[calc(100%+1rem)] left-0 bg-white rounded-[5px] w-full py-5 px-2.5 border border-border shadow-lg z-50 max-h-[30rem] overflow-y-auto", ref: clickRef },
+             (loading || fetching) && (React.createElement("div", { className: "p-2 flex justify-center items-center" },
+                 React.createElement(Spinner, { width: 25, height: 25 }))),
+             !keyword && (React.createElement("div", { className: "text-center" },
+-                React.createElement("span", null, "Search for products, order and other resources"))),
++                React.createElement("span", null, "Caută produse, comenzi și alte resurse"))),
+             (data === null || data === void 0 ? void 0 : data.products.items.length) === 0 &&
+                 (data === null || data === void 0 ? void 0 : data.customers.items.length) === 0 &&
+                 (data === null || data === void 0 ? void 0 : data.orders.items.length) === 0 &&
+diff --git a/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/Survey.js b/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/Survey.js
+index db1e125..1bf689d 100644
+--- a/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/Survey.js
++++ b/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/Survey.js
+@@ -1,4 +1,5 @@
+ import { Button } from '@components/common/ui/Button.js';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import { MessageSquare } from 'lucide-react';
+ import React from 'react';
+ export default function Survey() {
+@@ -7,9 +8,9 @@ export default function Survey() {
+         window.open(surveyUrl, '_blank', 'noopener,noreferrer');
+     };
+     return (React.createElement("div", { className: "fixed bottom-6 right-6 z-50" },
+-        React.createElement(Button, { onClick: handleSurveyClick, size: "default", className: "shadow-lg hover:shadow-xl transition-shadow gap-2", title: "Take our survey" },
++        React.createElement(Button, { onClick: handleSurveyClick, size: "default", className: "shadow-lg hover:shadow-xl transition-shadow gap-2", title: _('Take our survey') },
+             React.createElement(MessageSquare, { className: "size-4" }),
+-            "Give Feedback")));
++            _('Give Feedback'))));
+ }
+ export const layout = {
+     areaId: 'content',
+diff --git a/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/Version.js b/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/Version.js
+index c11b097..0c953c1 100644
+--- a/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/Version.js
++++ b/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/all/Version.js
+@@ -1,10 +1,9 @@
+ import PropTypes from 'prop-types';
+ import React from 'react';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ export default function Version({ version }) {
+     return (React.createElement("div", { className: "version" },
+-        React.createElement("span", null,
+-            "Version ",
+-            version)));
++    React.createElement("span", null, _('Version ${version}', { version }))));
+ }
+ Version.propTypes = {
+     version: PropTypes.string.isRequired
+diff --git a/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/dashboard/PageHeading.js b/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/dashboard/PageHeading.js
+index 344b685..63760b7 100644
+--- a/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/dashboard/PageHeading.js
++++ b/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/dashboard/PageHeading.js
+@@ -1,7 +1,7 @@
+ import { PageHeading } from '@components/admin/PageHeading.js';
+ import React from 'react';
+ export default function DashboardPageHeading() {
+-    return React.createElement(PageHeading, { heading: "Dashboard" });
++    return React.createElement(PageHeading, { heading: "Panou de control" });
+ }
+ export const layout = {
+     areaId: 'content',
+diff --git a/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/dashboard/index.js b/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/dashboard/index.js
+index 12c59e7..c1413ad 100644
+--- a/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/dashboard/index.js
++++ b/node_modules/@evershop/evershop/dist/modules/cms/pages/admin/dashboard/index.js
+@@ -1,8 +1,8 @@
+ import { setPageMetaInfo } from '../../../../cms/services/pageMetaInfo.js';
+ export default (request, response) => {
+     setPageMetaInfo(request, {
+-        title: 'Dashboard',
+-        description: 'dashboard'
++        title: 'Panou de control',
++        description: 'Panou de control'
+     });
+ };
+ //# sourceMappingURL=index.js.map
+\ No newline at end of file
+diff --git a/node_modules/@evershop/evershop/dist/modules/customer/pages/admin/all/CustomerMenuGroup.js b/node_modules/@evershop/evershop/dist/modules/customer/pages/admin/all/CustomerMenuGroup.js
+index d734891..f842b90 100644
+--- a/node_modules/@evershop/evershop/dist/modules/customer/pages/admin/all/CustomerMenuGroup.js
++++ b/node_modules/@evershop/evershop/dist/modules/customer/pages/admin/all/CustomerMenuGroup.js
+@@ -3,11 +3,11 @@ import { User } from 'lucide-react';
+ import PropTypes from 'prop-types';
+ import React from 'react';
+ export default function CustomerMenuGroup({ customerGrid }) {
+-    return (React.createElement(NavigationItemGroup, { id: "customerMenuGroup", name: "Customer", items: [
++  return (React.createElement(NavigationItemGroup, { id: "customerMenuGroup", name: "Client", items: [
+             {
+                 Icon: User,
+                 url: customerGrid,
+-                title: 'Customers'
++        title: 'Clienți'
+             }
+         ] }));
+ }
+diff --git a/node_modules/@evershop/evershop/dist/modules/oms/pages/admin/all/OmsMenuGroup.js b/node_modules/@evershop/evershop/dist/modules/oms/pages/admin/all/OmsMenuGroup.js
+index 9b227b6..e46194b 100644
+--- a/node_modules/@evershop/evershop/dist/modules/oms/pages/admin/all/OmsMenuGroup.js
++++ b/node_modules/@evershop/evershop/dist/modules/oms/pages/admin/all/OmsMenuGroup.js
+@@ -3,11 +3,11 @@ import { Package } from 'lucide-react';
+ import PropTypes from 'prop-types';
+ import React from 'react';
+ export default function OmsMenuGroup({ orderGrid }) {
+-    return (React.createElement(NavigationItemGroup, { id: "omsMenuGroup", name: "Sale", items: [
++  return (React.createElement(NavigationItemGroup, { id: "omsMenuGroup", name: "Vânzări", items: [
+             {
+                 Icon: Package,
+                 url: orderGrid,
+-                title: 'Orders'
++        title: 'Comenzi'
+             }
+         ] }));
+ }
+diff --git a/node_modules/@evershop/evershop/dist/modules/oms/pages/admin/dashboard/Bestsellers.js b/node_modules/@evershop/evershop/dist/modules/oms/pages/admin/dashboard/Bestsellers.js
+index 55e1323..1fd5942 100644
+--- a/node_modules/@evershop/evershop/dist/modules/oms/pages/admin/dashboard/Bestsellers.js
++++ b/node_modules/@evershop/evershop/dist/modules/oms/pages/admin/dashboard/Bestsellers.js
+@@ -7,15 +7,15 @@ import { Table, TableRow, TableBody, TableCell } from '@components/common/ui/Tab
+ export default function BestSellers({ bestSellers, listUrl }) {
+     return (React.createElement(Card, null,
+         React.createElement(CardHeader, null,
+-            React.createElement(CardTitle, null, "Best Sellers"),
+-            React.createElement(CardDescription, null, "A list of best selling products"),
+-            React.createElement(CardAction, null,
+-                React.createElement("a", { href: listUrl, className: "text-sm text-primary hover:underline" }, "View All Products"))),
++      React.createElement(CardTitle, null, "Cele mai vândute"),
++      React.createElement(CardDescription, null, "O listă a produselor cel mai bine vândute"),
++      React.createElement(CardAction, null,
++        React.createElement("a", { href: listUrl, className: "text-sm text-primary hover:underline" }, "Vezi toate produsele"))),
+         React.createElement(CardContent, null,
+             React.createElement(Table, null,
+                 React.createElement(TableBody, null,
+                     bestSellers.length === 0 && (React.createElement(TableRow, null,
+-                        React.createElement(TableCell, { align: "left" }, "Look like you just started. No bestsellers yet."),
++            React.createElement(TableCell, { align: "left" }, "Se pare că abia ai început. Încă nu există produse bestseller."),
+                         React.createElement(TableCell, null, " "))),
+                     bestSellers.map((p, i) => {
+                         var _a, _b;
+@@ -32,7 +32,7 @@ export default function BestSellers({ bestSellers, listUrl }) {
+                             React.createElement(TableCell, null, p.price.regular.text),
+                             React.createElement(TableCell, null,
+                                 p.soldQty,
+-                                " sold")));
++                              " vândute")));
+                     }))))));
+ }
+ export const layout = {
+diff --git a/node_modules/@evershop/evershop/dist/modules/oms/pages/admin/dashboard/Lifetimesales.js b/node_modules/@evershop/evershop/dist/modules/oms/pages/admin/dashboard/Lifetimesales.js
+index 7eff6e7..2096748 100644
+--- a/node_modules/@evershop/evershop/dist/modules/oms/pages/admin/dashboard/Lifetimesales.js
++++ b/node_modules/@evershop/evershop/dist/modules/oms/pages/admin/dashboard/Lifetimesales.js
+@@ -52,9 +52,9 @@ export default function LifetimeSale({ api }) {
+         }
+     }, []);
+     if (fetching) {
+-        return (React.createElement(Card, { title: "Lifetime Sales" },
++        return (React.createElement(Card, { title: "Vânzări totale" },
+             React.createElement(CardHeader, null,
+-                React.createElement(CardTitle, null, "Lifetime Sales")),
++                React.createElement(CardTitle, null, "Vânzări totale")),
+             React.createElement(CardContent, null,
+                 React.createElement("div", { className: "skeleton-wrapper-lifetime" },
+                     React.createElement("div", { className: "skeleton" }),
+@@ -66,32 +66,32 @@ export default function LifetimeSale({ api }) {
+                     React.createElement("div", { className: "skeleton-chart" })))));
+     }
+     else {
+-        return (React.createElement(Card, { title: "Lifetime Sales" },
++        return (React.createElement(Card, { title: "Vânzări totale" },
+             React.createElement(CardHeader, null,
+-                React.createElement(CardTitle, null, "Lifetime Sales"),
+-                React.createElement(CardDescription, null, "Overview of total sales and order status over the lifetime of your")),
++                React.createElement(CardTitle, null, "Vânzări totale"),
++                React.createElement(CardDescription, null, "Privire de ansamblu asupra vânzărilor totale și a stării comenzilor")),
+             React.createElement(CardContent, null,
+                 React.createElement("div", { className: "grid grid-cols-1 gap-2" },
+                     React.createElement("div", { className: "flex space-x-2 items-center" },
+                         React.createElement(Dot, { variant: "info" }),
+                         React.createElement("div", { className: "self-center" },
+                             orders,
+-                            " orders")),
++                            " comenzi")),
+                     React.createElement("div", { className: "flex space-x-2 items-center" },
+                         React.createElement(Dot, { variant: "info" }),
+                         React.createElement("div", { className: "self-center" },
+                             total,
+-                            " lifetime sale")),
++                            " vânzări totale")),
+                     React.createElement("div", { className: "flex space-x-2 items-center" },
+                         React.createElement(Dot, { variant: "success" }),
+                         React.createElement("div", { className: "self-center" },
+                             completed_percentage,
+-                            "% of orders completed")),
++                            "% dintre comenzi finalizate")),
+                     React.createElement("div", { className: "flex space-x-2 items-center" },
+                         React.createElement(Dot, { variant: "critical" }),
+                         React.createElement("div", { className: "self-center" },
+                             cancelled_percentage,
+-                            "% of orders cancelled")))),
++                            "% dintre comenzi anulate")))),
+             React.createElement(CardContent, null,
+                 React.createElement("div", { style: { height: '200px' } },
+                     React.createElement(ResponsiveContainer, { width: "100%", height: "100%" },
+diff --git a/node_modules/@evershop/evershop/dist/modules/oms/pages/admin/dashboard/Statistic.js b/node_modules/@evershop/evershop/dist/modules/oms/pages/admin/dashboard/Statistic.js
+index 4ac9ca8..af5d8d2 100644
+--- a/node_modules/@evershop/evershop/dist/modules/oms/pages/admin/dashboard/Statistic.js
++++ b/node_modules/@evershop/evershop/dist/modules/oms/pages/admin/dashboard/Statistic.js
+@@ -29,23 +29,23 @@ export default function SaleStatistic({ api }) {
+         }
+     }, [period]);
+     if (fetching) {
+-        return (React.createElement(Card, { title: "Sale Statistics" },
++        return (React.createElement(Card, { title: "Statistici vânzări" },
+             React.createElement(CardHeader, null,
+-                React.createElement(CardTitle, null, "Sale Statistics"),
+-                React.createElement(CardDescription, null, "Overview of sales data over selected periods")),
++                React.createElement(CardTitle, null, "Statistici vânzări"),
++                React.createElement(CardDescription, null, "Privire de ansamblu asupra vânzărilor pentru perioadele selectate")),
+             React.createElement("div", { className: "skeleton-wrapper-statistic" },
+                 React.createElement("div", { className: "skeleton" }))));
+     }
+     else {
+         return (React.createElement(Card, null,
+             React.createElement(CardHeader, null,
+-                React.createElement(CardTitle, null, "Sale Statistics"),
+-                React.createElement(CardDescription, null, "Overview of sales data over selected periods"),
++                React.createElement(CardTitle, null, "Statistici vânzări"),
++                React.createElement(CardDescription, null, "Privire de ansamblu asupra vânzărilor pentru perioadele selectate"),
+                 React.createElement(CardAction, null,
+                     React.createElement(ButtonGroup, null,
+-                        React.createElement(Button, { onClick: () => setPeriod('daily'), variant: 'outline' }, period === 'daily' ? (React.createElement("span", { className: "text-primary" }, "Daily")) : ('Daily')),
+-                        React.createElement(Button, { onClick: () => setPeriod('weekly'), variant: 'outline' }, period === 'weekly' ? (React.createElement("span", { className: "text-primary" }, "Weekly")) : ('Weekly')),
+-                        React.createElement(Button, { onClick: () => setPeriod('monthly'), variant: 'outline' }, period === 'monthly' ? (React.createElement("span", { className: "text-primary" }, "Monthly")) : ('Monthly'))))),
++                        React.createElement(Button, { onClick: () => setPeriod('daily'), variant: 'outline' }, period === 'daily' ? (React.createElement("span", { className: "text-primary" }, "Zilnic")) : ('Zilnic')),
++                        React.createElement(Button, { onClick: () => setPeriod('weekly'), variant: 'outline' }, period === 'weekly' ? (React.createElement("span", { className: "text-primary" }, "Săptămânal")) : ('Săptămânal')),
++                        React.createElement(Button, { onClick: () => setPeriod('monthly'), variant: 'outline' }, period === 'monthly' ? (React.createElement("span", { className: "text-primary" }, "Lunar")) : ('Lunar'))))),
+             React.createElement(CardContent, null, data.length === 0 ? null : (React.createElement(ResponsiveContainer, { width: "100%", height: 300 },
+                 React.createElement(AreaChart, { data: data, margin: {
+                         top: 5,
+diff --git a/node_modules/@evershop/evershop/dist/modules/promotion/pages/admin/all/CouponMenuGroup.js b/node_modules/@evershop/evershop/dist/modules/promotion/pages/admin/all/CouponMenuGroup.js
+index c1474f1..20c3ce6 100644
+--- a/node_modules/@evershop/evershop/dist/modules/promotion/pages/admin/all/CouponMenuGroup.js
++++ b/node_modules/@evershop/evershop/dist/modules/promotion/pages/admin/all/CouponMenuGroup.js
+@@ -2,11 +2,11 @@ import { NavigationItemGroup } from '@components/admin/NavigationItemGroup.js';
+ import { GiftIcon } from 'lucide-react';
+ import React from 'react';
+ export default function CatalogMenuGroup({ couponGrid }) {
+-    return (React.createElement(NavigationItemGroup, { id: "couponMenuGroup", name: "Promotion", items: [
++  return (React.createElement(NavigationItemGroup, { id: "couponMenuGroup", name: "Promoții", items: [
+             {
+                 Icon: GiftIcon,
+                 url: couponGrid,
+-                title: 'Coupons'
++        title: 'Cupoane'
+             }
+         ] }));
+ }
+diff --git a/node_modules/@evershop/evershop/dist/modules/promotion/pages/admin/all/NewCouponQuickLink.js b/node_modules/@evershop/evershop/dist/modules/promotion/pages/admin/all/NewCouponQuickLink.js
+index 55b444d..224d980 100644
+--- a/node_modules/@evershop/evershop/dist/modules/promotion/pages/admin/all/NewCouponQuickLink.js
++++ b/node_modules/@evershop/evershop/dist/modules/promotion/pages/admin/all/NewCouponQuickLink.js
+@@ -2,7 +2,7 @@ import { NavigationItem } from '@components/admin/NavigationItem.js';
+ import { GiftIcon } from 'lucide-react';
+ import React from 'react';
+ export default function NewProductQuickLink({ couponNew }) {
+-    return React.createElement(NavigationItem, { Icon: GiftIcon, title: "New Coupon", url: couponNew });
++  return React.createElement(NavigationItem, { Icon: GiftIcon, title: "Cupon nou", url: couponNew });
+ }
+ export const layout = {
+     areaId: 'quickLinks',
+diff --git a/node_modules/@evershop/evershop/dist/modules/setting/pages/admin/all/SettingMenuGroup.js b/node_modules/@evershop/evershop/dist/modules/setting/pages/admin/all/SettingMenuGroup.js
+index e71286e..5bcfd98 100644
+--- a/node_modules/@evershop/evershop/dist/modules/setting/pages/admin/all/SettingMenuGroup.js
++++ b/node_modules/@evershop/evershop/dist/modules/setting/pages/admin/all/SettingMenuGroup.js
+@@ -2,7 +2,7 @@ import { NavigationItemGroup } from '@components/admin/NavigationItemGroup.js';
+ import { Settings } from 'lucide-react';
+ import React from 'react';
+ export default function CmsMenuGroup({ storeSetting }) {
+-    return (React.createElement(NavigationItemGroup, { id: "settingMenuGroup", name: "Setting", Icon: () => React.createElement(Settings, { width: 15, height: 15 }), url: storeSetting }));
++  return (React.createElement(NavigationItemGroup, { id: "settingMenuGroup", name: "Setări", Icon: () => React.createElement(Settings, { width: 15, height: 15 }), url: storeSetting }));
+ }
+ export const layout = {
+     areaId: 'adminMenu',
+diff --git a/node_modules/@evershop/evershop/src/components/common/ui/Dialog.tsx b/node_modules/@evershop/evershop/src/components/common/ui/Dialog.tsx
+index f0e6f47..f6b2934 100644
+--- a/node_modules/@evershop/evershop/src/components/common/ui/Dialog.tsx
++++ b/node_modules/@evershop/evershop/src/components/common/ui/Dialog.tsx
+@@ -1,5 +1,6 @@
+ import { Dialog as DialogPrimitive } from '@base-ui/react/dialog';
+ import { Button } from '@components/common/ui/Button.js';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import { cn } from '@evershop/evershop/lib/util/cn';
+ import { XIcon } from 'lucide-react';
+ import * as React from 'react';
+@@ -68,7 +69,7 @@ function DialogContent({
+             }
+           >
+             <XIcon />
+-            <span className="sr-only">Close</span>
++            <span className="sr-only">{_('Close')}</span>
+           </DialogPrimitive.Close>
+         )}
+       </DialogPrimitive.Popup>
+@@ -106,7 +107,7 @@ function DialogFooter({
+       {children}
+       {showCloseButton && (
+         <DialogPrimitive.Close render={<Button variant="outline" />}>
+-          Close
++          {_('Close')}
+         </DialogPrimitive.Close>
+       )}
+     </div>
+diff --git a/node_modules/@evershop/evershop/src/components/common/ui/Sheet.tsx b/node_modules/@evershop/evershop/src/components/common/ui/Sheet.tsx
+index f0721ec..8c49868 100644
+--- a/node_modules/@evershop/evershop/src/components/common/ui/Sheet.tsx
++++ b/node_modules/@evershop/evershop/src/components/common/ui/Sheet.tsx
+@@ -1,5 +1,6 @@
+ import { Dialog as SheetPrimitive } from '@base-ui/react/dialog';
+ import { Button } from '@components/common/ui/Button.js';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import { cn } from '@evershop/evershop/lib/util/cn';
+ import { XIcon } from 'lucide-react';
+ import * as React from 'react';
+@@ -68,7 +69,7 @@ function SheetContent({
+             }
+           >
+             <XIcon />
+-            <span className="sr-only">Close</span>
++            <span className="sr-only">{_('Close')}</span>
+           </SheetPrimitive.Close>
+         )}
+       </SheetPrimitive.Popup>
+diff --git a/node_modules/@evershop/evershop/src/components/frontStore/cart/CartSummaryItems.tsx b/node_modules/@evershop/evershop/src/components/frontStore/cart/CartSummaryItems.tsx
+index 15126b1..d3ff09c 100644
+--- a/node_modules/@evershop/evershop/src/components/frontStore/cart/CartSummaryItems.tsx
++++ b/node_modules/@evershop/evershop/src/components/frontStore/cart/CartSummaryItems.tsx
+@@ -5,6 +5,21 @@ import { CartItem } from '@components/frontStore/cart/CartContext.js';
+ import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import React from 'react';
+ 
++const translateProductOption = (value: string) => {
++  switch (value) {
++    case 'Color':
++      return _('Color');
++    case 'White':
++      return _('White');
++    case 'Black':
++      return _('Black');
++    case 'Yellow':
++      return _('Yellow');
++    default:
++      return value;
++  }
++};
++
+ const CartSummarySkeleton: React.FC<{ rows?: number }> = ({ rows = 2 }) => {
+   return (
+     <ul className="divide-y divide-border">
+@@ -74,9 +89,9 @@ const CartSummaryItemsList: React.FC<{
+               <div className="space-y-1">
+                 {item.variantOptions.map((option) => (
+                   <div key={option.attributeCode} className="text-xs">
+-                    <span>{option.attributeName}</span>:{' '}
++                    <span>{translateProductOption(option.attributeName)}</span>:{' '}
+                     <span className="text-muted-foreground">
+-                      {option.optionText}
++                      {translateProductOption(option.optionText)}
+                     </span>
+                   </div>
+                 ))}
+diff --git a/node_modules/@evershop/evershop/src/components/frontStore/cart/DefaultCartItemList.tsx b/node_modules/@evershop/evershop/src/components/frontStore/cart/DefaultCartItemList.tsx
+index 599f54b..e0def9c 100644
+--- a/node_modules/@evershop/evershop/src/components/frontStore/cart/DefaultCartItemList.tsx
++++ b/node_modules/@evershop/evershop/src/components/frontStore/cart/DefaultCartItemList.tsx
+@@ -10,6 +10,17 @@ import { ItemQuantity } from '@components/frontStore/cart/ItemQuantity.js';
+ import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import React from 'react';
+ 
++const translateOptionLabel = (value: string) => {
++  switch (value) {
++    case 'Color':
++      return _('Color');
++    case 'White':
++      return _('White');
++    default:
++      return value;
++  }
++};
++
+ interface CartItemsTableProps {
+   items: CartItem[];
+   showPriceIncludingTax?: boolean;
+@@ -58,9 +69,9 @@ export const DefaultCartItemList: React.FC<CartItemsTableProps> = ({
+               </div>
+               {row.variantOptions?.map((option) => (
+                 <span key={option.optionId} className="text-xs">
+-                  <span>{option.attributeName}</span>:{' '}
++                  <span>{translateOptionLabel(option.attributeName)}</span>:{' '}
+                   <span className="text-muted-foreground">
+-                    {option.optionText}
++                    {translateOptionLabel(option.optionText)}
+                   </span>
+                 </span>
+               ))}
+diff --git a/node_modules/@evershop/evershop/src/components/frontStore/cart/DefaultMiniCartIcon.tsx b/node_modules/@evershop/evershop/src/components/frontStore/cart/DefaultMiniCartIcon.tsx
+index 151f724..106f375 100644
+--- a/node_modules/@evershop/evershop/src/components/frontStore/cart/DefaultMiniCartIcon.tsx
++++ b/node_modules/@evershop/evershop/src/components/frontStore/cart/DefaultMiniCartIcon.tsx
+@@ -1,5 +1,6 @@
+ import { ShoppingBag } from 'lucide-react';
+ import React from 'react';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ 
+ export const DefaultMiniCartIcon = ({
+   totalQty,
+@@ -24,7 +25,9 @@ export const DefaultMiniCartIcon = ({
+       className={`mini-cart-icon relative ${
+         disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+       } ${isOpen ? 'active' : ''}`}
+-      aria-label={`Shopping cart with ${totalQty} items`}
++      aria-label={_('Shopping cart with ${count} items', {
++        count: totalQty.toString()
++      })}
+     >
+       {syncStatus.syncing ? (
+         <div className="w-6 h-6 flex items-center justify-center">
+diff --git a/node_modules/@evershop/evershop/src/components/frontStore/catalog/DefaultVariantSelectorRender.tsx b/node_modules/@evershop/evershop/src/components/frontStore/catalog/DefaultVariantSelectorRender.tsx
+index 116d0f3..737f741 100644
+--- a/node_modules/@evershop/evershop/src/components/frontStore/catalog/DefaultVariantSelectorRender.tsx
++++ b/node_modules/@evershop/evershop/src/components/frontStore/catalog/DefaultVariantSelectorRender.tsx
+@@ -3,8 +3,24 @@ import {
+   VariantAttributeGroupProps,
+   VariantOptionItemProps
+ } from '@components/frontStore/catalog/VariantSelector.js';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import React from 'react';
+ 
++const translateProductOption = (value: string) => {
++  switch (value) {
++    case 'Color':
++      return _('Color');
++    case 'White':
++      return _('White');
++    case 'Black':
++      return _('Black');
++    case 'Yellow':
++      return _('Yellow');
++    default:
++      return value;
++  }
++};
++
+ const DefaultVariantOptionItem: React.FC<VariantOptionItemProps> = ({
+   option,
+   attribute,
+@@ -32,7 +48,7 @@ const DefaultVariantOptionItem: React.FC<VariantOptionItemProps> = ({
+         }}
+         className={'group-[.selected]:border-primary'}
+       >
+-        {option.optionText}
++        {translateProductOption(option.optionText)}
+       </Button>
+     </li>
+   );
+@@ -47,7 +63,7 @@ const DefaultVariantAttribute: React.FC<VariantAttributeGroupProps> = ({
+   return (
+     <div key={attribute.attributeCode}>
+       <div className="mb-2 text-textSubdued uppercase">
+-        <span>{attribute.attributeName}</span>
++        <span>{translateProductOption(attribute.attributeName)}</span>
+       </div>
+       <ul className="variant-option-list flex justify-start gap-2 flex-wrap">
+         {options.map((option) => (
+diff --git a/node_modules/@evershop/evershop/src/components/frontStore/catalog/Media.tsx b/node_modules/@evershop/evershop/src/components/frontStore/catalog/Media.tsx
+index 23dcf2c..5f99027 100644
+--- a/node_modules/@evershop/evershop/src/components/frontStore/catalog/Media.tsx
++++ b/node_modules/@evershop/evershop/src/components/frontStore/catalog/Media.tsx
+@@ -1,6 +1,7 @@
+ /* eslint-disable jsx-a11y/click-events-have-key-events */
+ /* eslint-disable jsx-a11y/no-static-element-interactions */
+ import React, { useState, useRef } from 'react';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import Slider from 'react-slick';
+ import 'slick-carousel/slick/slick.css';
+ import 'slick-carousel/slick/slick-theme.css';
+@@ -19,7 +20,7 @@ const PrevArrow = (props: any) => {
+     <button
+       className={`${className} custom-arrow prev-arrow`}
+       onClick={onClick}
+-      aria-label="Previous slide"
++      aria-label={_('Previous slide')}
+     >
+       <svg
+         xmlns="http://www.w3.org/2000/svg"
+@@ -44,7 +45,7 @@ const NextArrow = (props: any) => {
+     <button
+       className={`${className} custom-arrow next-arrow`}
+       onClick={onClick}
+-      aria-label="Next slide"
++      aria-label={_('Next slide')}
+     >
+       <svg
+         xmlns="http://www.w3.org/2000/svg"
+diff --git a/node_modules/@evershop/evershop/src/components/frontStore/catalog/ProductSingleAttributes.tsx b/node_modules/@evershop/evershop/src/components/frontStore/catalog/ProductSingleAttributes.tsx
+index 02859a7..ff9db26 100644
+--- a/node_modules/@evershop/evershop/src/components/frontStore/catalog/ProductSingleAttributes.tsx
++++ b/node_modules/@evershop/evershop/src/components/frontStore/catalog/ProductSingleAttributes.tsx
+@@ -1,7 +1,23 @@
+ import Area from '@components/common/Area.js';
+ import { useProduct } from '@components/frontStore/catalog/ProductContext.js';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import React from 'react';
+ 
++const translateProductOption = (value: string) => {
++  switch (value) {
++    case 'Color':
++      return _('Color');
++    case 'White':
++      return _('White');
++    case 'Black':
++      return _('Black');
++    case 'Yellow':
++      return _('Yellow');
++    default:
++      return value;
++  }
++};
++
+ export const ProductSingleAttributes = () => {
+   const { attributes, sku } = useProduct();
+   const list = attributes
+@@ -21,8 +37,8 @@ export const ProductSingleAttributes = () => {
+         <ul className="list-none">
+           {list.map((attribute) => (
+             <li key={attribute.attributeCode} className="py-1">
+-              <strong>{attribute.attributeName}: </strong>{' '}
+-              <span>{attribute.optionText}</span>
++              <strong>{translateProductOption(attribute.attributeName)}: </strong>{' '}
++              <span>{translateProductOption(attribute.optionText)}</span>
+             </li>
+           ))}
+         </ul>
+diff --git a/node_modules/@evershop/evershop/src/components/frontStore/checkout/CheckoutContext.tsx b/node_modules/@evershop/evershop/src/components/frontStore/checkout/CheckoutContext.tsx
+index 0aa1c3a..171b112 100644
+--- a/node_modules/@evershop/evershop/src/components/frontStore/checkout/CheckoutContext.tsx
++++ b/node_modules/@evershop/evershop/src/components/frontStore/checkout/CheckoutContext.tsx
+@@ -224,7 +224,7 @@ export function CheckoutProvider({
+           return methods.map((method) => ({
+             code: method.code,
+             name: method.name,
+-            cost: method.cost || { value: 0, text: 'Free' }
++            cost: method.cost || { value: 0, text: _('Free') }
+           }));
+         } catch (error) {
+           // Return empty array on error, let the error be handled by cart context
+@@ -236,7 +236,7 @@ export function CheckoutProvider({
+           (method) => ({
+             code: method.code,
+             name: method.name,
+-            cost: method.cost || { value: 0, text: 'Free' }
++            cost: method.cost || { value: 0, text: _('Free') }
+           })
+         );
+       }
+diff --git a/node_modules/@evershop/evershop/src/components/frontStore/checkout/OrderSummaryItems.tsx b/node_modules/@evershop/evershop/src/components/frontStore/checkout/OrderSummaryItems.tsx
+index bc0ec10..71f306b 100644
+--- a/node_modules/@evershop/evershop/src/components/frontStore/checkout/OrderSummaryItems.tsx
++++ b/node_modules/@evershop/evershop/src/components/frontStore/checkout/OrderSummaryItems.tsx
+@@ -5,6 +5,21 @@ import { OrderItem } from '@components/frontStore/customer/CustomerContext.js';
+ import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import React from 'react';
+ 
++const translateProductOption = (value: string) => {
++  switch (value) {
++    case 'Color':
++      return _('Color');
++    case 'White':
++      return _('White');
++    case 'Black':
++      return _('Black');
++    case 'Yellow':
++      return _('Yellow');
++    default:
++      return value;
++  }
++};
++
+ const OrderSummaryItems: React.FC<{
+   items: OrderItem[];
+ }> = ({ items }) => {
+@@ -54,7 +69,8 @@ const OrderSummaryItems: React.FC<{
+                     key={option.attributeCode}
+                     className="text-xs text-gray-700"
+                   >
+-                    {option.attributeName}: {option.optionText}
++                    {translateProductOption(option.attributeName)}:{' '}
++                    {translateProductOption(option.optionText)}
+                   </div>
+                 ))}
+               </div>
+diff --git a/node_modules/@evershop/evershop/src/components/frontStore/checkout/payment/PaymentMethods.tsx b/node_modules/@evershop/evershop/src/components/frontStore/checkout/payment/PaymentMethods.tsx
+index 4b0541a..f4afce9 100644
+--- a/node_modules/@evershop/evershop/src/components/frontStore/checkout/payment/PaymentMethods.tsx
++++ b/node_modules/@evershop/evershop/src/components/frontStore/checkout/payment/PaymentMethods.tsx
+@@ -127,7 +127,7 @@ export function PaymentMethods({
+                                             isSelected
+                                           }
+                                         )
+-                                      : _(method.name)}
++                                      : method.name}
+                                   </Label>
+                                 </div>
+                               </ItemTitle>
+diff --git a/node_modules/@evershop/evershop/src/components/frontStore/checkout/shipment/ShippingMethods.tsx b/node_modules/@evershop/evershop/src/components/frontStore/checkout/shipment/ShippingMethods.tsx
+index 72c1e90..baa10e7 100644
+--- a/node_modules/@evershop/evershop/src/components/frontStore/checkout/shipment/ShippingMethods.tsx
++++ b/node_modules/@evershop/evershop/src/components/frontStore/checkout/shipment/ShippingMethods.tsx
+@@ -193,9 +193,7 @@ export function ShippingMethods({
+                             </div>
+                           </ItemTitle>
+                           {method.description && (
+-                            <ItemDescription>
+-                              {method.description}
+-                            </ItemDescription>
++                            <ItemDescription>{method.description}</ItemDescription>
+                           )}
+                         </ItemContent>
+                         <ItemActions>
+diff --git a/node_modules/@evershop/evershop/src/components/frontStore/customer/LoginForm.tsx b/node_modules/@evershop/evershop/src/components/frontStore/customer/LoginForm.tsx
+index 7fc5bf8..850cb42 100644
+--- a/node_modules/@evershop/evershop/src/components/frontStore/customer/LoginForm.tsx
++++ b/node_modules/@evershop/evershop/src/components/frontStore/customer/LoginForm.tsx
+@@ -25,7 +25,7 @@ const SubmitButton: React.FC<{ formId: string }> = ({ formId }) => {
+         }}
+         isLoading={isSubmitting}
+       >
+-        {_(isSubmitting ? 'Signing In...' : 'Sign In')}
++        {isSubmitting ? _('Signing In...') : _('Sign In')}
+       </Button>
+     </div>
+   );
+@@ -45,12 +45,12 @@ export const CustomerLoginForm: React.FC<{
+         <Area id="customerLoginFormTitleBefore" noOuter />
+         {title && (
+           <h1 className="login__form__title text-2xl text-center mb-6">
+-            {_(title)}
++            {title}
+           </h1>
+         )}
+         {subtitle && (
+           <p className="login__form__subtitle text-center mb-6">
+-            {_(subtitle)}
++            {subtitle}
+           </p>
+         )}
+         <Area id="customerLoginFormTitleAfter" noOuter />
+diff --git a/node_modules/@evershop/evershop/src/components/frontStore/customer/RegistrationForm.tsx b/node_modules/@evershop/evershop/src/components/frontStore/customer/RegistrationForm.tsx
+index 38a2823..3f5b94c 100644
+--- a/node_modules/@evershop/evershop/src/components/frontStore/customer/RegistrationForm.tsx
++++ b/node_modules/@evershop/evershop/src/components/frontStore/customer/RegistrationForm.tsx
+@@ -25,7 +25,7 @@ const SubmitButton: React.FC<{ formId: string }> = ({ formId }) => {
+         }}
+         isLoading={isSubmitting}
+       >
+-        {_(isSubmitting ? 'Signing Up...' : 'Sign Up')}
++        {isSubmitting ? _('Signing Up...') : _('Sign Up')}
+       </Button>
+     </div>
+   );
+@@ -45,13 +45,13 @@ export const CustomerRegistrationForm: React.FC<{
+         <Area id="customerRegisterFormTitleBefore" noOuter />
+         {title && (
+           <h1 className="register__form__title text-2xl text-center mb-6">
+-            {_(title)}
++            {title}
+           </h1>
+         )}
+         <Area id="customerRegisterFormTitleAfter" noOuter />
+         {subtitle && (
+           <p className="register__form__subtitle text-center mb-6">
+-            {_(subtitle)}
++            {subtitle}
+           </p>
+         )}
+         <Area id="customerRegisterFormBefore" noOuter />
+diff --git a/node_modules/@evershop/evershop/src/lib/webpack/prod/createConfigClient.js b/node_modules/@evershop/evershop/src/lib/webpack/prod/createConfigClient.js
+index 7d97b5e..ddc4c84 100644
+--- a/node_modules/@evershop/evershop/src/lib/webpack/prod/createConfigClient.js
++++ b/node_modules/@evershop/evershop/src/lib/webpack/prod/createConfigClient.js
+@@ -1,7 +1,6 @@
+ import path from 'path';
+ import HtmlWebpackPlugin from 'html-webpack-plugin';
+ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+-import WebpackBar from 'webpackbar';
+ import { getEnabledExtensions } from '../../../bin/extension/index.js';
+ import { CONSTANTS } from '../../helpers.js';
+ import { createBaseConfig } from '../createBaseConfig.js';
+@@ -133,7 +132,6 @@ export function createConfigClient(routes) {
+     ]
+   });
+ 
+-  plugins.push(new WebpackBar({ name: 'Client' }));
+   plugins.push(
+     new MiniCssExtractPlugin({
+       filename: '[name]/client/[contenthash].css',
+diff --git a/node_modules/@evershop/evershop/src/lib/webpack/prod/createConfigServer.js b/node_modules/@evershop/evershop/src/lib/webpack/prod/createConfigServer.js
+index 51967ac..99b3541 100644
+--- a/node_modules/@evershop/evershop/src/lib/webpack/prod/createConfigServer.js
++++ b/node_modules/@evershop/evershop/src/lib/webpack/prod/createConfigServer.js
+@@ -1,5 +1,4 @@
+ import path from 'path';
+-import WebpackBar from 'webpackbar';
+ import { CONSTANTS } from '../../helpers.js';
+ import { createBaseConfig } from '../createBaseConfig.js';
+ import { getRouteBuildSubPath } from '../getRouteBuildSubPath.js';
+@@ -18,7 +17,6 @@ export function createConfigServer(routes) {
+   });
+   const config = createBaseConfig(true);
+   const { plugins } = config;
+-  plugins.push(new WebpackBar({ name: 'Server', color: 'orange' }));
+ 
+   const loaders = config.module.rules;
+   loaders.push({
+diff --git a/node_modules/@evershop/evershop/src/modules/auth/pages/admin/adminLogin/LoginForm.tsx b/node_modules/@evershop/evershop/src/modules/auth/pages/admin/adminLogin/LoginForm.tsx
+index 141155b..9ace926 100644
+--- a/node_modules/@evershop/evershop/src/modules/auth/pages/admin/adminLogin/LoginForm.tsx
++++ b/node_modules/@evershop/evershop/src/modules/auth/pages/admin/adminLogin/LoginForm.tsx
+@@ -5,6 +5,7 @@ import { EmailField } from '@components/common/form/EmailField.js';
+ import { Form, useFormContext } from '@components/common/form/Form.js';
+ import { PasswordField } from '@components/common/form/PasswordField.js';
+ import { Button } from '@components/common/ui/Button.js';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import { LockKeyhole, Mail } from 'lucide-react';
+ 
+ interface LoginFormProps {
+@@ -19,7 +20,7 @@ const SubmitButton: React.FC = () => {
+   return (
+     <div className="form-submit-button flex border-t border-border mt-4 pt-4 justify-between">
+       <Button type="submit" size="lg" isLoading={isSubmitting}>
+-        SIGN IN
++        {_('Sign In')}
+       </Button>
+     </div>
+   );
+@@ -44,26 +45,11 @@ export default function LoginForm({ authUrl, dashboardUrl }: LoginFormProps) {
+         }
+       `}</style>
+       <div className="flex items-center justify-center mb-7">
+-        <svg
+-          width="60"
+-          height="61"
+-          viewBox="0 0 251 276"
+-          fill="none"
+-          xmlns="http://www.w3.org/2000/svg"
+-        >
+-          <path
+-            d="M62.2402 34.2864L0.329313 68.5728L0.131725 137.524L0 206.538L62.306 240.95C96.5546 259.858 124.81 275.363 125.139 275.363C125.468 275.363 142.527 266.035 163.142 254.69C183.691 243.282 211.748 227.841 225.448 220.277L250.278 206.538V191.789V176.978L248.829 177.735C247.973 178.176 219.915 193.617 186.457 212.147C152.933 230.677 125.205 245.677 124.81 245.614C124.349 245.488 102.219 233.387 75.5444 218.639L27.0037 191.853V137.65V83.4471L48.9359 71.346C60.9229 64.7282 82.9211 52.6271 97.7401 44.4337C112.493 36.2402 124.876 29.5594 125.139 29.5594C125.402 29.5594 142.593 38.9504 163.339 50.4212L223.801 83.447L233.337 78.0776L250.278 68.5728L223.801 54.1398C202.857 42.2908 125.6 -0.0629883 124.941 6.10352e-05C124.546 6.10352e-05 96.2912 15.4415 62.2402 34.2864Z"
+-            fill="#008060"
+-          />
+-          <path
+-            d="M188.367 102.796C154.514 121.515 126.325 137.019 125.732 137.146C125.073 137.335 108.542 128.511 87.0045 116.662L49.397 95.8632V110.8L49.4628 125.675L86.0166 145.843C106.105 156.936 123.229 166.264 124.085 166.579C125.402 167.02 134.623 162.167 187.445 132.986C221.43 114.141 249.488 98.5734 249.817 98.3213C250.08 98.0691 250.212 91.3253 250.146 83.321L249.949 68.7618L188.367 102.796Z"
+-            fill="#008060"
+-          />
+-          <path
+-            d="M243.362 126.557C239.74 128.511 211.814 143.953 181.254 160.844C150.694 177.735 125.468 191.537 125.139 191.537C124.81 191.537 107.751 182.21 87.1363 170.865L49.7263 150.192L49.5288 164.688C49.397 175.781 49.5946 179.373 50.1874 179.941C51.4388 181.012 124.349 221.16 125.139 221.16C125.798 221.16 248.763 153.406 249.817 152.524C250.08 152.272 250.212 145.528 250.146 137.461L249.949 122.902L243.362 126.557Z"
+-            fill="#008060"
+-          />
+-        </svg>
++        <img
++          src="/assets/branding/printel-logo.jpeg"
++          alt="Printel"
++          className="h-24 w-auto object-contain"
++        />
+       </div>
+       {error && <div className="text-destructive py-2">{error}</div>}
+       <Form
+@@ -82,12 +68,12 @@ export default function LoginForm({ authUrl, dashboardUrl }: LoginFormProps) {
+                 default: (
+                   <EmailField
+                     prefixIcon={<Mail className="h-5 w-5" />}
+-                    label="Email"
++                    label={'Email'}
+                     name="email"
+-                    placeholder="Email"
++                    placeholder={'Email'}
+                     required
+                     validation={{
+-                      required: 'Email is required'
++                      required: _('Email is required')
+                     }}
+                   />
+                 )
+@@ -99,12 +85,12 @@ export default function LoginForm({ authUrl, dashboardUrl }: LoginFormProps) {
+                 default: (
+                   <PasswordField
+                     prefixIcon={<LockKeyhole className="h-5 w-5" />}
+-                    label="Password"
++                    label={'Parola'}
+                     name="password"
+-                    placeholder="Password"
++                    placeholder={'Parola'}
+                     required
+                     validation={{
+-                      required: 'Password is required'
++                      required: _('Password is required')
+                     }}
+                     showToggle
+                   />
+diff --git a/node_modules/@evershop/evershop/src/modules/auth/pages/admin/adminLogin/index.ts b/node_modules/@evershop/evershop/src/modules/auth/pages/admin/adminLogin/index.ts
+index 63d8003..7f9ce49 100644
+--- a/node_modules/@evershop/evershop/src/modules/auth/pages/admin/adminLogin/index.ts
++++ b/node_modules/@evershop/evershop/src/modules/auth/pages/admin/adminLogin/index.ts
+@@ -1,4 +1,5 @@
+ import { buildUrl } from '../../../../../lib/router/buildUrl.js';
++import { translate } from '../../../../../lib/locale/translate/translate.js';
+ import { setPageMetaInfo } from '../../../../cms/services/pageMetaInfo.js';
+ 
+ export default (request, response, next) => {
+@@ -9,8 +10,8 @@ export default (request, response, next) => {
+     response.redirect(buildUrl('dashboard'));
+   } else {
+     setPageMetaInfo(request, {
+-      title: 'Admin Login',
+-      description: 'Admin Login'
++      title: translate('Autentificare administrator'),
++      description: translate('Autentificare administrator')
+     });
+     next();
+   }
+diff --git a/node_modules/@evershop/evershop/src/modules/auth/services/loginUserWithEmail.ts b/node_modules/@evershop/evershop/src/modules/auth/services/loginUserWithEmail.ts
+index 4c09415..ec7bcda 100644
+--- a/node_modules/@evershop/evershop/src/modules/auth/services/loginUserWithEmail.ts
++++ b/node_modules/@evershop/evershop/src/modules/auth/services/loginUserWithEmail.ts
+@@ -1,5 +1,6 @@
+ import { select } from '@evershop/postgres-query-builder';
+ import { pool } from '../../../lib/postgres/connection.js';
++import { translate } from '../../../lib/locale/translate/translate.js';
+ import { hookable, hookBefore, hookAfter } from '../../../lib/util/hookable.js';
+ import { comparePassword } from '../../../lib/util/passwordHelper.js';
+ import { buildAdminUserPayload } from './buildAdminUserPayload.js';
+@@ -24,7 +25,7 @@ const _loginUserWithEmail = async function loginUserWithEmail(
+     .load(pool);
+   const result = comparePassword(password, user ? user.password : '');
+   if (!user || !result) {
+-    throw new Error('Invalid email or password');
++    throw new Error(translate('Invalid email or password'));
+   }
+   if (this.session) {
+     this.session.userID = user.admin_user_id;
+diff --git a/node_modules/@evershop/evershop/src/modules/cms/components/Slideshow.tsx b/node_modules/@evershop/evershop/src/modules/cms/components/Slideshow.tsx
+index cd74e1e..f7a5093 100644
+--- a/node_modules/@evershop/evershop/src/modules/cms/components/Slideshow.tsx
++++ b/node_modules/@evershop/evershop/src/modules/cms/components/Slideshow.tsx
+@@ -1,6 +1,7 @@
+ import { Image } from '@components/common/Image.js';
+ import React from 'react';
+ import Slider from 'react-slick';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import 'slick-carousel/slick/slick.css';
+ 
+ function PrevArrow(props: any) {
+@@ -9,7 +10,7 @@ function PrevArrow(props: any) {
+     <button
+       className="absolute bottom-[20px] right-[70px] z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white transition-all hover:bg-black/70 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/50 md:bottom-[20px] md:right-[70px] md:h-10 md:w-10"
+       onClick={onClick}
+-      aria-label="Previous slide"
++      aria-label={_('Previous slide')}
+       type="button"
+     >
+       <svg
+@@ -36,7 +37,7 @@ function NextArrow(props: any) {
+     <button
+       className="absolute bottom-[20px] right-5 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white transition-all hover:bg-black/70 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/50 md:bottom-[20px] md:right-5 md:h-10 md:w-10"
+       onClick={onClick}
+-      aria-label="Next slide"
++      aria-label={_('Next slide')}
+       type="button"
+     >
+       <svg
+@@ -69,7 +70,7 @@ function CustomDot(props: any) {
+           ? '!bg-black scale-125 shadow-md'
+           : '!bg-black/70 !hover:bg-black/90'
+       }`}
+-      aria-label="Go to slide"
++      aria-label={_('Go to slide')}
+       type="button"
+     />
+   );
+diff --git a/node_modules/@evershop/evershop/src/modules/cms/pages/admin/all/Logo.tsx b/node_modules/@evershop/evershop/src/modules/cms/pages/admin/all/Logo.tsx
+index 007d116..555cc01 100644
+--- a/node_modules/@evershop/evershop/src/modules/cms/pages/admin/all/Logo.tsx
++++ b/node_modules/@evershop/evershop/src/modules/cms/pages/admin/all/Logo.tsx
+@@ -6,28 +6,12 @@ interface LogoProps {
+ export default function Logo({ dashboardUrl }: LogoProps) {
+   return (
+     <div className="logo w-9 h-auto flex items-center">
+-      <a href={dashboardUrl} className="flex items-end">
+-        <svg
+-          width="256"
+-          height="282"
+-          viewBox="0 0 256 282"
+-          fill="none"
+-          className="w-8 h-auto"
+-          xmlns="http://www.w3.org/2000/svg"
+-        >
+-          <path
+-            d="M63.6632 35.0703L0.336842 70.1406L0.134737 140.668L0 211.26L63.7305 246.459C98.7621 265.799 127.663 281.658 128 281.658C128.337 281.658 145.785 272.117 166.872 260.513C187.891 248.844 216.589 233.05 230.602 225.314L256 211.26V196.174V181.024L254.518 181.798C253.642 182.249 224.943 198.044 190.72 216.997C156.429 235.951 128.067 251.294 127.663 251.229C127.192 251.101 104.556 238.723 77.2716 223.637L27.6211 196.239V140.797V85.3549L50.0547 72.9771C62.3158 66.2081 84.8168 53.8303 99.9747 45.4496C115.065 37.0688 127.731 30.2353 128 30.2353C128.269 30.2353 145.853 39.8409 167.074 51.574L228.918 85.3549L238.672 79.8626L256 70.1406L228.918 55.3775C207.495 43.2577 128.472 -0.0643921 127.798 9.15527e-05C127.394 9.15527e-05 98.4926 15.7946 63.6632 35.0703Z"
+-            fill="#008060"
+-          />
+-          <path
+-            d="M192.674 105.146C158.046 124.293 129.213 140.152 128.606 140.281C127.933 140.475 111.023 131.449 88.9937 119.329L50.5263 98.055V113.334L50.5937 128.548L87.9832 149.178C108.531 160.524 126.046 170.065 126.922 170.387C128.269 170.839 137.701 165.875 191.731 136.026C226.493 116.751 255.192 100.827 255.528 100.569C255.798 100.311 255.933 93.4133 255.865 85.226L255.663 70.334L192.674 105.146Z"
+-            fill="#008060"
+-          />
+-          <path
+-            d="M248.926 129.451C245.221 131.449 216.657 147.244 185.398 164.521C154.139 181.798 128.337 195.917 128 195.917C127.663 195.917 110.215 186.375 89.1284 174.771L50.8632 153.626L50.6611 168.453C50.5263 179.8 50.7284 183.474 51.3347 184.055C52.6147 185.15 127.192 226.216 128 226.216C128.674 226.216 254.451 156.914 255.528 156.011C255.798 155.753 255.933 148.855 255.865 140.603L255.663 125.712L248.926 129.451Z"
+-            fill="#008060"
+-          />
+-        </svg>
++      <a href={dashboardUrl} className="flex items-center" aria-label="Printel admin">
++        <img
++          src="/assets/branding/printel-logo.jpeg"
++          alt="Printel"
++          className="h-11 w-auto object-contain"
++        />
+       </a>
+     </div>
+   );
+diff --git a/node_modules/@evershop/evershop/src/modules/cms/pages/admin/all/Survey.tsx b/node_modules/@evershop/evershop/src/modules/cms/pages/admin/all/Survey.tsx
+index 9854203..d1d2f0b 100644
+--- a/node_modules/@evershop/evershop/src/modules/cms/pages/admin/all/Survey.tsx
++++ b/node_modules/@evershop/evershop/src/modules/cms/pages/admin/all/Survey.tsx
+@@ -1,4 +1,5 @@
+ import { Button } from '@components/common/ui/Button.js';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ import { MessageSquare } from 'lucide-react';
+ import React from 'react';
+ 
+@@ -15,10 +16,10 @@ export default function Survey() {
+         onClick={handleSurveyClick}
+         size="default"
+         className="shadow-lg hover:shadow-xl transition-shadow gap-2"
+-        title="Take our survey"
++        title={_('Take our survey')}
+       >
+         <MessageSquare className="size-4" />
+-        Give Feedback
++        {_('Give Feedback')}
+       </Button>
+     </div>
+   );
+diff --git a/node_modules/@evershop/evershop/src/modules/cms/pages/admin/all/Version.jsx b/node_modules/@evershop/evershop/src/modules/cms/pages/admin/all/Version.jsx
+index e0b73f1..864de02 100644
+--- a/node_modules/@evershop/evershop/src/modules/cms/pages/admin/all/Version.jsx
++++ b/node_modules/@evershop/evershop/src/modules/cms/pages/admin/all/Version.jsx
+@@ -1,11 +1,12 @@
+ import PropTypes from 'prop-types';
+ import React from 'react';
++import { _ } from '@evershop/evershop/lib/locale/translate/_';
+ 
+ 
+ export default function Version({ version }) {
+   return (
+     <div className="version">
+-      <span>Version {version}</span>
++      <span>{_('Version ${version}', { version })}</span>
+     </div>
+   );
+ }

@@ -1,0 +1,6 @@
+extend type Setting {
+  cookieBannerTitle: String
+  cookieBannerMessage: String
+  cookiePolicyUrl: String
+  cookiePolicyLinkLabel: String
+}

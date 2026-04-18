@@ -1,0 +1,42 @@
+{
+  "name": "printel",
+  "version": "0.1.0",
+  "description": "A modern e-commerce platform powered by EverShop",
+  "type": "module",
+  "private": true,
+  "workspaces": [
+    "extensions/*",
+    "themes/*"
+  ],
+  "scripts": {
+    "setup": "evershop install",
+    "start": "evershop start",
+    "build": "npm run build:extensions && evershop build",
+    "build:extensions": "npm --workspace @printel/theme run compile && npm --workspace @printel/legal-footer run compile && npm --workspace @printel/cookie-banner run compile",
+    "dev": "evershop dev",
+    "postinstall": "patch-package",
+    "seed": "evershop seed",
+    "start:debug": "evershop start --debug",
+    "ensure:test-admin": "node scripts/ensure-playwright-admin.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:install": "playwright install chromium",
+    "user:create": "evershop user:create",
+    "user:changePassword": "evershop user:changePassword"
+  },
+  "dependencies": {
+    "@evershop/evershop": "2.1.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.55.0",
+    "@parcel/watcher": "2.5.6",
+    "@types/config": "3.3.5",
+    "@types/express": "5.0.6",
+    "@types/node": "25.6.0",
+    "@types/pg": "8.20.0",
+    "@types/react": "19.2.14",
+    "execa": "9.6.1",
+    "patch-package": "^8.0.1",
+    "typescript": "6.0.2"
+  }
+}

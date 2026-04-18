@@ -1,0 +1,25 @@
+import { insertOnUpdate } from '@evershop/postgres-query-builder';
+
+const footerSettingKeys = [
+  'companyLegalName',
+  'companyLegalForm',
+  'companyTaxId',
+  'companyTradeRegister',
+  'companyRegisteredOffice',
+  'companyContactEmail',
+  'companyContactPhone'
+];
+
+export default async function migrate(connection: any) {
+  await Promise.all(
+    footerSettingKeys.map((name) =>
+      insertOnUpdate('setting', ['name'])
+        .given({
+          name,
+          value: '',
+          is_json: 0
+        })
+        .execute(connection, false)
+    )
+  );
+}

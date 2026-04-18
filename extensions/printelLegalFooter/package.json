@@ -1,0 +1,8 @@
+{
+  "name": "@printel/legal-footer",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "compile": "rm -rf dist && tsc -p tsconfig.json && mkdir -p dist/graphql/types/LegalFooterSetting && cp src/graphql/types/LegalFooterSetting/LegalFooterSetting.graphql dist/graphql/types/LegalFooterSetting/LegalFooterSetting.graphql"
+  }
+}

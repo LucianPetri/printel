@@ -1,0 +1,355 @@
+key,translation
+home,Home
+shop,Shop
+products,Products
+categories,Categories
+cart,Cart
+checkout,Checkout
+account,Account
+admin,Admin
+login,Sign In
+logout,Sign Out
+register,Sign Up
+email,Email
+password,Password
+confirmPassword,Confirm Password
+name,Name
+firstName,First Name
+lastName,Last Name
+address,Address
+city,City
+state,State
+zipCode,ZIP Code
+country,Country
+Country,Country
+phone,Phone
+price,Price
+quantity,Quantity
+Quantity,Quantity
+total,Total
+Total,Total
+subtotal,Subtotal
+shipping,Shipping
+Shipping,Shipping
+tax,Tax
+discount,Discount
+add,Add
+remove,Remove
+Remove,Remove
+update,Update
+save,Save
+Save,Save
+cancel,Cancel
+submit,Submit
+delete,Delete
+edit,Edit
+view,View
+search,Search
+filter,Filter
+sort,Sort
+back,Back
+next,Next
+previous,Previous
+loading,Loading...
+error,Error
+success,Success
+warning,Warning
+info,Information
+yes,Yes
+no,No
+description,Description
+details,Details
+summary,Summary
+order,Order
+orders,Orders
+customer,Customer
+customers,Customers
+product,Product
+Product,Product
+category,Category
+brand,Brand
+price.from,Price from
+price.to,Price to
+inStock,In Stock
+outOfStock,Out of Stock
+addToCart,Add to Cart
+continueShopping,Continue Shopping
+proceedToCheckout,Proceed to Checkout
+viewCart,View Cart
+emptyCart,Your cart is empty
+myAccount,My Account
+myOrders,My Orders
+myAddress,My Addresses
+mySettings,My Settings
+profile,Profile
+settings,Settings
+helpCategory.general,General
+helpCategory.products,Products
+helpCategory.orders,Orders
+helpCategory.shipping,Shipping
+helpCategory.returns,Returns
+helpCategory.payment,Payment
+footer.company,Company
+footer.support,Support
+footer.policies,Policies
+footer.contact,Contact
+footer.social,Social Media
+footer.followUs,Follow Us
+footer.newsletter,Newsletter
+footer.language,Language
+footer.currency,Currency
+message.itemAdded,Item added to cart
+message.itemRemoved,Item removed from cart
+message.saved,Saved successfully
+message.deleted,Deleted successfully
+message.updated,Updated successfully
+message.error,An error occurred
+message.required,This field is required
+message.invalidEmail,Invalid email address
+message.passwordMismatch,Passwords do not match
+message.confirmDelete,Are you sure you want to delete this item?
+breadcrumb.home,Home
+breadcrumb.products,Products
+breadcrumb.cart,Cart
+breadcrumb.checkout,Checkout
+breadcrumb.account,Account
+breadcrumb.orders,Orders
+pagination.showing,Showing
+pagination.of,of
+pagination.results,results
+filter.priceRange,Price Range
+filter.category,Category
+filter.brand,Brand
+filter.availability,Availability
+filter.rating,Rating
+sort.recommended,Recommended
+sort.newest,Newest
+sort.bestSelling,Best Selling
+sort.priceLowest,Price: Low to High
+sort.priceHighest,Price: High to Low
+sort.rating,Rating
+sort.name,Name
+Company Information,Company Information
+Legal information for Romanian consumers,Legal information for Romanian consumers
+Legal Company Name,Legal Company Name
+Legal Form,Legal Form
+CUI / CIF,CUI / CIF
+Trade Register Number,Trade Register Number
+Registered Office,Registered Office
+Contact Email,Contact Email
+Contact Phone,Contact Phone
+Romanian legal footer information,Romanian legal footer information
+Complete the legal footer fields from the admin store settings to publish company information here.,Complete the legal footer fields from the admin store settings to publish company information here.
+ANPC Complaints,ANPC Complaints
+Direct consumers to the official ANPC electronic complaint portal.,Direct consumers to the official ANPC electronic complaint portal.
+ANPC SAL,ANPC SAL
+Alternative dispute resolution for consumer disputes handled through ANPC.,Alternative dispute resolution for consumer disputes handled through ANPC.
+"Your privacy, served with care.","Your privacy, served with care."
+"We use essential cookies to keep checkout, security, and language preferences working. You can accept analytics and marketing cookies, reject non-essential cookies, or fine-tune your choices.","We use essential cookies to keep checkout, security, and language preferences working. You can accept analytics and marketing cookies, reject non-essential cookies, or fine-tune your choices."
+Cookie Policy,Cookie Policy
+No non-essential cookies will be set unless you choose them.,No non-essential cookies will be set unless you choose them.
+Selected preferences saved.,Selected preferences saved.
+Manage cookies,Manage cookies
+Cookie preferences,Cookie preferences
+Privacy choices,Privacy choices
+Accept all cookies,Accept all cookies
+Reject non-essential,Reject non-essential
+Hide customization,Hide customization
+Customize,Customize
+Close,Close
+Choose which optional cookies can help us improve Printel. Essential cookies stay on because the store cannot function without them.,Choose which optional cookies can help us improve Printel. Essential cookies stay on because the store cannot function without them.
+Essential cookies,Essential cookies
+"Needed for cart, checkout, security, and your consent selection.","Needed for cart, checkout, security, and your consent selection."
+Always active,Always active
+Preferences cookies,Preferences cookies
+"Remember your language, region, and other shopping choices.","Remember your language, region, and other shopping choices."
+Analytics cookies,Analytics cookies
+"Help us understand visits, navigation paths, and store performance so we can improve the shopping experience.","Help us understand visits, navigation paths, and store performance so we can improve the shopping experience."
+Advertising and measurement cookies,Advertising and measurement cookies
+"Measure campaign performance, limit ad frequency, detect invalid traffic, and understand which ads lead to visits or sales.","Measure campaign performance, limit ad frequency, detect invalid traffic, and understand which ads lead to visits or sales."
+Personalized ads cookies,Personalized ads cookies
+"Allow advertising partners such as Google to personalize ads and show more relevant promotions, only if you consent.","Allow advertising partners such as Google to personalize ads and show more relevant promotions, only if you consent."
+Save preferences,Save preferences
+What stays on,What stays on
+Reject is as easy as accept,Reject is as easy as accept
+You can refuse optional cookies immediately without losing access to the shop.,You can refuse optional cookies immediately without losing access to the shop.
+Change your mind anytime,Change your mind anytime
+Use the manage cookies button later to review or update your preferences.,Use the manage cookies button later to review or update your preferences.
+sample.theme.everywhere.title,Everywhere
+sample.theme.everywhere.description,This component is rendered on every page of the store front.
+sample.theme.everywhere.modifyPrefix,You can modify this component at
+sample.theme.everywhere.removeHint,You can also remove this by disabling the theme `sample`.
+sample.theme.homeOnly.title,Home Page Only
+sample.theme.homeOnly.description,This component is only rendered on the home page.
+sample.theme.homeOnly.modifyPrefix,You can modify this component at
+sample.theme.homeOnly.removeHint,You can also remove this by disabling the theme `sample`.
+sample.extension.freeShipping.banner,"🚚 Free shipping on orders over 250 RON!"
+sample.extension.freeShipping.noMinimum,"✨ No minimum required"
+sample.extension.fooList.title,Foo List
+sample.extension.fooList.modifyPrefix,You can modify this component at
+sample.extension.foo.description.foo,This is a Foo object
+sample.extension.foo.description.bar,This is a Bar object
+sample.extension.foo.description.baz,This is a Baz object
+Home,Home
+Featured Products,Featured Products
+Featured products displayed on the homepage,Featured products displayed on the homepage
+About Us,About Us
+About us,About us
+Premium Quality Products,Premium Quality Products
+Discover our exquisite collection of ceramic and stainless steel products,Discover our exquisite collection of ceramic and stainless steel products
+Shop Now,Shop Now
+Crafted With Care,Crafted With Care
+Elegant designs that enhance your daily life, from morning coffee to home organization,"Elegant designs that enhance your daily life, from morning coffee to home organization"
+View Collection,View Collection
+Previous slide,Previous slide
+Next slide,Next slide
+Go to slide,Go to slide
+Shopping cart with ${count} items,Shopping cart with ${count} items
+© 2022 Evershop. All Rights Reserved.,© 2022 Evershop. All Rights Reserved.
+Login,Login
+Welcome Back!,Welcome Back!
+Please sign in to your account,Please sign in to your account
+Sign In,Sign In
+Signing In...,Signing In...
+Create an account,Create an account
+Forgot your password?,Forgot your password?
+Email,Email
+Password,Password
+Email is required,Email is required
+Password is required,Password is required
+Go to Login,Go to Login
+Invalid email or password,Invalid email or password
+Join us for exclusive offers and order tracking,Join us for exclusive offers and order tracking
+Already have an account?,Already have an account?
+Full Name,Full Name
+Full Name is required,Full Name is required
+Sign Up,Sign Up
+Signing Up...,Signing Up...
+Reset password,Reset password
+Reset Password,Reset Password
+Reset Your Password,Reset Your Password
+Please enter your email to receive a reset link,Please enter your email to receive a reset link
+Enter your new password,Enter your new password
+Your password has been updated successfully.,Your password has been updated successfully.
+"We have sent you an email with a link to reset your password. Please check your inbox.","We have sent you an email with a link to reset your password. Please check your inbox."
+UPDATE PASSWORD,UPDATE PASSWORD
+Shopping cart,Shopping cart
+Shopping Cart,Shopping Cart
+Your cart is empty!,Your cart is empty!
+Your cart is empty,Your cart is empty
+CONTINUE SHOPPING,CONTINUE SHOPPING
+Continue Shopping,Continue Shopping
+Order summary,Order summary
+CHECKOUT,CHECKOUT
+Sub total,Sub total
+Contact Information,Contact Information
+Enter your email,Enter your email
+Enter your password,Enter your password
+Log in,Log in
+Logging in...,Logging in...
+Logout,Logout
+Logging out...,Logging out...
+Logged in as,Logged in as
+Successfully logged in,Successfully logged in
+Successfully logged out,Successfully logged out
+Login failed,Login failed
+Shipping Address,Shipping Address
+Shipping Method,Shipping Method
+Available shipping methods will appear once you provide your address details,Available shipping methods will appear once you provide your address details
+No shipping methods available,No shipping methods available
+No shipping options are available for your location,No shipping options are available for your location
+Please select a shipping method,Please select a shipping method
+Failed to update shipment,Failed to update shipment
+Billing Address,Billing Address
+Same as shipping address,Same as shipping address
+Use a different billing address,Use a different billing address
+Continue to payment,Continue to payment
+Payment Information,Payment Information
+Pick a payment method,Pick a payment method
+No payment methods available,No payment methods available
+Please select a payment method,Please select a payment method
+Select a payment method,Select a payment method
+Complete Order,Complete Order
+Please provide billing address to proceed,Please provide billing address to proceed
+Inclusive of tax ${totalTaxAmount},Inclusive of tax ${totalTaxAmount}
+Discount(${coupon}),Discount(${coupon})
+Shipping (${method}),Shipping (${method})
+No shipping is required for this order,No shipping is required for this order
+No shipping required,No shipping required
+Select shipping method,Select shipping method
+Enter coupon code,Enter coupon code
+Apply,Apply
+Coupon applied successfully!,Coupon applied successfully!
+Invalid coupon,Invalid coupon
+Coupon removed successfully!,Coupon removed successfully!
+Coupon code is required,Coupon code is required
+FREE,FREE
+Free,Free
+Contact for pricing,Contact for pricing
+Please select variant options,Please select variant options
+My Account,My Account
+Recent Orders,Recent Orders
+Account Information,Account Information
+Address Book,Address Book
+You have no addresses saved,You have no addresses saved
+Add new address,Add new address
+Edit Address,Edit Address
+Set as default,Set as default
+Close,Close
+Address has been updated successfully!,Address has been updated successfully!
+Address has been deleted successfully!,Address has been deleted successfully!
+Address has been saved successfully!,Address has been saved successfully!
+Address,Address
+Address 2,Address 2
+Address is required,Address is required
+City,City
+City is required,City is required
+Country is required,Country is required
+Province,Province
+Province is required,Province is required
+Postcode,Postcode
+Postcode is required,Postcode is required
+Telephone,Telephone
+Telephone is required,Telephone is required
+Full name,Full name
+Full name is required,Full name is required
+You have not placed any orders yet,You have not placed any orders yet
+Edit,Edit
+Search results for: ${keyword},Search results for: ${keyword}
+Search results for "${keyword}",Search results for ${keyword}
+Checkout success,Checkout success
+No products found,No products found
+Add some items to get started,Add some items to get started
+Your Cart,Your Cart
+View Cart (${totalQty}),View Cart (${totalQty})
+Payment Method,Payment Method
+Color,Color
+White,White
+Black,Black
+Yellow,Yellow
+Order #${orderNumber},Order #${orderNumber}
+Thank you ${name}!,Thank you ${name}!
+${count} products,${count} products
+${count} Products,${count} Products
+Add to Cart,Add to Cart
+ADD TO CART,ADD TO CART
+Adding...,Adding...
+SOLD OUT,SOLD OUT
+In Stock,In Stock
+Out of Stock,Out of Stock
+Product Description,Product Description
+Product Filters,Product Filters
+Filters,Filters
+Sort By,Sort By
+Select sort,Select sort
+Default,Default
+Price,Price
+Name,Name
+Active Filters,Active Filters
+Clear All,Clear All
+Apply Filters,Apply Filters
+Filter Products,Filter Products
+No categories found for "${term}",No categories found for ${term}
+No options found for "${code}",No options found for ${code}
+Show all ${count} options,Show all ${count} options
+Categories,Categories

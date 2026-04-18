@@ -1,0 +1,8 @@
+{
+  "name": "@printel/cookie-banner",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "compile": "rm -rf dist && tsc -p tsconfig.json && mkdir -p dist/graphql/types/CookieBannerSetting && cp src/graphql/types/CookieBannerSetting/CookieBannerSetting.graphql dist/graphql/types/CookieBannerSetting/CookieBannerSetting.graphql"
+  }
+}

@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: printel-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-evershop}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_SSLMODE: ${DB_SSLMODE:-disable}
+      SHOP_URL: ${SHOP_URL:-https://printel.ro}
+      ADMIN_URL: ${ADMIN_URL:-https://printel.ro/admin}
+    ports:
+      - "127.0.0.1:3000:3000"
+    expose:
+      - "3000"
+    networks:
+      - evershop-network
+      - proxy
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: evershop-postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-evershop}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - evershop-network
+
+volumes:
+  postgres_data:
+
+networks:
+  evershop-network:
+    driver: bridge
+  proxy:
+    external: true
+    name: nginx_proxy

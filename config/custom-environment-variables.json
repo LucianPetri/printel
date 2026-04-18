@@ -1,0 +1,8 @@
+{
+  "shop": {
+    "homeUrl": "SHOP_URL"
+  },
+  "admin": {
+    "url": "ADMIN_URL"
+  }
+}

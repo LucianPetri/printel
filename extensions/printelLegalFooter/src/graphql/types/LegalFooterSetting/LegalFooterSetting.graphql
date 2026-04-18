@@ -1,0 +1,9 @@
+extend type Setting {
+  companyLegalName: String
+  companyLegalForm: String
+  companyTaxId: String
+  companyTradeRegister: String
+  companyRegisteredOffice: String
+  companyContactEmail: String
+  companyContactPhone: String
+}
