@@ -18,20 +18,38 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  dependency-review:
-    if: github.event_name == 'pull_request'
+  pre-build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Dependency review
+        if: github.event_name == 'pull_request'
         uses: actions/dependency-review-action@38ecb5b593bf0eb19e335c03f97670f792489a8b # v4.7.0
 
+      - name: Setup Node.js
+        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate compose configuration
+        env:
+          DB_NAME: evershop
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_PORT: 5432
+          DB_SSLMODE: disable
+          SHOP_URL: https://printel.ro
+          ADMIN_URL: https://printel.ro/admin
+        run: npm run prebuild:ci
+
   build:
+    needs: pre-build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -63,13 +81,224 @@ jobs:
       - name: Build production image
         run: docker build --tag printel:${{ github.sha }} .
 
-      - name: Validate production compose file
+  unit-test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm run test:unit
+
+  lint-test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint checks
+        run: npm run lint
+
+  playwright-tests:
+    needs:
+      - unit-test
+      - lint-test
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
         env:
+          POSTGRES_DB: evershop
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npm run test:e2e:install
+
+      - name: Bootstrap test database
+        env:
+          CI_DB_HOST: 127.0.0.1
+          CI_DB_PORT: 5432
+          CI_DB_NAME: evershop
+          CI_DB_USER: postgres
+          CI_DB_PASSWORD: postgres
+          CI_ADMIN_FULLNAME: Playwright Admin
+          CI_ADMIN_EMAIL: playwright-admin@printel.local
+          CI_ADMIN_PASSWORD: Playwright123!
+        run: npm run ci:bootstrap
+
+      - name: Run Playwright tests
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
           DB_NAME: evershop
           DB_USER: postgres
           DB_PASSWORD: postgres
-          DB_PORT: 5432
           DB_SSLMODE: disable
+          SHOP_URL: http://127.0.0.1:3001
+          ADMIN_URL: http://127.0.0.1:3001/admin
+          PORT: 3001
+          PLAYWRIGHT_PORT: 3001
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:3001
+          PLAYWRIGHT_ADMIN_EMAIL: playwright-admin@printel.local
+          PLAYWRIGHT_ADMIN_PASSWORD: Playwright123!
+          SKIP_PLAYWRIGHT_ADMIN_SETUP: 'true'
+        run: npm run test:e2e
+
+  deploy:
+    needs:
+      - build
+      - unit-test
+      - lint-test
+      - playwright-tests
+    if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'master')
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://printel.ro
+    steps:
+      - name: Check deploy secrets
+        id: deploy_secrets
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          ready=true
+          for value in "$DEPLOY_HOST" "$DEPLOY_USER" "$DEPLOY_SSH_KEY" "$DEPLOY_PATH"; do
+            if [[ -z "$value" ]]; then
+              ready=false
+            fi
+          done
+          echo "ready=$ready" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout repository
+        if: steps.deploy_secrets.outputs.ready == 'true'
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Node.js
+        if: steps.deploy_secrets.outputs.ready == 'true'
+        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        if: steps.deploy_secrets.outputs.ready == 'true'
+        run: npm ci
+
+      - name: Build application
+        if: steps.deploy_secrets.outputs.ready == 'true'
+        env:
+          NODE_ENV: production
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: evershop
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_SSLMODE: disable
+          PORT: 3000
           SHOP_URL: https://printel.ro
           ADMIN_URL: https://printel.ro/admin
-        run: docker compose config
+        run: npm run build
+
+      - name: Configure SSH access
+        if: steps.deploy_secrets.outputs.ready == 'true'
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+      - name: Sync release to server
+        if: steps.deploy_secrets.outputs.ready == 'true'
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          rsync -az --delete \
+            --exclude '.git' \
+            --exclude 'node_modules' \
+            --exclude '.env' \
+            ./ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
+
+      - name: Start production stack
+        if: steps.deploy_secrets.outputs.ready == 'true'
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          PROD_DB_HOST: ${{ secrets.PROD_DB_HOST }}
+          PROD_DB_PORT: ${{ secrets.PROD_DB_PORT || '5432' }}
+          PROD_DB_NAME: ${{ secrets.PROD_DB_NAME }}
+          PROD_DB_USER: ${{ secrets.PROD_DB_USER }}
+          PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
+          PROD_DB_SSLMODE: ${{ secrets.PROD_DB_SSLMODE || 'disable' }}
+        run: |
+          ssh "$DEPLOY_USER@$DEPLOY_HOST" <<EOF
+          set -e
+          mkdir -p "$DEPLOY_PATH"
+          cd "$DEPLOY_PATH"
+          umask 077
+          cat > .env <<ENVVARS
+          NODE_ENV=production
+          PORT=3000
+          DB_HOST=${PROD_DB_HOST}
+          DB_PORT=${PROD_DB_PORT}
+          DB_NAME=${PROD_DB_NAME}
+          DB_USER=${PROD_DB_USER}
+          DB_PASSWORD=${PROD_DB_PASSWORD}
+          DB_SSLMODE=${PROD_DB_SSLMODE}
+          SHOP_URL=https://printel.ro
+          ADMIN_URL=https://printel.ro/admin
+          ENVVARS
+          docker compose up -d --build postgres app
+          EOF
+
+      - name: Skip deploy when secrets are missing
+        if: steps.deploy_secrets.outputs.ready != 'true'
+        run: echo 'Deployment secrets are not configured, so the production deploy was skipped.'
