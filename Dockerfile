@@ -6,7 +6,6 @@ COPY package.json package-lock.json ./
 COPY patches ./patches
 COPY config ./config
 COPY docker ./docker
-COPY themes ./themes
 COPY extensions ./extensions
 COPY translations ./translations
 COPY media ./media
