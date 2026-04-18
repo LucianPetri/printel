@@ -11,7 +11,6 @@ COPY extensions ./extensions
 COPY translations ./translations
 COPY media ./media
 COPY public ./public
-COPY .env ./.env
 
 RUN npm ci
 
