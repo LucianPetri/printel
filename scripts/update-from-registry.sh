@@ -2,7 +2,7 @@
 set -euo pipefail
 
 deploy_path="${DEPLOY_PATH:-$PWD}"
-compose_file="${COMPOSE_FILE:-docker-compose.release.yml}"
+compose_file="${COMPOSE_FILE:-../docker-compose.release.yml}"
 
 cd "$deploy_path"
 
