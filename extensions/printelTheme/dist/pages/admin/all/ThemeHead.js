@@ -1,8 +1,8 @@
 import React from 'react';
 const logoSrc = '/assets/branding/printel-logo.jpeg';
 export default function ThemeHead() {
-    React.useEffect(()=>{
-        const replaceAdminLogo = ()=>{
+    React.useEffect(() => {
+        const replaceAdminLogo = () => {
             const adminLogoLink = document.querySelector('.header .logo a');
             if (adminLogoLink) {
                 adminLogoLink.replaceChildren();
@@ -33,19 +33,13 @@ export default function ThemeHead() {
         };
         replaceAdminLogo();
         const frame = window.requestAnimationFrame(replaceAdminLogo);
-        return ()=>window.cancelAnimationFrame(frame);
+        return () => window.cancelAnimationFrame(frame);
     }, []);
-    return /*#__PURE__*/ React.createElement(React.Fragment, null, /*#__PURE__*/ React.createElement("link", {
-        rel: "icon",
-        href: logoSrc,
-        type: "image/jpeg"
-    }), /*#__PURE__*/ React.createElement("link", {
-        rel: "apple-touch-icon",
-        href: logoSrc
-    }), /*#__PURE__*/ React.createElement("meta", {
-        name: "theme-color",
-        content: "#66D878"
-    }), /*#__PURE__*/ React.createElement("style", null, `
+    return (React.createElement(React.Fragment, null,
+        React.createElement("link", { rel: "icon", href: logoSrc, type: "image/jpeg" }),
+        React.createElement("link", { rel: "apple-touch-icon", href: logoSrc }),
+        React.createElement("meta", { name: "theme-color", content: "#66D878" }),
+        React.createElement("style", null, `
         :root {
           --background: oklch(0.992 0.01 135);
           --foreground: oklch(0.3 0.03 160);
@@ -285,9 +279,10 @@ export default function ThemeHead() {
             padding: 1rem;
           }
         }
-      `));
+      `)));
 }
 export const layout = {
     areaId: 'head',
     sortOrder: 100
 };
+//# sourceMappingURL=ThemeHead.js.map

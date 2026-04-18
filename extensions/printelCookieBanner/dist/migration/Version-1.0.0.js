@@ -6,11 +6,12 @@ const cookieBannerSettingKeys = [
     'cookiePolicyLinkLabel'
 ];
 export default async function migrate(connection) {
-    await Promise.all(cookieBannerSettingKeys.map((name)=>insertOnUpdate('setting', [
-            'name'
-        ]).given({
-            name,
-            value: '',
-            is_json: 0
-        }).execute(connection, false)));
+    await Promise.all(cookieBannerSettingKeys.map((name) => insertOnUpdate('setting', ['name'])
+        .given({
+        name,
+        value: '',
+        is_json: 0
+    })
+        .execute(connection, false)));
 }
+//# sourceMappingURL=Version-1.0.0.js.map
