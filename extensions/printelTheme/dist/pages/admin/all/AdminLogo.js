@@ -1,5 +1,5 @@
 import React from 'react';
-const logoSrc = '/assets/branding/printel-logo.jpeg';
+const logoSrc = '/assets/branding/printel-generated_image.png';
 export default function AdminLogo({ dashboardUrl }) {
     return /*#__PURE__*/ React.createElement("div", {
         className: "printel-admin-logo logo flex items-center"

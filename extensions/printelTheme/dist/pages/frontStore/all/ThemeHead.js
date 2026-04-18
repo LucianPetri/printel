@@ -1,5 +1,5 @@
 import React from 'react';
-const logoSrc = '/assets/branding/printel-logo.jpeg';
+const logoSrc = '/assets/branding/printel-generated_image.png';
 export default function ThemeHead() {
     return /*#__PURE__*/ React.createElement(React.Fragment, null, /*#__PURE__*/ React.createElement("link", {
         rel: "icon",

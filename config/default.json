@@ -12,7 +12,7 @@
   "themeConfig": {
     "logo": {
       "alt": "Printel",
-      "src": "/assets/branding/printel-logo.jpeg",
+      "src": "/assets/branding/printel-generated_image.png",
       "width": 220,
       "height": 220
     },
