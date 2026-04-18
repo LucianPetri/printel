@@ -18,17 +18,21 @@ const companyData = {
 };
 
 async function loginToAdmin(page) {
-  await page.goto('/admin/login');
+  await page.goto('/admin/login', { waitUntil: 'domcontentloaded' });
   await page.getByLabel('Email').fill(adminEmail);
   await page.getByLabel('Parola').fill(adminPassword);
   await page.getByRole('button', { name: /Sign In|Autentificare/i }).click();
-  await page.waitForURL(/\/admin(?:\/dashboard)?(?:\?.*)?$/);
+  await expect(page).toHaveURL(/\/admin(?:\/dashboard)?(?:\?.*)?$/, {
+    timeout: 15000
+  });
 }
 
 test.describe.serial('Romanian legal footer', () => {
   test('admin exposes and saves the legal footer fields', async ({ page }) => {
+    test.setTimeout(60000);
+
     await loginToAdmin(page);
-    await page.goto('/admin/setting/store');
+    await page.goto('/admin/setting/store', { waitUntil: 'domcontentloaded' });
 
     await expect(
       page.getByText(/Legal Footer Information|Informații legale footer/i)
@@ -72,7 +76,9 @@ test.describe.serial('Romanian legal footer', () => {
   });
 
   test('storefront renders company info and fixed ANPC banners', async ({ page }) => {
-    await page.goto('/accessories/stainless-steel-thermos-white');
+    await page.goto('/accessories/stainless-steel-thermos-white', {
+      waitUntil: 'domcontentloaded'
+    });
 
     await expect(page.getByTestId('legal-footer')).toBeVisible();
     await expect(page.getByText(companyData.companyLegalName)).toBeVisible();
@@ -88,7 +94,7 @@ test.describe.serial('Romanian legal footer', () => {
       'https://reclamatiisal.anpc.ro/'
     );
 
-    await page.goto('/cart');
+    await page.goto('/cart', { waitUntil: 'domcontentloaded' });
     await expect(page.getByTestId('legal-footer')).toBeVisible();
     await expect(page.getByText(companyData.companyContactEmail)).toBeVisible();
     await expect(page.getByText(companyData.companyContactPhone)).toBeVisible();

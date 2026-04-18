@@ -12,9 +12,9 @@
   "themeConfig": {
     "logo": {
       "alt": "Printel",
-      "src": "/assets/branding/printel-generated_image.png",
-      "width": 220,
-      "height": 220
+      "src": "/assets/branding/logo_plus_text.svg",
+      "width": 600,
+      "height": 335
     },
     "copyRight": "© 2026 Printel. Toate drepturile rezervate."
   },

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const logoSrc = '/assets/branding/printel-generated_image.png';
+const adminLogoSrc = '/assets/branding/logo_only.svg';
 
 interface AdminLogoProps {
   dashboardUrl: string;
@@ -9,7 +9,11 @@ interface AdminLogoProps {
 export default function AdminLogo({ dashboardUrl }: AdminLogoProps) {
   return (
     <div className="printel-admin-logo logo flex items-center">
-      <a href={dashboardUrl} aria-label="Printel admin" />
+      <a
+        href={dashboardUrl}
+        aria-label="Printel admin"
+        style={{ backgroundImage: `url(${adminLogoSrc})` }}
+      />
     </div>
   );
 }

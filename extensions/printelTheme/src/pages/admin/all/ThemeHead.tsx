@@ -1,6 +1,7 @@
 import React from 'react';
 
-const logoSrc = '/assets/branding/printel-generated_image.png';
+const iconSrc = '/assets/branding/printel-logo.jpeg';
+const adminLogoSrc = '/assets/branding/logo_only.svg';
 
 export default function ThemeHead() {
   React.useEffect(() => {
@@ -15,7 +16,7 @@ export default function ThemeHead() {
         adminLogoLink.style.width = '100%';
         adminLogoLink.style.minWidth = '8.75rem';
         adminLogoLink.style.height = '2.75rem';
-        adminLogoLink.style.background = `url(${logoSrc}) left center / contain no-repeat`;
+        adminLogoLink.style.background = `url(${adminLogoSrc}) left center / contain no-repeat`;
       }
 
       const loginForm = document.querySelector<HTMLElement>('.admin-login-form');
@@ -31,7 +32,7 @@ export default function ThemeHead() {
         logoBlock.setAttribute('data-printel-login-brand', 'true');
         logoBlock.style.height = '7rem';
         logoBlock.style.marginBottom = '1.5rem';
-        logoBlock.style.background = `url(${logoSrc}) center / contain no-repeat`;
+        logoBlock.style.background = `url(${adminLogoSrc}) center / contain no-repeat`;
         loginForm.prepend(logoBlock);
       }
 
@@ -48,8 +49,8 @@ export default function ThemeHead() {
 
   return (
     <>
-      <link rel="icon" href={logoSrc} type="image/jpeg" />
-      <link rel="apple-touch-icon" href={logoSrc} />
+      <link rel="icon" href={iconSrc} type="image/jpeg" />
+      <link rel="apple-touch-icon" href={iconSrc} />
       <meta name="theme-color" content="#66D878" />
       <style>{`
         :root {
@@ -113,7 +114,7 @@ export default function ThemeHead() {
           width: 100% !important;
           min-width: 8.75rem;
           height: 2.75rem !important;
-          background: url(${logoSrc}) left center / contain no-repeat !important;
+          background: url(${adminLogoSrc}) left center / contain no-repeat !important;
         }
 
         body.admin .header > .logo:not(.printel-admin-logo),
@@ -241,7 +242,7 @@ export default function ThemeHead() {
           display: block !important;
           height: 7rem;
           margin-bottom: 1.5rem;
-          background: url(${logoSrc}) center / contain no-repeat;
+          background: url(${adminLogoSrc}) center / contain no-repeat;
         }
 
         body.adminLogin .admin-login-form .form-submit-button button {

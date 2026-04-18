@@ -1,17 +1,18 @@
 import React from 'react';
-const logoSrc = '/assets/branding/printel-generated_image.png';
+const iconSrc = '/assets/branding/printel-logo.jpeg';
+const frontStoreLogoSrc = '/assets/branding/logo_plus_text.svg';
 export default function ThemeHead() {
     return /*#__PURE__*/ React.createElement(React.Fragment, null, /*#__PURE__*/ React.createElement("link", {
         rel: "icon",
-        href: logoSrc,
+        href: iconSrc,
         type: "image/jpeg"
     }), /*#__PURE__*/ React.createElement("link", {
         rel: "apple-touch-icon",
-        href: logoSrc
+        href: iconSrc
     }), /*#__PURE__*/ React.createElement("link", {
         rel: "preload",
         as: "image",
-        href: logoSrc
+        href: frontStoreLogoSrc
     }), /*#__PURE__*/ React.createElement("meta", {
         name: "theme-color",
         content: "#66D878"
