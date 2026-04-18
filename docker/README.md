@@ -118,6 +118,39 @@ docker run --network evershop-network \
   your-evershop-image
 ```
 
+## Pull-Based Production Updates
+
+If GitHub cannot open an inbound connection to your server, use the registry-based flow instead of deploying from GitHub directly.
+
+### GitHub side
+
+The CI workflow publishes a production image to GitHub Container Registry:
+
+```text
+ghcr.io/lucianpetri/printel:main
+ghcr.io/lucianpetri/printel:latest
+ghcr.io/lucianpetri/printel:sha-<commit>
+```
+
+### Server side
+
+Use `docker-compose.release.yml` instead of the local build-based compose file and keep your production `.env` on the server.
+
+To update manually:
+
+```bash
+DEPLOY_PATH=/srv/printel ./scripts/update-from-registry.sh
+```
+
+### Scheduler vs webhook
+
+For this setup, a webhook is usually better than a scheduler because it updates immediately after GitHub finishes pushing the image.
+
+- Scheduler: simple and robust, but delayed and does unnecessary checks
+- Webhook: immediate and efficient, but you must secure the endpoint
+
+If you do not want to expose a webhook at all, run the update script from cron every few minutes.
+
 ## Troubleshooting
 
 ### Database won't start
