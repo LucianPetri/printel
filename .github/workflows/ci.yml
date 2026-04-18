@@ -154,18 +154,6 @@ jobs:
       - name: Install Playwright browsers
         run: npm run test:e2e:install
 
-      - name: Bootstrap test database
-        env:
-          CI_DB_HOST: 127.0.0.1
-          CI_DB_PORT: 5432
-          CI_DB_NAME: evershop
-          CI_DB_USER: postgres
-          CI_DB_PASSWORD: postgres
-          CI_ADMIN_FULLNAME: Playwright Admin
-          CI_ADMIN_EMAIL: playwright-admin@printel.local
-          CI_ADMIN_PASSWORD: Playwright123!
-        run: npm run ci:bootstrap
-
       - name: Run Playwright tests
         env:
           DB_HOST: 127.0.0.1
@@ -181,7 +169,6 @@ jobs:
           PLAYWRIGHT_BASE_URL: http://127.0.0.1:3001
           PLAYWRIGHT_ADMIN_EMAIL: playwright-admin@printel.local
           PLAYWRIGHT_ADMIN_PASSWORD: Playwright123!
-          SKIP_PLAYWRIGHT_ADMIN_SETUP: 'true'
         run: npm run test:e2e
 
   deploy:
