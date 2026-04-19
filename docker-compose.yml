@@ -17,10 +17,6 @@ services:
       DB_SSLMODE: ${DB_SSLMODE:-disable}
       SHOP_URL: ${SHOP_URL:-https://printel.ro}
       ADMIN_URL: ${ADMIN_URL:-https://printel.ro/admin}
-    ports:
-      - "127.0.0.1:3000:3000"
-    expose:
-      - "3000"
     networks:
       - evershop-network
       - proxy
