@@ -1,6 +1,6 @@
 services:
   app:
-    image: ${APP_IMAGE:-ghcr.io/lucianpetri/printel:main}
+    image: ${APP_IMAGE:-ghcr.io/lucianpetri/printel:latest}
     container_name: printel-app
     restart: unless-stopped
     depends_on:
