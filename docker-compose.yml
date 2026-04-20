@@ -11,7 +11,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
-      DB_HOST: postgres
+      DB_HOST: ${DB_HOST:-printel-db}
       DB_PORT: 5432
       DB_NAME: ${DB_NAME:-evershop}
       DB_USER: ${DB_USER:-postgres}
@@ -20,12 +20,12 @@ services:
       SHOP_URL: ${SHOP_URL:-https://printel.ro}
       ADMIN_URL: ${ADMIN_URL:-https://printel.ro/admin}
     networks:
-      - evershop-network
-      - proxy
+      evershop-network: {}
+      proxy: {}
 
   postgres:
     image: postgres:16-alpine
-    container_name: evershop-postgres
+    container_name: printel-postgres
     environment:
       POSTGRES_DB: ${DB_NAME:-evershop}
       POSTGRES_USER: ${DB_USER:-postgres}
@@ -34,15 +34,17 @@ services:
       - ./postgres_data:/var/lib/postgresql/data
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-evershop}"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      - evershop-network
+      evershop-network:
+        aliases:
+          - printel-db
 networks:
   evershop-network:
     driver: bridge
   proxy:
     external: true
-    name: pangolin_default
+    name: nginx_proxy

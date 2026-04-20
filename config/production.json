@@ -1,8 +1,55 @@
 {
   "shop": {
+    "name": "Printel",
+    "language": "ro",
+    "currency": "RON",
+    "timezone": "Europe/Bucharest",
     "homeUrl": "https://printel.ro"
   },
   "admin": {
     "url": "https://printel.ro/admin"
+  },
+  "themeConfig": {
+    "logo": {
+      "alt": "Printel",
+      "src": "/assets/branding/logo_plus_text.svg",
+      "width": 600,
+      "height": 335
+    },
+    "copyRight": "© 2026 Printel. Toate drepturile rezervate."
+  },
+  "system": {
+    "extensions": [
+      {
+        "name": "printelTheme",
+        "resolve": "extensions/printelTheme",
+        "enabled": true,
+        "priority": 5
+      },
+      {
+        "name": "printelLegalFooter",
+        "resolve": "extensions/printelLegalFooter",
+        "enabled": true,
+        "priority": 10
+      },
+      {
+        "name": "printelCookieBanner",
+        "resolve": "extensions/printelCookieBanner",
+        "enabled": true,
+        "priority": 20
+      }
+    ]
+  },
+  "security": {
+    "enableHttps": false,
+    "sessionTimeout": 3600
+  },
+  "database": {
+    "host": "${DB_HOST}",
+    "port": "${DB_PORT}",
+    "database": "${DB_NAME}",
+    "user": "${DB_USER}",
+    "password": "${DB_PASSWORD}",
+    "sslmode": "${DB_SSLMODE:disable}"
   }
 }

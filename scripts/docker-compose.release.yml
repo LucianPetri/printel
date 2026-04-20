@@ -9,7 +9,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
-      DB_HOST: postgres
+      DB_HOST: ${DB_HOST:-printel-db}
       DB_PORT: 5432
       DB_NAME: ${DB_NAME:-evershop}
       DB_USER: ${DB_USER:-postgres}
@@ -17,13 +17,9 @@ services:
       DB_SSLMODE: ${DB_SSLMODE:-disable}
       SHOP_URL: ${SHOP_URL:-https://printel.ro}
       ADMIN_URL: ${ADMIN_URL:-https://printel.ro/admin}
-    ports:
-      - "127.0.0.1:3000:3000"
-    expose:
-      - "3000"
     networks:
-      - evershop-network
-      - proxy
+      evershop-network: {}
+      proxy: {}
 
   postgres:
     image: postgres:16-alpine
@@ -32,8 +28,6 @@ services:
       POSTGRES_DB: ${DB_NAME:-evershop}
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
-    ports:
-      - "${DB_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -43,7 +37,9 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - evershop-network
+      evershop-network:
+        aliases:
+          - printel-db
 
 volumes:
   postgres_data:
