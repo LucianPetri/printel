@@ -1,6 +1,8 @@
 services:
   app:
-    image: ${APP_IMAGE:-ghcr.io/lucianpetri/printel:latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: printel-app
     restart: unless-stopped
     depends_on:
