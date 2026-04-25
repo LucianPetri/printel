@@ -1,0 +1,32 @@
+enum PrintOnDemandDeliveryUnit {
+  days
+  weeks
+}
+
+type PrintOnDemandDeliveryRange {
+  min: Int!
+  max: Int!
+  unit: PrintOnDemandDeliveryUnit!
+  label: String!
+}
+
+type CategoryPrintOnDemandPolicy {
+  enabled: Boolean!
+  deliveryRange: PrintOnDemandDeliveryRange
+}
+
+type ProductPrintOnDemandPresentation {
+  applies: Boolean!
+  purchasable: Boolean!
+  ctaLabel: String!
+  sourceCategoryId: Int
+  deliveryRange: PrintOnDemandDeliveryRange
+}
+
+extend type Category {
+  printOnDemandPolicy: CategoryPrintOnDemandPolicy!
+}
+
+extend type Product {
+  printOnDemandPresentation: ProductPrintOnDemandPresentation!
+}

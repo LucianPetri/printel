@@ -167,5 +167,12 @@
   "Reject is as easy as accept": "Respingerea este la fel de simplă ca acceptarea",
   "You can refuse optional cookies immediately without losing access to the shop.": "Poți refuza imediat cookie-urile opționale fără să pierzi accesul la magazin.",
   "Change your mind anytime": "Îți poți schimba oricând alegerea",
-  "Use the manage cookies button later to review or update your preferences.": "Folosește ulterior butonul de gestionare a cookie-urilor pentru a revizui sau actualiza preferințele."
+  "Use the manage cookies button later to review or update your preferences.": "Folosește ulterior butonul de gestionare a cookie-urilor pentru a revizui sau actualiza preferințele.",
+  "Print Now": "Printează acum",
+  "Print-on-demand delivery: ${value} ${unit}": "Livrare print la comandă: ${value} ${unit}",
+  "Print-on-demand delivery: ${min}-${max} ${unit}": "Livrare print la comandă: ${min}-${max} ${unit}",
+  "day": "zi",
+  "days": "zile",
+  "week": "săptămână",
+  "weeks": "săptămâni"
 }

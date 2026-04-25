@@ -169,5 +169,22 @@
   "Banner Message": "Banner Message",
   "We use essential cookies to keep the store secure and functional. With your permission, we can also activate preferences, analytics, ad measurement, and personalized ads cookies.": "We use essential cookies to keep the store secure and functional. With your permission, we can also activate preferences, analytics, ad measurement, and personalized ads cookies.",
   "Cookie Policy URL": "Cookie Policy URL",
-  "The storefront banner keeps essential cookies active and lets shoppers accept, reject, or customize non-essential cookies.": "The storefront banner keeps essential cookies active and lets shoppers accept, reject, or customize non-essential cookies."
+  "The storefront banner keeps essential cookies active and lets shoppers accept, reject, or customize non-essential cookies.": "The storefront banner keeps essential cookies active and lets shoppers accept, reject, or customize non-essential cookies.",
+  "Print-on-Demand Settings": "Print-on-Demand Settings",
+  "Enable category-level print-on-demand behavior for out-of-stock products and configure the shopper delivery promise.": "Enable category-level print-on-demand behavior for out-of-stock products and configure the shopper delivery promise.",
+  "Enable print on demand": "Enable print on demand",
+  "When enabled, out-of-stock products assigned directly to this category remain purchasable and show the configured print lead time.": "When enabled, out-of-stock products assigned directly to this category remain purchasable and show the configured print lead time.",
+  "Minimum delivery time": "Minimum delivery time",
+  "Minimum delivery time is required": "Minimum delivery time is required",
+  "Minimum delivery time must be a positive whole number": "Minimum delivery time must be a positive whole number",
+  "Maximum delivery time": "Maximum delivery time",
+  "Maximum delivery time is required": "Maximum delivery time is required",
+  "Maximum delivery time must be a positive whole number": "Maximum delivery time must be a positive whole number",
+  "Maximum delivery time must be greater than or equal to the minimum": "Maximum delivery time must be greater than or equal to the minimum",
+  "Delivery time unit": "Delivery time unit",
+  "Delivery time unit is required": "Delivery time unit is required",
+  "Select delivery unit": "Select delivery unit",
+  "Days": "Days",
+  "Weeks": "Weeks",
+  "In-stock products keep the existing resale flow. Only out-of-stock products in this category switch to the print-on-demand call to action and delivery range.": "In-stock products keep the existing resale flow. Only out-of-stock products in this category switch to the print-on-demand call to action and delivery range."
 }

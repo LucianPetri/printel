@@ -167,5 +167,12 @@
   "Reject is as easy as accept": "Reject is as easy as accept",
   "You can refuse optional cookies immediately without losing access to the shop.": "You can refuse optional cookies immediately without losing access to the shop.",
   "Change your mind anytime": "Change your mind anytime",
-  "Use the manage cookies button later to review or update your preferences.": "Use the manage cookies button later to review or update your preferences."
+  "Use the manage cookies button later to review or update your preferences.": "Use the manage cookies button later to review or update your preferences.",
+  "Print Now": "Print Now",
+  "Print-on-demand delivery: ${value} ${unit}": "Print-on-demand delivery: ${value} ${unit}",
+  "Print-on-demand delivery: ${min}-${max} ${unit}": "Print-on-demand delivery: ${min}-${max} ${unit}",
+  "day": "day",
+  "days": "days",
+  "week": "week",
+  "weeks": "weeks"
 }

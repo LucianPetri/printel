@@ -169,5 +169,22 @@
   "Banner Message": "Mesaj banner",
   "We use essential cookies to keep the store secure and functional. With your permission, we can also activate preferences, analytics, ad measurement, and personalized ads cookies.": "Folosim cookie-uri esențiale pentru funcționarea și securitatea magazinului. Cu acordul tău, putem activa și cookie-uri de preferințe, analiză, măsurare publicitară și reclame personalizate.",
   "Cookie Policy URL": "URL politică cookie",
-  "The storefront banner keeps essential cookies active and lets shoppers accept, reject, or customize non-essential cookies.": "Bannerul din storefront păstrează active cookie-urile esențiale și le permite cumpărătorilor să accepte, să respingă sau să personalizeze cookie-urile neesențiale."
+  "The storefront banner keeps essential cookies active and lets shoppers accept, reject, or customize non-essential cookies.": "Bannerul din storefront păstrează active cookie-urile esențiale și le permite cumpărătorilor să accepte, să respingă sau să personalizeze cookie-urile neesențiale.",
+  "Print-on-Demand Settings": "Setări print la comandă",
+  "Enable category-level print-on-demand behavior for out-of-stock products and configure the shopper delivery promise.": "Activează comportamentul de print la comandă la nivel de categorie pentru produsele fără stoc și configurează promisiunea de livrare afișată cumpărătorilor.",
+  "Enable print on demand": "Activează print la comandă",
+  "When enabled, out-of-stock products assigned directly to this category remain purchasable and show the configured print lead time.": "Când este activat, produsele fără stoc atribuite direct acestei categorii rămân cumpărabile și afișează intervalul configurat pentru tipărire.",
+  "Minimum delivery time": "Timp minim de livrare",
+  "Minimum delivery time is required": "Timpul minim de livrare este obligatoriu",
+  "Minimum delivery time must be a positive whole number": "Timpul minim de livrare trebuie să fie un număr întreg pozitiv",
+  "Maximum delivery time": "Timp maxim de livrare",
+  "Maximum delivery time is required": "Timpul maxim de livrare este obligatoriu",
+  "Maximum delivery time must be a positive whole number": "Timpul maxim de livrare trebuie să fie un număr întreg pozitiv",
+  "Maximum delivery time must be greater than or equal to the minimum": "Timpul maxim de livrare trebuie să fie mai mare sau egal cu minimul",
+  "Delivery time unit": "Unitatea timpului de livrare",
+  "Delivery time unit is required": "Unitatea timpului de livrare este obligatorie",
+  "Select delivery unit": "Selectează unitatea de livrare",
+  "Days": "Zile",
+  "Weeks": "Săptămâni",
+  "In-stock products keep the existing resale flow. Only out-of-stock products in this category switch to the print-on-demand call to action and delivery range.": "Produsele aflate în stoc păstrează fluxul actual de revânzare. Doar produsele fără stoc din această categorie trec la apelul la acțiune și intervalul de livrare pentru print la comandă."
 }

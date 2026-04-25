@@ -12,12 +12,12 @@
 **Purpose**: Scaffold the new extension workspace and register the build/config entry points.
 
 <!-- parallel-group: 1 -->
-- [ ] T001 [P] Create `extensions/printelPrintOnDemand/package.json` with the compile script that runs `rm -rf dist && tsc -p tsconfig.json && mkdir -p dist/graphql/types/PrintOnDemand && cp src/graphql/types/PrintOnDemand/PrintOnDemand.graphql dist/graphql/types/PrintOnDemand/PrintOnDemand.graphql`
-- [ ] T002 [P] Create `extensions/printelPrintOnDemand/tsconfig.json` for the new ESM extension workspace build
-- [ ] T003 [P] Create `extensions/printelPrintOnDemand/src/bootstrap.ts` and the initial source folders under `extensions/printelPrintOnDemand/src/graphql/`, `src/lib/`, `src/migration/`, `src/pages/`, and `src/components/`
+- [X] T001 [P] Create `extensions/printelPrintOnDemand/package.json` with the compile script that runs `rm -rf dist && tsc -p tsconfig.json && mkdir -p dist/graphql/types/PrintOnDemand && cp src/graphql/types/PrintOnDemand/PrintOnDemand.graphql dist/graphql/types/PrintOnDemand/PrintOnDemand.graphql`
+- [X] T002 [P] Create `extensions/printelPrintOnDemand/tsconfig.json` for the new ESM extension workspace build
+- [X] T003 [P] Create `extensions/printelPrintOnDemand/src/bootstrap.ts` and the initial source folders under `extensions/printelPrintOnDemand/src/graphql/`, `src/lib/`, `src/migration/`, `src/pages/`, and `src/components/`
 
 <!-- sequential -->
-- [ ] T004 Register `extensions/printelPrintOnDemand` in `config/default.json` and add the new workspace to `package.json` `build:extensions` and `typecheck`
+- [X] T004 Register `extensions/printelPrintOnDemand` in `config/default.json` and add the new workspace to `package.json` `build:extensions` and `typecheck`
 
 ---
 
@@ -28,16 +28,16 @@
 **⚠️ CRITICAL**: No user story work should be considered complete until this phase is done.
 
 <!-- parallel-group: 2 -->
-- [ ] T005 [P] Add the initial category POD migration scaffold in `extensions/printelPrintOnDemand/src/migration/Version-1.0.0.ts`
-- [ ] T006 [P] Define `Category.printOnDemandPolicy` and `Product.printOnDemandPresentation` in `extensions/printelPrintOnDemand/src/graphql/types/PrintOnDemand/PrintOnDemand.graphql`
-- [ ] T007 [P] Create shared POD range formatting and eligibility helpers in `extensions/printelPrintOnDemand/src/lib/printOnDemandPresentation.ts`
+- [X] T005 [P] Add the initial category POD migration scaffold in `extensions/printelPrintOnDemand/src/migration/Version-1.0.0.ts`
+- [X] T006 [P] Define `Category.printOnDemandPolicy` and `Product.printOnDemandPresentation` in `extensions/printelPrintOnDemand/src/graphql/types/PrintOnDemand/PrintOnDemand.graphql`
+- [X] T007 [P] Create shared POD range formatting and eligibility helpers in `extensions/printelPrintOnDemand/src/lib/printOnDemandPresentation.ts`
 
 <!-- sequential -->
-- [ ] T008 Wire extension hook registration for category payload processing, cart item qty validation, checkout validation, and order-placement behavior in `extensions/printelPrintOnDemand/src/bootstrap.ts`
+- [X] T008 Wire extension hook registration for category payload processing, cart item qty validation, checkout validation, and order-placement behavior in `extensions/printelPrintOnDemand/src/bootstrap.ts`
 
 <!-- parallel-group: 3 -->
-- [ ] T009 [P] Add admin locale placeholders for POD settings and validation keys in `translations/ro/admin.json` and `translations/en/admin.json`
-- [ ] T010 [P] Add storefront locale placeholders for `Print Now` and POD delivery-range wording in `translations/ro/messages.json` and `translations/en/messages.json`
+- [X] T009 [P] Add admin locale placeholders for POD settings and validation keys in `translations/ro/admin.json` and `translations/en/admin.json`
+- [X] T010 [P] Add storefront locale placeholders for `Print Now` and POD delivery-range wording in `translations/ro/messages.json` and `translations/en/messages.json`
 
 **Checkpoint**: Foundation ready for story implementation.
 
@@ -52,20 +52,20 @@
 ### Tests for User Story 1
 
 <!-- parallel-group: 4 -->
-- [ ] T011 [P] [US1] Add unit coverage for POD payload normalization, required-field validation, positive integers, `min <= max`, and disable-to-null behavior in `tests/unit/print-on-demand-category-policy.test.mjs`
+- [X] T011 [P] [US1] Add unit coverage for POD payload normalization, required-field validation, positive integers, `min <= max`, and disable-to-null behavior in `tests/unit/print-on-demand-category-policy.test.mjs`
 - [ ] T012 [P] [US1] Add admin E2E coverage for save/reopen and invalid category validation flows in `tests/e2e/print-on-demand-category-admin.spec.ts`
-- [ ] T013 [P] [US1] Create reusable POD category fixture builders in `tests/unit/fixtures/print-on-demand-category-fixtures.mjs`
+- [X] T013 [P] [US1] Create reusable POD category fixture builders in `tests/unit/fixtures/print-on-demand-category-fixtures.mjs`
 
 ### Implementation for User Story 1
 
 <!-- parallel-group: 5 -->
-- [ ] T014 [P] [US1] Implement the POD settings card UI in `extensions/printelPrintOnDemand/src/pages/admin/categoryEdit+categoryNew/PrintOnDemandSettings.tsx`
-- [ ] T015 [P] [US1] Implement category POD save/load resolvers in `extensions/printelPrintOnDemand/src/graphql/types/PrintOnDemand/PrintOnDemand.resolvers.ts`
-- [ ] T016 [P] [US1] Add localized admin labels and validation copy in `translations/ro/admin.json` and `translations/en/admin.json`
+- [X] T014 [P] [US1] Implement the POD settings card UI in `extensions/printelPrintOnDemand/src/pages/admin/categoryEdit+categoryNew/PrintOnDemandSettings.tsx`
+- [X] T015 [P] [US1] Implement category POD save/load resolvers in `extensions/printelPrintOnDemand/src/graphql/types/PrintOnDemand/PrintOnDemand.resolvers.ts`
+- [X] T016 [P] [US1] Add localized admin labels and validation copy in `translations/ro/admin.json` and `translations/en/admin.json`
 
 <!-- sequential -->
-- [ ] T017 [US1] Implement category create/update normalization and localized validation failures in `extensions/printelPrintOnDemand/src/bootstrap.ts`
-- [ ] T018 [US1] Regenerate admin and GraphQL outputs in `extensions/printelPrintOnDemand/dist/pages/admin/categoryEdit+categoryNew/PrintOnDemandSettings.js`, `extensions/printelPrintOnDemand/dist/graphql/types/PrintOnDemand/PrintOnDemand.resolvers.js`, and `extensions/printelPrintOnDemand/dist/graphql/types/PrintOnDemand/PrintOnDemand.graphql` with `npm run build:extensions`
+- [X] T017 [US1] Implement category create/update normalization and localized validation failures in `extensions/printelPrintOnDemand/src/bootstrap.ts`
+- [X] T018 [US1] Regenerate admin and GraphQL outputs in `extensions/printelPrintOnDemand/dist/pages/admin/categoryEdit+categoryNew/PrintOnDemandSettings.js`, `extensions/printelPrintOnDemand/dist/graphql/types/PrintOnDemand/PrintOnDemand.resolvers.js`, and `extensions/printelPrintOnDemand/dist/graphql/types/PrintOnDemand/PrintOnDemand.graphql` with `npm run build:extensions`
 
 **Checkpoint**: User Story 1 is independently testable.
 
@@ -80,30 +80,30 @@
 ### Tests for User Story 2
 
 <!-- parallel-group: 6 -->
-- [ ] T019 [P] [US2] Add unit coverage for POD presentation resolution, equal-range formatting, direct-category lookup, and two-category range separation in `tests/unit/print-on-demand-presentation.test.mjs`
-- [ ] T020 [P] [US2] Add unit coverage for POD order-placement inventory skip logic and non-negative stock handling in `tests/unit/print-on-demand-order-placement.test.mjs`
+- [X] T019 [P] [US2] Add unit coverage for POD presentation resolution, equal-range formatting, direct-category lookup, and two-category range separation in `tests/unit/print-on-demand-presentation.test.mjs`
+- [X] T020 [P] [US2] Add unit coverage for POD order-placement inventory skip logic and non-negative stock handling in `tests/unit/print-on-demand-order-placement.test.mjs`
 - [ ] T021 [P] [US2] Add E2E coverage for PDP, category listing, and search listing CTA surfaces plus add-to-cart, cart reload, checkout, and successful order placement in `tests/e2e/print-on-demand-purchase-flow.spec.ts`
 
 ### Implementation for User Story 2
 
 <!-- parallel-group: 7 -->
-- [ ] T022 [P] [US2] Create two-category POD fixture data for Category A `5-7 days`, Category B `2-3 weeks`, and their out-of-stock products in `tests/e2e/fixtures/print-on-demand-catalog.ts`
-- [ ] T023 [P] [US2] Implement product/category POD read-model resolvers in `extensions/printelPrintOnDemand/src/graphql/types/PrintOnDemand/PrintOnDemand.resolvers.ts`
-- [ ] T024 [P] [US2] Implement shared CTA-label, delivery-range, and purchasability helpers in `extensions/printelPrintOnDemand/src/lib/printOnDemandPresentation.ts`
+- [X] T022 [P] [US2] Create two-category POD fixture data for Category A `5-7 days`, Category B `2-3 weeks`, and their out-of-stock products in `tests/e2e/fixtures/print-on-demand-catalog.ts`
+- [X] T023 [P] [US2] Implement product/category POD read-model resolvers in `extensions/printelPrintOnDemand/src/graphql/types/PrintOnDemand/PrintOnDemand.resolvers.ts`
+- [X] T024 [P] [US2] Implement shared CTA-label, delivery-range, and purchasability helpers in `extensions/printelPrintOnDemand/src/lib/printOnDemandPresentation.ts`
 
 <!-- sequential -->
-- [ ] T025 [US2] Implement POD CTA and delivery rendering on the PDP in `extensions/printelPrintOnDemand/src/components/frontStore/catalog/ProductSingleForm.tsx` and `extensions/printelPrintOnDemand/src/pages/frontStore/productView/ProductView.tsx`
+- [X] T025 [US2] Implement POD CTA and delivery rendering on the PDP in `extensions/printelPrintOnDemand/src/components/frontStore/catalog/ProductSingleForm.tsx` and `extensions/printelPrintOnDemand/src/pages/frontStore/productView/ProductView.tsx`
 
 <!-- parallel-group: 8 -->
-- [ ] T026 [P] [US2] Implement shared list-item CTA and delivery rendering in `extensions/printelPrintOnDemand/src/components/frontStore/catalog/ProductListItemRender.tsx`
-- [ ] T027 [P] [US2] Extend category listing queries to request POD presentation data in `extensions/printelPrintOnDemand/src/pages/frontStore/categoryView/CategoryView.tsx`
-- [ ] T028 [P] [US2] Extend search listing queries to request POD presentation data in `extensions/printelPrintOnDemand/src/pages/frontStore/catalogSearch/SearchPage.tsx`
+- [X] T026 [P] [US2] Implement shared list-item CTA and delivery rendering in `extensions/printelPrintOnDemand/src/components/frontStore/catalog/ProductListItemRender.tsx`
+- [X] T027 [P] [US2] Extend category listing queries to request POD presentation data in `extensions/printelPrintOnDemand/src/pages/frontStore/categoryView/CategoryView.tsx`
+- [X] T028 [P] [US2] Extend search listing queries to request POD presentation data in `extensions/printelPrintOnDemand/src/pages/frontStore/catalogSearch/SearchPage.tsx`
 
 <!-- sequential -->
-- [ ] T029 [US2] Implement POD-aware add-to-cart, cart qty, cart persistence/reload, and checkout validation rules in `extensions/printelPrintOnDemand/src/bootstrap.ts`
-- [ ] T030 [US2] Extend `reduce_product_stock_when_order_placed()` to skip POD-eligible out-of-stock items and prevent negative managed stock in `extensions/printelPrintOnDemand/src/migration/Version-1.0.0.ts`
-- [ ] T031 [US2] Add localized storefront `Print Now` and POD delivery-range wording in `translations/ro/messages.json` and `translations/en/messages.json`
-- [ ] T032 [US2] Regenerate storefront, migration, and GraphQL outputs in `extensions/printelPrintOnDemand/dist/**` and `extensions/printelPrintOnDemand/dist/graphql/types/PrintOnDemand/PrintOnDemand.graphql` with `npm run build:extensions`
+- [X] T029 [US2] Implement POD-aware add-to-cart, cart qty, cart persistence/reload, and checkout validation rules in `extensions/printelPrintOnDemand/src/bootstrap.ts`
+- [X] T030 [US2] Extend `reduce_product_stock_when_order_placed()` to skip POD-eligible out-of-stock items and prevent negative managed stock in `extensions/printelPrintOnDemand/src/migration/Version-1.0.0.ts`
+- [X] T031 [US2] Add localized storefront `Print Now` and POD delivery-range wording in `translations/ro/messages.json` and `translations/en/messages.json`
+- [X] T032 [US2] Regenerate storefront, migration, and GraphQL outputs in `extensions/printelPrintOnDemand/dist/**` and `extensions/printelPrintOnDemand/dist/graphql/types/PrintOnDemand/PrintOnDemand.graphql` with `npm run build:extensions`
 
 **Checkpoint**: User Story 2 is independently testable.
 
@@ -118,18 +118,18 @@
 ### Tests for User Story 3
 
 <!-- parallel-group: 9 -->
-- [ ] T033 [P] [US3] Add unit regression coverage for in-stock POD-category products, non-POD out-of-stock products, and disabled/invalid category policies in `tests/unit/print-on-demand-regression.test.mjs`
+- [X] T033 [P] [US3] Add unit regression coverage for in-stock POD-category products, non-POD out-of-stock products, and disabled/invalid category policies in `tests/unit/print-on-demand-regression.test.mjs`
 - [ ] T034 [P] [US3] Add E2E regression coverage for unchanged PDP/category/search CTA and delivery behavior in `tests/e2e/print-on-demand-regression.spec.ts`
 
 ### Implementation for User Story 3
 
 <!-- parallel-group: 10 -->
-- [ ] T035 [P] [US3] Harden non-applicable POD fallback rules in `extensions/printelPrintOnDemand/src/lib/printOnDemandPresentation.ts`
-- [ ] T036 [P] [US3] Preserve normal resale labels and delivery messaging in `extensions/printelPrintOnDemand/src/components/frontStore/catalog/ProductSingleForm.tsx` and `extensions/printelPrintOnDemand/src/components/frontStore/catalog/ProductListItemRender.tsx`
-- [ ] T037 [P] [US3] Restore standard checkout rejection when POD is disabled, invalid, or no longer eligible in `extensions/printelPrintOnDemand/src/bootstrap.ts`
+- [X] T035 [P] [US3] Harden non-applicable POD fallback rules in `extensions/printelPrintOnDemand/src/lib/printOnDemandPresentation.ts`
+- [X] T036 [P] [US3] Preserve normal resale labels and delivery messaging in `extensions/printelPrintOnDemand/src/components/frontStore/catalog/ProductSingleForm.tsx` and `extensions/printelPrintOnDemand/src/components/frontStore/catalog/ProductListItemRender.tsx`
+- [X] T037 [P] [US3] Restore standard checkout rejection when POD is disabled, invalid, or no longer eligible in `extensions/printelPrintOnDemand/src/bootstrap.ts`
 
 <!-- sequential -->
-- [ ] T038 [US3] Regenerate fallback storefront outputs in `extensions/printelPrintOnDemand/dist/components/frontStore/catalog/*.js` and `extensions/printelPrintOnDemand/dist/pages/frontStore/**/*.js` with `npm run build:extensions`
+- [X] T038 [US3] Regenerate fallback storefront outputs in `extensions/printelPrintOnDemand/dist/components/frontStore/catalog/*.js` and `extensions/printelPrintOnDemand/dist/pages/frontStore/**/*.js` with `npm run build:extensions`
 
 **Checkpoint**: User Story 3 is independently testable.
 
@@ -140,13 +140,13 @@
 **Purpose**: Final sync, validation, and release-quality verification across all stories.
 
 <!-- parallel-group: 11 -->
-- [ ] T039 [P] Verify source/build sync for `extensions/printelPrintOnDemand/src/**`, `extensions/printelPrintOnDemand/dist/**`, and `extensions/printelPrintOnDemand/dist/graphql/types/PrintOnDemand/PrintOnDemand.graphql` by running `npm run build:extensions`
-- [ ] T040 [P] Run `npm run lint` against `extensions/printelPrintOnDemand/src/**`, `config/default.json`, and `translations/{ro,en}/*.json`
-- [ ] T041 [P] Run `npm run test:unit` for `tests/unit/print-on-demand-*.test.mjs`
+- [X] T039 [P] Verify source/build sync for `extensions/printelPrintOnDemand/src/**`, `extensions/printelPrintOnDemand/dist/**`, and `extensions/printelPrintOnDemand/dist/graphql/types/PrintOnDemand/PrintOnDemand.graphql` by running `npm run build:extensions`
+- [X] T040 [P] Run `npm run lint` against `extensions/printelPrintOnDemand/src/**`, `config/default.json`, and `translations/{ro,en}/*.json`
+- [X] T041 [P] Run `npm run test:unit` for `tests/unit/print-on-demand-*.test.mjs`
 
 <!-- sequential -->
 - [ ] T042 Run `npm run test:e2e` for `tests/e2e/print-on-demand-*.spec.ts`
-- [ ] T043 Run `npm run build` and verify final integrated outputs for `extensions/printelPrintOnDemand/dist/**` are included through `package.json` and `config/default.json`
+- [X] T043 Run `npm run build` and verify final integrated outputs for `extensions/printelPrintOnDemand/dist/**` are included through `package.json` and `config/default.json`
 
 ---
 

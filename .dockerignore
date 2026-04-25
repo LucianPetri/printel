@@ -4,6 +4,7 @@ node_modules
 .log
 .env
 .env.*
+coverage/
 postgres_data
 npm-debug.log
 Dockerfile*

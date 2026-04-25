@@ -1,0 +1,8 @@
+{
+  "name": "@printel/print-on-demand",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "compile": "rm -rf dist && tsc -p tsconfig.json && mkdir -p dist/graphql/types/PrintOnDemand && cp src/graphql/types/PrintOnDemand/PrintOnDemand.graphql dist/graphql/types/PrintOnDemand/PrintOnDemand.graphql"
+  }
+}
