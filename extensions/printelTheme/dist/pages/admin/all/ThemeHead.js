@@ -4,15 +4,14 @@ const adminLogoSrc = '/assets/branding/logo_only.svg';
 export default function ThemeHead() {
     React.useEffect(() => {
         const replaceAdminLogo = () => {
-            const adminLogoLink = document.querySelector('.header .logo a');
+            const adminLogoLink = document.querySelector('.header .printel-admin-logo a');
             if (adminLogoLink) {
-                adminLogoLink.replaceChildren();
                 adminLogoLink.setAttribute('aria-label', 'Printel admin');
-                adminLogoLink.style.display = 'block';
+                adminLogoLink.style.display = 'inline-flex';
+                adminLogoLink.style.alignItems = 'center';
                 adminLogoLink.style.width = '100%';
                 adminLogoLink.style.minWidth = '8.75rem';
                 adminLogoLink.style.height = '2.75rem';
-                adminLogoLink.style.background = `url(${adminLogoSrc}) left center / contain no-repeat`;
             }
             const loginForm = document.querySelector('.admin-login-form');
             if (!loginForm) {
@@ -39,6 +38,7 @@ export default function ThemeHead() {
     return (React.createElement(React.Fragment, null,
         React.createElement("link", { rel: "icon", href: iconSrc, type: "image/jpeg" }),
         React.createElement("link", { rel: "apple-touch-icon", href: iconSrc }),
+        React.createElement("link", { rel: "preload", as: "image", href: adminLogoSrc }),
         React.createElement("meta", { name: "theme-color", content: "#66D878" }),
         React.createElement("style", null, `
         :root {
@@ -92,17 +92,30 @@ export default function ThemeHead() {
 
         body.admin .header > .printel-admin-logo,
         body.adminLogin .header > .printel-admin-logo {
-          width: clamp(8.75rem, 12vw, 11rem);
+          width: auto;
+          height: auto;
           flex: 0 0 auto;
         }
 
         body.admin .header > .printel-admin-logo a,
         body.adminLogin .header > .printel-admin-logo a {
-          display: block !important;
-          width: 100% !important;
-          min-width: 8.75rem;
-          height: 2.75rem !important;
-          background: url(${adminLogoSrc}) left center / contain no-repeat !important;
+          display: inline-flex !important;
+          align-items: center;
+          justify-content: flex-start;
+          width: auto !important;
+          min-width: 0;
+          height: auto !important;
+          font-size: 0.95rem;
+          font-weight: 700;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          color: #2f7a4b;
+          text-decoration: none;
+        }
+
+        body.admin .header > .printel-admin-logo img,
+        body.adminLogin .header > .printel-admin-logo img {
+          display: none;
         }
 
         body.admin .header > .logo:not(.printel-admin-logo),
@@ -150,17 +163,71 @@ export default function ThemeHead() {
           padding: 0.85rem 0.45rem 1.5rem;
         }
 
+        .admin-nav > ul {
+          display: flex;
+          flex-direction: column;
+          gap: 0.4rem;
+          padding-bottom: 0.9rem;
+        }
+
+        .admin-nav > ul > li {
+          margin-top: 0 !important;
+        }
+
+        .admin-nav > ul > li.root-nav-item:last-child {
+          display: none;
+        }
+
         .admin-nav .root-label {
           color: #6f8d75;
           letter-spacing: 0.12em;
+          font-size: 0.69rem;
+        }
+
+        .admin-nav li span,
+        .admin-navigation li a {
+          line-height: 1.3;
+          font-size: 0.96rem;
         }
 
         .nav-item > a,
         .nav-item .root-label {
+          display: flex;
+          align-items: center;
           margin-left: 0;
-          padding-left: 0.875rem;
-          padding-right: 0.875rem;
+          min-height: 2.3rem;
+          padding: 0.48rem 0.85rem;
           border-radius: 0.95rem;
+        }
+
+        .nav-item .root-label a {
+          display: inline-flex;
+          align-items: center;
+          flex: 1 1 auto;
+          min-width: 0;
+          color: inherit;
+          text-decoration: none;
+        }
+
+        .nav-item .menu-icon {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 0.2rem;
+        }
+
+        .nav-item .menu-icon svg,
+        .root-label svg {
+          width: 0.98rem;
+          height: 0.98rem;
+        }
+
+        .root-nav-item .item-group {
+          margin-top: 0.25rem;
+        }
+
+        .root-nav-item .item-group .nav-item > a {
+          padding-left: 1.55rem;
         }
 
         .nav-item > a:hover {

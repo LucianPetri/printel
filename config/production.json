@@ -37,6 +37,12 @@
         "resolve": "extensions/printelCookieBanner",
         "enabled": true,
         "priority": 20
+      },
+      {
+        "name": "printelPrintOnDemand",
+        "resolve": "extensions/printelPrintOnDemand",
+        "enabled": true,
+        "priority": 15
       }
     ]
   },

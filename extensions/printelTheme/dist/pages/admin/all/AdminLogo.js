@@ -1,8 +1,7 @@
 import React from 'react';
-const adminLogoSrc = '/assets/branding/logo_only.svg';
 export default function AdminLogo({ dashboardUrl }) {
     return (React.createElement("div", { className: "printel-admin-logo logo flex items-center" },
-        React.createElement("a", { href: dashboardUrl, "aria-label": "Printel admin", style: { backgroundImage: `url(${adminLogoSrc})` } })));
+        React.createElement("a", { href: dashboardUrl, "aria-label": "Printel admin panel" }, "Printel Admin Panel")));
 }
 export const layout = {
     areaId: 'header',

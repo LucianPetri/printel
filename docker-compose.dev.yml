@@ -1,0 +1,59 @@
+services:
+  app:
+    image: ${APP_IMAGE:-printel-app}
+    container_name: printel-app
+    restart: unless-stopped
+    command: >
+      sh -lc "./node_modules/.bin/evershop build && npm run start"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: ${DB_HOST:-printel-db}
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-printel_dev}
+      DB_USER: ${DB_USER:-printel_dev}
+      DB_PASSWORD: ${DB_PASSWORD:-printel_dev}
+      DB_SSLMODE: ${DB_SSLMODE:-disable}
+      SHOP_URL: ${SHOP_URL:-https://dev.printel.ro}
+      ADMIN_URL: ${ADMIN_URL:-https://dev.printel.ro/admin}
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./config:/app/config:ro
+      - ./extensions:/app/extensions:ro
+    networks:
+      evershop-network: {}
+      proxy: {}
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: printel-postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-printel_dev}
+      POSTGRES_USER: ${DB_USER:-printel_dev}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-printel_dev}
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-printel_dev} -d ${DB_NAME:-printel_dev}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      evershop-network:
+        aliases:
+          - printel-db
+
+volumes:
+  postgres_data_dev:
+
+networks:
+  evershop-network:
+    driver: bridge
+  proxy:
+    external: true
+    name: nginx_proxy
