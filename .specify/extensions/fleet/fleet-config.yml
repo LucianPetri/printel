@@ -1,0 +1,10 @@
+parallel:
+  max_concurrency: 3
+
+models:
+  primary: "auto"
+  review: "gpt-5.4"
+
+verify:
+  auto_prompt_install: true
+  install_url: "https://github.com/ismaelJimenez/spec-kit-verify/archive/refs/tags/v1.0.3.zip"
