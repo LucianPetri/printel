@@ -15,9 +15,13 @@
 | Command | Purpose |
 |---------|---------|
 | `npm run dev` | Start with hot-reloading (development) |
+| `npm run build:extensions` | Compile custom EverShop workspaces into `dist/` |
 | `npm run build` | Build for production |
 | `npm run start` | Start production server |
 | `npm run start:debug` | Start with debug logging |
+| `npm run lint` | Type-check all custom workspaces |
+| `npm run test:unit` | Run unit tests for compiled extensions |
+| `npm run test:e2e` | Run Playwright storefront/admin tests |
 | `npm run setup` | Run installation wizard |
 | `npm run seed` | Add sample products & categories |
 | `npm run user:create` | Create new admin user |
@@ -96,6 +100,11 @@ npm run seed
 
 ### Build for Production
 ```bash
+npm run build:extensions
+npm run lint
+npm run test:unit
+# Run when storefront/admin journeys changed
+npm run test:e2e
 npm run build
 npm run start
 ```

@@ -56,9 +56,13 @@ Then open **http://localhost:3000** in your browser.
 
 ```bash
 npm run dev              # Development mode with hot-reloading
+npm run build:extensions # Compile custom EverShop workspaces
 npm run build            # Build for production
 npm run start            # Start production server
 npm run start:debug      # Start with debug logging
+npm run lint             # Type-check all custom workspaces
+npm run test:unit        # Run unit tests for compiled extensions
+npm run test:e2e         # Run Playwright storefront/admin tests
 npm run setup            # Run installation wizard
 npm run seed             # Populate with demo data
 npm run user:create      # Create admin user
@@ -216,7 +220,9 @@ We welcome contributions! To contribute:
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test thoroughly
+4. Run the applicable validation commands (`npm run lint`, `npm run test:unit`,
+   `npm run test:e2e`, `npm run build`; include `npm run build:extensions` when
+   changing extension source)
 5. Submit a pull request
 
 See [CONTRIBUTING.md](https://github.com/evershopcommerce/evershop/blob/main/CONTRIBUTING.md) in main repo.
