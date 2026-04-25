@@ -5,48 +5,59 @@
 
 ## Summary
 
-Implement the feature as a dedicated EverShop extension workspace, `extensions/printelPrintOnDemand`, that stores print-on-demand policy on categories, adds an admin category settings card, extends category/product GraphQL read models, overrides storefront product purchase messaging for eligible out-of-stock products, and adds POD-aware cart validation so the existing purchase flow stays usable. The effective policy is resolved from the product's assigned `category_id`, which is the only category linkage exposed by the current Printel catalog/admin model.
+Implement category-level print-on-demand (POD) policy in a dedicated EverShop extension so admins can enable POD per category and configure an out-of-stock delivery range. On the storefront, products in POD-enabled categories keep normal resale behavior while in stock, but when out of stock they remain purchasable through the existing add-to-cart -> cart -> checkout -> order-placement flow, show a `Print Now` CTA, and display the category-specific POD delivery range. The design explicitly covers multiple POD categories with different ranges, all affected buy-button surfaces, and POD-safe order placement without forcing managed-stock products into negative inventory.
+
+## Review Fixes Applied
+
+- **Existing purchase flow clarified**: in scope means successful continuation through **add-to-cart, cart persistence/reload, checkout, and order placement**, not just a relabeled button.
+- **CTA surface scope resolved**: implement on **all current storefront buy-button surfaces**:
+  1. product detail page
+  2. category product grid/list
+  3. search results product grid/list
+- **Order placement behavior fixed**: keep `manage_stock` unchanged; allow POD only for **currently out-of-stock** eligible items; skip stock decrement at order placement for those POD-eligible out-of-stock items so inventory does not go negative.
+- **Multi-category verification added**: tests must cover **at least two POD categories** with different configured ranges.
+- **Generated-output workflow made explicit**: source edits must be followed by the workspace compile script and root `npm run build:extensions`, then final `npm run build`.
 
 ## Technical Context
 
-**Language/Version**: TypeScript 6, Node.js ESM, React 19  
-**Primary Dependencies**: `@evershop/evershop` 2.1.2, React, react-hook-form, `@evershop/postgres-query-builder`  
-**Storage**: PostgreSQL (`category`, `product`, `product_inventory`, checkout triggers), JSON translation files under `translations/`  
-**Testing**: `npm run lint`, `npm run test:unit`, `npm run test:e2e`, `npm run build`  
-**Target Platform**: Linux-hosted EverShop storefront and admin web application  
-**Project Type**: Extension-based e-commerce web application  
-**Performance Goals**: Preserve existing admin/product page responsiveness; keep POD resolution to one category lookup per product surface and avoid extra shopper-facing network hops beyond page GraphQL loads  
-**Constraints**: Extension-first delivery; `src` and `dist` must stay in sync; Romanian is the release gate for new copy; existing checkout path must remain the only order path; current product assignment is a single `category_id`; no new secrets or env vars  
-**Scale/Scope**: One new feature extension workspace, root workspace/config updates, category schema migration, storefront/admin UI wiring, translations, unit coverage, and one focused E2E flow
+**Language/Version**: TypeScript 6.0.2 + Node.js ESM, EverShop 2.1.2
+**Primary Dependencies**: EverShop core, React, react-hook-form, PostgreSQL query builder
+**Storage**: PostgreSQL (`category`, `product`, `product_inventory`, `cart_item`, `order_item`)
+**Testing**: `npm run lint`, `npm run test:unit`, `npm run test:e2e`, `npm run build`
+**Target Platform**: Linux-hosted EverShop storefront/admin
+**Project Type**: EverShop web application with extension workspaces
+**Performance Goals**: no noticeable storefront/admin latency regression; POD data must piggy-back on existing product/category reads without introducing extra per-item round trips in render loops
+**Constraints**: extension-first delivery, Romanian default/localized copy, committed `dist/` outputs, copied GraphQL artifacts must stay in sync with `src/`, no secret/config drift
+**Scale/Scope**: one storefront/admin, many categories, multiple POD categories with independent ranges
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-checked after Phase 1 design.*
+*GATE: Pass before implementation and re-check after design.*
 
-- [x] Extension-first scope identified: `config/default.json`, `package.json`, `extensions/printelPrintOnDemand/*`, generated `extensions/printelPrintOnDemand/dist/*`, `translations/*`, `tests/*`
-- [x] Romanian/compliance impact reviewed: shopper/admin copy changes require Romanian and English translations; no pricing/privacy/legal/ANPC/cookie policy changes are expected
-- [x] `src` to `dist` compile path identified: new workspace compiles via `npm run build:extensions`, with copied GraphQL schema files committed in `dist/`
-- [x] Validation commands listed via repository entry points: `npm run lint`, `npm run test:unit`, `npm run test:e2e`, `npm run build`
-- [x] Config and secret handling documented: committed changes stay in `config/*.json`, workspace sources, migrations, tests, and translations only; no secret material added
+- [x] **Extension-first scope identified**
+  Touched surfaces: `config/default.json`, `package.json`, `extensions/printelPrintOnDemand/src/**`, `extensions/printelPrintOnDemand/dist/**`, copied GraphQL artifacts under `dist/graphql/**`, `translations/**`, `tests/**`
 
-**Post-design review**: PASS. The design stays inside EverShop extension seams, keeps Romanian translation coverage explicit, and does not require constitution exceptions.
+- [x] **Romanian/compliance impact reviewed**
+  No pricing/privacy/legal flow change. New admin/storefront copy must ship in Romanian first and also be added to all supported locales.
+
+- [x] **`src` -> `dist` compile path identified**
+  New workspace compile script must be:
+  `rm -rf dist && tsc -p tsconfig.json && mkdir -p dist/graphql/types/PrintOnDemand && cp src/graphql/types/PrintOnDemand/PrintOnDemand.graphql dist/graphql/types/PrintOnDemand/PrintOnDemand.graphql`
+  Root workflow must then run:
+  `npm run build:extensions`
+  Final release verification must run:
+  `npm run build`
+
+- [x] **Validation commands listed via repo entry points**
+  `npm run lint`
+  `npm run test:unit`
+  `npm run test:e2e`
+  `npm run build`
+
+- [x] **Config and secret handling documented**
+  Extension registration stays in committed `config/default.json`; no new secrets; environment values remain in `.env*` only.
 
 ## Project Structure
-
-### Documentation (this feature)
-
-```text
-specs/001-print-on-demand-category/
-├── plan.md
-├── research.md
-├── data-model.md
-├── quickstart.md
-├── contracts/
-│   └── print-on-demand-category.md
-└── tasks.md                # Created later by /speckit.tasks
-```
-
-### Source Code (repository root)
 
 ```text
 config/
@@ -56,8 +67,8 @@ package.json
 
 extensions/
 ├── printelTheme/
-├── printelCookieBanner/
 ├── printelLegalFooter/
+├── printelCookieBanner/
 └── printelPrintOnDemand/
     ├── package.json
     ├── tsconfig.json
@@ -65,131 +76,254 @@ extensions/
     │   ├── bootstrap.ts
     │   ├── migration/
     │   │   └── Version-1.0.0.ts
-    │   ├── graphql/
-    │   │   └── types/
-    │   │       └── PrintOnDemand/
-    │   │           ├── PrintOnDemand.graphql
-    │   │           └── PrintOnDemand.resolvers.ts
-    │   ├── pages/
-    │   │   ├── admin/
-    │   │   │   └── categoryEdit+categoryNew/
-    │   │   │       └── PrintOnDemandSettings.tsx
-    │   │   └── frontStore/
-    │   │       └── productView/
-    │   │           ├── ProductView.tsx
-    │   │           └── ProductSingleForm.tsx
-    │   └── shared/
-    │       └── printOnDemandPresentation.ts
+    │   ├── graphql/types/PrintOnDemand/
+    │   │   ├── PrintOnDemand.graphql
+    │   │   └── PrintOnDemand.resolvers.ts
+    │   ├── pages/admin/categoryEdit+categoryNew/
+    │   │   └── PrintOnDemandSettings.tsx
+    │   ├── pages/frontStore/productView/
+    │   │   └── ProductView.tsx
+    │   ├── pages/frontStore/categoryView/
+    │   │   └── CategoryView.tsx
+    │   ├── pages/frontStore/catalogSearch/
+    │   │   └── SearchPage.tsx
+    │   └── components/frontStore/catalog/
+    │       ├── ProductSingleForm.tsx
+    │       └── ProductListItemRender.tsx
     └── dist/
-
+        └── ...
 tests/
 ├── unit/
-│   └── print-on-demand-category-resolver.test.mjs
 └── e2e/
-    └── print-on-demand-category.spec.ts
 
 translations/
-├── en/
-│   ├── admin.json
-│   └── messages.json
-└── ro/
-    ├── admin.json
-    └── messages.json
+├── ro/
+└── en/
 ```
 
-**Structure Decision**: Use a dedicated `printelPrintOnDemand` workspace because the feature spans migration, GraphQL, admin, storefront, and checkout validation seams. Keep the theme workspace untouched unless styling-only follow-up work is needed, and update root workspace scripts/config so the new extension compiles and loads with the existing extension set.
+**Structure Decision**: deliver the feature in a new `extensions/printelPrintOnDemand` workspace because this feature spans migration, GraphQL, admin UI, storefront rendering, cart/checkout behavior, and generated outputs.
 
-## Phase 0: Research Summary
+## Core Design Decisions
 
-1. **Persistence strategy**: Add category-owned POD columns directly to `category` because the fields are non-localized operational policy, not CMS copy.
-2. **Validation strategy**: Enforce the same min/max/unit rules in both admin UI and server-side category processors so invalid values cannot leak into customer-visible presentation.
-3. **Storefront read strategy**: Extend product/category GraphQL with a derived POD presentation object so product page components consume one resolved contract instead of duplicating business rules.
-4. **Purchase-flow strategy**: Change both storefront CTA rendering and checkout/cart validation; UI-only relabeling is insufficient because base `AddToCart` and cart item stock rules currently block out-of-stock purchases.
-5. **Precedence strategy**: Resolve the effective POD policy from the product's assigned `category_id` only. The current admin/catalog model exposes a single product category, so multi-category conflict resolution is intentionally out of scope unless catalog assignment rules change.
+### 1. Category is the POD source of truth
 
-## Phase 1: Design Summary
+Persist on `category`:
 
-### Data Model
+- `print_on_demand_enabled BOOLEAN NOT NULL DEFAULT false`
+- `print_on_demand_min INT NULL`
+- `print_on_demand_max INT NULL`
+- `print_on_demand_unit VARCHAR(16) NULL`
 
-- Add nullable category columns:
-  - `print_on_demand_enabled BOOLEAN NOT NULL DEFAULT FALSE`
-  - `print_on_demand_min INT`
-  - `print_on_demand_max INT`
-  - `print_on_demand_unit VARCHAR(16)` constrained to `days|weeks`
-- Server normalization rules:
-  - when disabled, clear min/max/unit to `NULL`
-  - when enabled, require all three fields
-  - min/max must be positive integers and `min <= max`
-- Derived product read model:
-  - `applies`: true only when product is out of stock and assigned category has POD enabled
-  - `ctaLabel`: `Print Now` when `applies`, otherwise existing label
-  - `deliveryRange`: resolved category range when `applies`, otherwise null/standard storefront behavior
-  - `purchasable`: true for POD-eligible out-of-stock products because the existing add-to-cart flow remains active
+If POD is disabled, range fields are nulled.
 
-### Admin Surfaces
+### 2. POD applies only for direct category assignment
 
-- Add `PrintOnDemandSettings.tsx` under `pages/admin/categoryEdit+categoryNew/` as a new category-edit card.
-- Fields:
-  - enable toggle
-  - minimum value
-  - maximum value
-  - unit selector (`days`, `weeks`)
-- Query the current category policy through an extended Category GraphQL type.
-- Client behavior:
-  - hide/disable range inputs until the toggle is enabled
-  - show inline validation for required/positive/min-max ordering
-- Server behavior:
-  - extend category create/update schema/processors in `bootstrap.ts`
-  - reject invalid payloads even if a crafted request bypasses the UI
+Use `product.category_id` only. No parent inheritance and no multi-category conflict resolution in v1.
 
-### Storefront Behavior Wiring
+### 3. "Existing purchase flow" means full order completion
 
-- Override product-view query/components in the new extension so `useProduct()` receives the derived POD presentation contract.
-- In `ProductSingleForm`:
-  - keep quantity input and add-to-cart interaction available for POD-eligible out-of-stock products
-  - swap the CTA label to localized `Print Now`
-  - show localized POD delivery copy built from category min/max/unit
-  - preserve existing labels and delivery behavior for in-stock products and non-POD products
-- Reuse a shared formatter/helper to render identical ranges cleanly (for example, `2 weeks` instead of `2-2 weeks`) and to support Romanian/English copy consistently.
-- Ensure the same derived contract can be reused for any later list-card CTA surfaces if catalog/product-card add-to-cart buttons must also change.
+For eligible out-of-stock POD products, the shopper must be able to:
 
-### Checkout / Cart Behavior
+1. click CTA
+2. add item to cart
+3. view/reload cart without item-level stock rejection
+4. continue through checkout
+5. place the order successfully via the standard order creation path
 
-- Base EverShop currently blocks out-of-stock add-to-cart twice:
-  - front-end `AddToCart` computes `canAddToCart` from `product.isInStock`
-  - checkout cart item base fields reject qty when managed stock is below requested qty
-- The extension therefore must add POD-aware cart rules, not just product-page copy:
-  - override/add a POD-aware add-to-cart component state contract
-  - extend cart item field processing so eligible POD products bypass the default out-of-stock rejection while remaining on the same cart/checkout path
+No separate POD checkout path is introduced.
 
-### Category Precedence Handling
+### 4. CTA scope includes all current buy-button surfaces
 
-- **Chosen rule for this release**: the product's assigned `category_id` is authoritative for POD behavior.
-- **Implications**:
-  - different POD categories with different ranges are supported across products
-  - no parent-category inheritance is planned in v1
-  - no multi-category conflict logic is implemented because current product admin/catalog wiring is single-category
+Implement POD CTA/delivery behavior on:
 
-### Validation & Coverage
+- **PDP**: `ProductSingleForm`
+- **Category listing**: `ProductListItemRender` used by `CategoryView`
+- **Search listing**: `ProductListItemRender` used by `SearchPage`
 
-- Unit tests:
-  - category/product POD resolver output
-  - delivery range formatting and identical min/max rendering
-  - validation normalization when disabling POD
-- E2E:
-  - admin config save/edit round-trip
-  - out-of-stock POD product shows `Print Now`, shows POD promise, and remains orderable
-  - in-stock POD-category product stays unchanged
-  - out-of-stock non-POD product stays unchanged
-- Build validation:
-  - root scripts updated so `npm run lint`, `npm run test:unit`, and `npm run build` include the new workspace compile path
+Collection widgets are not in scope unless they render add-to-cart buttons via the same shared renderer.
 
-## Risks / Gate Decisions
+### 5. Order placement behavior for managed stock
 
-1. **Checkout stock semantics**: permitting POD purchases for out-of-stock items requires a deliberate decision on inventory decrement behavior at order placement. The current trigger always subtracts ordered qty for managed-stock products, which may drive POD items negative unless explicitly adjusted.
-2. **Catalog discoverability**: if the business expects out-of-stock POD items to remain visible in listing/search surfaces, confirm the current `showOutOfStockProduct` behavior is acceptable; this plan only guarantees correct messaging on product purchase surfaces.
-3. **Future multi-category scope**: if merchandising later requires a product to belong to multiple categories with conflicting POD policies, the current single-category rule must be revisited before implementation expands.
+**Concrete decision**:
 
-## Complexity Tracking
+- Keep `product_inventory.manage_stock` unchanged.
+- POD eligibility exists only when:
+  - product is currently out of stock, and
+  - product category has POD enabled with a valid range.
+- In-stock POD-category products remain standard resale items.
+- For **out-of-stock POD-eligible** order items, order placement must **not decrement inventory further**.
+- For in-stock items and all non-POD items, existing decrement behavior remains unchanged.
 
-No constitution violations or justified exceptions identified.
+Implementation detail: replace the checkout stock-reduction function in the new extension migration so `reduce_product_stock_when_order_placed()` skips decrement when the ordered product is currently out of stock and its direct category has POD enabled. This avoids negative inventory while preserving normal stock handling for non-POD and in-stock cases.
+
+### 6. Cart and order validation must be POD-aware
+
+Do not solve this with UI-only changes.
+
+Implement in `src/bootstrap.ts`:
+
+- category create/update payload normalization + validation
+- POD-aware `cartItemFields` resolver extension for `qty`
+- POD-aware order validation rule so checkout/order creation succeeds only when the item is either:
+  - in stock normally, or
+  - out of stock and currently POD-eligible
+
+If the category is later disabled or made invalid before checkout completion, the standard out-of-stock failure should return.
+
+## Phase 0: Research Closure
+
+All plan-level unknowns are resolved. The previous open issue about order-placement stock decrement is now closed by the explicit "skip decrement for POD-eligible out-of-stock items" rule above.
+
+## Phase 1: Design & Contracts
+
+### Admin contract
+
+Add a POD settings card to category create/edit:
+
+- enable toggle
+- min number
+- max number
+- unit select: `days | weeks`
+
+Validation:
+- all three range fields required when enabled
+- integers only
+- `> 0`
+- `min <= max`
+
+### GraphQL/read contract
+
+Expose derived POD read models:
+
+- `Category.printOnDemandPolicy`
+- `Product.printOnDemandPresentation`
+
+`Product.printOnDemandPresentation` must at minimum include:
+
+- `applies`
+- `purchasable`
+- `ctaLabel`
+- `sourceCategoryId`
+- `deliveryRange { min, max, unit, label }`
+
+### Storefront behavior contract
+
+When `printOnDemandPresentation.applies = true`:
+
+- CTA label = localized `Print Now`
+- delivery message = category POD range
+- add-to-cart enabled
+- cart/checkout/order placement continue through standard flow
+
+When false:
+
+- preserve current label, delivery message, and stock rules
+
+## Implementation Plan
+
+### Workstream A — Extension scaffolding
+1. Create `extensions/printelPrintOnDemand`
+2. Register extension in `config/default.json`
+3. Update root scripts in `package.json`:
+   - append workspace to `build:extensions`
+   - append workspace tsconfig to `typecheck`
+
+### Workstream B — Persistence and migration
+1. Add category POD columns in extension migration
+2. Replace stock-reduction DB function in same migration with POD-aware skip logic
+3. Keep runtime behavior extension-owned; no direct core edits
+
+### Workstream C — Admin category flow
+1. Add `PrintOnDemandSettings.tsx` into category create/edit area
+2. Extend category GraphQL/admin resolvers to return persisted POD fields
+3. Add server-side create/update normalization and validation hooks
+
+### Workstream D — Storefront read model
+1. Add GraphQL schema + resolvers for category POD policy and product POD presentation
+2. Build shared range formatter for:
+   - min/max range
+   - equal min/max single-value wording
+   - unit localization
+
+### Workstream E — Storefront surfaces
+1. Override PDP query/rendering
+2. Override category listing query/rendering
+3. Override search listing query/rendering
+4. Reuse one shared presentation contract so all CTA surfaces stay consistent
+
+### Workstream F — Purchase-flow continuity
+1. Extend cart item qty logic so out-of-stock POD-eligible items are not rejected
+2. Add order validation rule for POD eligibility at checkout
+3. Ensure order placement succeeds through standard flow
+4. Ensure inventory is **not decremented** for POD-eligible out-of-stock order items
+
+## Verification Strategy
+
+### Required fixture matrix
+
+Create at minimum:
+
+- **POD Category A**: e.g. `5-7 days`
+- **POD Category B**: e.g. `2-3 weeks`
+- **Product A**: out of stock, assigned to Category A
+- **Product B**: out of stock, assigned to Category B
+- **Product C**: in stock, assigned to POD category
+- **Product D**: out of stock, assigned to non-POD category
+
+### Unit coverage
+
+Must verify:
+
+- category validation and normalization
+- direct-category POD resolution
+- equal/min-max label formatting
+- Category A vs Category B range separation
+- cart qty rule bypass only for out-of-stock POD-eligible items
+- order validation success for POD-eligible out-of-stock items
+- stock-decrement skip logic for POD-eligible out-of-stock order items
+
+### E2E coverage
+
+Must verify:
+
+1. admin can save/reopen POD Category A
+2. admin can save/reopen POD Category B
+3. PDP for Product A shows `Print Now` + Category A range
+4. PDP for Product B shows `Print Now` + Category B range
+5. category/search list surfaces show the correct CTA/range for both products
+6. Product A can be added to cart and successfully checked out to order placement
+7. Product C keeps normal resale behavior
+8. Product D keeps normal out-of-stock behavior
+
+## Generated Output Workflow
+
+After any source/schema changes in the new extension:
+
+1. update `src/**`
+2. run workspace compile via root entry point:
+   - `npm run build:extensions`
+3. confirm generated outputs are updated and committed:
+   - `extensions/printelPrintOnDemand/dist/**`
+   - copied GraphQL file under `extensions/printelPrintOnDemand/dist/graphql/types/PrintOnDemand/PrintOnDemand.graphql`
+4. run full repo build:
+   - `npm run build`
+
+A change is incomplete if `src`, `dist`, and copied GraphQL artifacts are not all in sync.
+
+## Validation Commands
+
+- `npm run lint`
+- `npm run test:unit`
+- `npm run test:e2e`
+- `npm run build`
+
+## Post-Design Constitution Re-Check
+
+PASS. The revised plan now explicitly covers:
+
+- extension-first implementation
+- Romanian/localized copy updates
+- generated-output workflow with actual commands
+- script-gated validation
+- secure config handling
+- full operational purchase-flow behavior, not just UI copy

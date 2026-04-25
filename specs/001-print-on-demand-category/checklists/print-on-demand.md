@@ -52,3 +52,14 @@
 - [ ] CHK026 Is the assumption that stock status remains the single source of truth sufficient, or must requirements also define how POD orders affect inventory when stock is already zero? [Assumption, Spec §Assumptions]
 - [ ] CHK027 Are dependency requirements documented for translation assets, generated build artifacts, and extension/config touchpoints so implementation scope is not inferred ad hoc? [Dependency, Spec §Compliance, Localization & Operational Constraints]
 - [ ] CHK028 Does the spec clearly exclude parent-category inheritance, listing/search-surface changes, and separate checkout paths for v1, or are these left implicit? [Boundary, Gap, Assumption]
+
+## Revised Plan Alignment
+
+- [ ] CHK029 Do the requirements explicitly define POD eligibility as applying only to products that are currently out of stock and directly assigned to a POD-enabled category with a valid range? [Alignment, Spec §FR-005, Plan §Core Design Decisions]
+- [ ] CHK030 Do the requirements clearly state that the existing purchase flow includes add-to-cart, cart persistence/reload, checkout, and successful order placement rather than only a relabeled button? [Alignment, Spec §FR-013, Plan §Core Design Decisions]
+- [ ] CHK031 Are requirements explicit that POD-eligible out-of-stock orders must not decrement inventory further or drive managed stock negative at order placement? [Gap, Inventory Handling, Plan §Order placement behavior]
+- [ ] CHK032 Do the requirements clearly cover all intended CTA surfaces for v1: product detail page, category listings, and search listings? [Scope, Plan §CTA scope]
+- [ ] CHK033 Are verification requirements explicit that at least two POD categories with different configured ranges must be tested to prove category-specific messaging works correctly? [Coverage, Spec §FR-010, Plan §Verification Strategy]
+- [ ] CHK034 Do the requirements define how checkout should behave if a product loses POD eligibility after being added to cart but before order placement completes? [Exception Flow, Plan §Cart and order validation]
+- [ ] CHK035 Are generated-output obligations explicit enough that implementers must keep `src/**`, `dist/**`, and copied GraphQL artifacts synchronized through the documented build workflow? [Build Sync, Spec §Compliance, Plan §Generated Output Workflow]
+- [ ] CHK036 Do localization and validation requirements fully cover the new admin labels, storefront CTA text, delivery wording, and inventory-related validation/error states across supported locales? [Localization, Validation, Spec §FR-003, Spec §FR-012]
