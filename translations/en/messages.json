@@ -171,6 +171,7 @@
   "Print Now": "Print Now",
   "Print-on-demand delivery: ${value} ${unit}": "Print-on-demand delivery: ${value} ${unit}",
   "Print-on-demand delivery: ${min}-${max} ${unit}": "Print-on-demand delivery: ${min}-${max} ${unit}",
+  "One or more products are no longer eligible for print-on-demand checkout.": "One or more products are no longer eligible for print-on-demand checkout.",
   "day": "day",
   "days": "days",
   "week": "week",

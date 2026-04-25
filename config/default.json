@@ -18,6 +18,9 @@
     },
     "copyRight": "© 2026 Printel. Toate drepturile rezervate."
   },
+  "catalog": {
+    "showOutOfStockProduct": true
+  },
   "system": {
     "extensions": [
       {

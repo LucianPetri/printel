@@ -25,6 +25,7 @@ export declare function normalizePrintOnDemandPolicy(value: LooseRecord): PrintO
 export declare function hasValidPrintOnDemandPolicy(policy: PrintOnDemandPolicy | null | undefined): boolean;
 export declare function buildPrintOnDemandPayload<T extends Record<string, any>>(data: T, options?: {
     allowMissing?: boolean;
+    translate?: TranslateFunction;
 }): T & {
     print_on_demand_enabled?: boolean;
     print_on_demand_min?: number | null;

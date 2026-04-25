@@ -65,6 +65,7 @@ export function hasValidPrintOnDemandPolicy(policy) {
     return Boolean((policy === null || policy === void 0 ? void 0 : policy.enabled) && policy.deliveryRange);
 }
 export function buildPrintOnDemandPayload(data, options = {}) {
+    var _a;
     const hasPodFields = [
         'print_on_demand_enabled',
         'print_on_demand_min',
@@ -74,6 +75,7 @@ export function buildPrintOnDemandPayload(data, options = {}) {
     if (!hasPodFields && options.allowMissing) {
         return data;
     }
+    const translate = (_a = options.translate) !== null && _a !== void 0 ? _a : identityTranslate;
     const enabled = coerceBoolean(data.print_on_demand_enabled);
     if (!enabled) {
         return {
@@ -88,16 +90,16 @@ export function buildPrintOnDemandPayload(data, options = {}) {
     const max = coerceInteger(data.print_on_demand_max);
     const unit = normalizePrintOnDemandUnit(data.print_on_demand_unit);
     if (min === null || max === null) {
-        throw new Error('Print-on-demand delivery min and max are required.');
+        throw new Error(translate('Print-on-demand delivery minimum and maximum are required.'));
     }
     if (min <= 0 || max <= 0) {
-        throw new Error('Print-on-demand delivery values must be positive integers.');
+        throw new Error(translate('Print-on-demand delivery minimum and maximum must be positive integers.'));
     }
     if (unit === null) {
-        throw new Error('Print-on-demand delivery unit must be days or weeks.');
+        throw new Error(translate('Print-on-demand delivery unit must be days or weeks.'));
     }
     if (min > max) {
-        throw new Error('Print-on-demand delivery minimum cannot be greater than the maximum.');
+        throw new Error(translate('Print-on-demand delivery minimum cannot be greater than the maximum.'));
     }
     return {
         ...data,

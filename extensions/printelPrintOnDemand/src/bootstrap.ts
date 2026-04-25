@@ -1,10 +1,10 @@
 import { select } from '@evershop/postgres-query-builder';
 import { pool } from '@evershop/evershop/lib/postgres';
+import { translate } from '@evershop/evershop/lib/locale/translate/translate';
 import { addProcessor } from '@evershop/evershop/lib/util/registry';
 import { addOrderValidationRule } from '@evershop/evershop/checkout/services';
 import {
   buildPrintOnDemandPayload,
-  normalizePrintOnDemandPolicy,
   resolvePrintOnDemandPresentation
 } from './lib/printOnDemandPresentation.js';
 
@@ -21,36 +21,51 @@ async function loadCategory(categoryId: number | null) {
 
 async function isPrintOnDemandEligibleProduct(product: Record<string, any>) {
   const category = await loadCategory(product.category_id ?? product.categoryId ?? null);
-  return resolvePrintOnDemandPresentation(product, category).applies;
+  return resolvePrintOnDemandPresentation(product, category).purchasable;
 }
 
-function registerPrintOnDemandQtyField(fields: Record<string, any>[]) {
-  return fields.concat([
-    {
-      key: 'qty',
-      dependencies: ['product_id', 'category_id'],
-      resolvers: [
-        async function printOnDemandQtyResolver(this: any, value: number) {
-          const product = await this.getProduct();
-          const isEligible = await isPrintOnDemandEligibleProduct(product);
-          if (isEligible) {
-            this.setError('qty', null);
-          }
-          return value;
-        }
-      ]
+function wrapPrintOnDemandCartItemProductLoader(
+  loader: (id: number) => Promise<Record<string, any> | null>
+) {
+  return async (id: number) => {
+    const product = await loader(id);
+    if (!product) {
+      return product;
     }
-  ]);
+
+    const inStockQty = Number.parseInt(String(product.qty ?? 0), 10) || 0;
+    if (inStockQty >= 1) {
+      return product;
+    }
+
+    const isEligible = await isPrintOnDemandEligibleProduct(product);
+    if (!isEligible) {
+      return product;
+    }
+
+    return {
+      ...product,
+      manage_stock: false,
+      manageStock: false
+    };
+  };
 }
 
 function normalizeCategoryPayload(data: Record<string, any>) {
-  return buildPrintOnDemandPayload(data, { allowMissing: true });
+  return buildPrintOnDemandPayload(data, {
+    allowMissing: true,
+    translate
+  });
 }
 
 export default () => {
   addProcessor('categoryDataBeforeCreate', normalizeCategoryPayload, 10);
   addProcessor('categoryDataBeforeUpdate', normalizeCategoryPayload, 10);
-  addProcessor('cartItemFields', registerPrintOnDemandQtyField, 10);
+  addProcessor(
+    'cartItemProductLoaderFunction',
+    wrapPrintOnDemandCartItemProductLoader,
+    20
+  );
 
   addOrderValidationRule({
     id: 'printOnDemandEligibility',
@@ -62,12 +77,11 @@ export default () => {
         const product = await item.getProduct();
         const requestedQty = Number.parseInt(String(item.getData('qty')), 10) || 0;
         const inStockQty = Number.parseInt(String(product.qty ?? 0), 10) || 0;
-        const policy = normalizePrintOnDemandPolicy(
-          await loadCategory(product.category_id ?? product.categoryId ?? null)
-        );
+        const category = await loadCategory(product.category_id ?? product.categoryId ?? null);
+        const presentation = resolvePrintOnDemandPresentation(product, category);
 
         if (inStockQty < 1) {
-          if (!resolvePrintOnDemandPresentation(product, policy).applies) {
+          if (!presentation.purchasable) {
             return false;
           }
           continue;
@@ -84,6 +98,6 @@ export default () => {
       return true;
     },
     errorMessage:
-      'One or more products are no longer eligible for print on demand checkout.'
+      translate('One or more products are no longer eligible for print-on-demand checkout.')
   });
 };

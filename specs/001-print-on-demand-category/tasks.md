@@ -53,7 +53,7 @@
 
 <!-- parallel-group: 4 -->
 - [X] T011 [P] [US1] Add unit coverage for POD payload normalization, required-field validation, positive integers, `min <= max`, and disable-to-null behavior in `tests/unit/print-on-demand-category-policy.test.mjs`
-- [ ] T012 [P] [US1] Add admin E2E coverage for save/reopen and invalid category validation flows in `tests/e2e/print-on-demand-category-admin.spec.ts`
+- [X] T012 [P] [US1] Add admin E2E coverage for save/reopen and invalid category validation flows in `tests/e2e/print-on-demand-category-admin.spec.ts`
 - [X] T013 [P] [US1] Create reusable POD category fixture builders in `tests/unit/fixtures/print-on-demand-category-fixtures.mjs`
 
 ### Implementation for User Story 1
@@ -82,7 +82,7 @@
 <!-- parallel-group: 6 -->
 - [X] T019 [P] [US2] Add unit coverage for POD presentation resolution, equal-range formatting, direct-category lookup, and two-category range separation in `tests/unit/print-on-demand-presentation.test.mjs`
 - [X] T020 [P] [US2] Add unit coverage for POD order-placement inventory skip logic and non-negative stock handling in `tests/unit/print-on-demand-order-placement.test.mjs`
-- [ ] T021 [P] [US2] Add E2E coverage for PDP, category listing, and search listing CTA surfaces plus add-to-cart, cart reload, checkout, and successful order placement in `tests/e2e/print-on-demand-purchase-flow.spec.ts`
+- [X] T021 [P] [US2] Add E2E coverage for PDP, category listing, and search listing CTA surfaces plus add-to-cart, cart reload, checkout, and successful order placement in `tests/e2e/print-on-demand-purchase-flow.spec.ts`
 
 ### Implementation for User Story 2
 
@@ -119,7 +119,7 @@
 
 <!-- parallel-group: 9 -->
 - [X] T033 [P] [US3] Add unit regression coverage for in-stock POD-category products, non-POD out-of-stock products, and disabled/invalid category policies in `tests/unit/print-on-demand-regression.test.mjs`
-- [ ] T034 [P] [US3] Add E2E regression coverage for unchanged PDP/category/search CTA and delivery behavior in `tests/e2e/print-on-demand-regression.spec.ts`
+- [X] T034 [P] [US3] Add E2E regression coverage for unchanged PDP/category/search CTA and delivery behavior in `tests/e2e/print-on-demand-regression.spec.ts`
 
 ### Implementation for User Story 3
 
@@ -145,7 +145,7 @@
 - [X] T041 [P] Run `npm run test:unit` for `tests/unit/print-on-demand-*.test.mjs`
 
 <!-- sequential -->
-- [ ] T042 Run `npm run test:e2e` for `tests/e2e/print-on-demand-*.spec.ts`
+- [X] T042 Run `npm run test:e2e` for `tests/e2e/print-on-demand-*.spec.ts`
 - [X] T043 Run `npm run build` and verify final integrated outputs for `extensions/printelPrintOnDemand/dist/**` are included through `package.json` and `config/default.json`
 
 ---

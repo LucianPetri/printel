@@ -171,6 +171,7 @@
   "Print Now": "Printează acum",
   "Print-on-demand delivery: ${value} ${unit}": "Livrare print la comandă: ${value} ${unit}",
   "Print-on-demand delivery: ${min}-${max} ${unit}": "Livrare print la comandă: ${min}-${max} ${unit}",
+  "One or more products are no longer eligible for print-on-demand checkout.": "Unul sau mai multe produse nu mai sunt eligibile pentru checkout cu print la comandă.",
   "day": "zi",
   "days": "zile",
   "week": "săptămână",
