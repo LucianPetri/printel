@@ -1,0 +1,5 @@
+{
+  "methods": ["POST"],
+  "path": "/anaf/connection/check",
+  "access": "private"
+}

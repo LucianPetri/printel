@@ -1,4 +1,5 @@
 import { expect, Page } from '@playwright/test';
+import { execFileSync } from 'node:child_process';
 import pg from 'pg';
 import { printOnDemandCatalogFixtures } from '../fixtures/print-on-demand-catalog.js';
 
@@ -15,6 +16,45 @@ const checkoutMethodCost = '19.9000';
 
 type DeliveryUnit = 'days' | 'weeks';
 type Queryable = Pick<pg.Pool, 'query'>;
+
+function inspectDockerValue(containerName: string, format: string) {
+  try {
+    return execFileSync('docker', ['inspect', '-f', format, containerName], {
+      cwd: process.cwd(),
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore']
+    }).trim();
+  } catch {
+    return '';
+  }
+}
+
+function resolveDockerDbDefaults() {
+  const host =
+    process.env.DB_HOST ||
+    inspectDockerValue('printel-postgres', '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}') ||
+    '127.0.0.1';
+  const envLines = inspectDockerValue(
+    'printel-postgres',
+    '{{range .Config.Env}}{{println .}}{{end}}'
+  )
+    .split('\n')
+    .filter(Boolean);
+  const envMap = Object.fromEntries(
+    envLines.map((line) => {
+      const [key, ...rest] = line.split('=');
+      return [key, rest.join('=')];
+    })
+  );
+
+  return {
+    host,
+    port: Number.parseInt(process.env.DB_PORT || '5432', 10),
+    database: process.env.DB_NAME || envMap.POSTGRES_DB || 'printel_dev',
+    user: process.env.DB_USER || envMap.POSTGRES_USER || 'printel_dev',
+    password: process.env.DB_PASSWORD || envMap.POSTGRES_PASSWORD || 'printel_dev'
+  };
+}
 
 interface SeededCategory {
   id: number;
@@ -81,13 +121,14 @@ function formatRangeLabel(
 
 function createDbPool() {
   const { Pool } = pg;
+  const defaults = resolveDockerDbDefaults();
 
   return new Pool({
-    host: process.env.DB_HOST || '127.0.0.1',
-    port: Number.parseInt(process.env.DB_PORT || '5432', 10),
-    database: process.env.DB_NAME || 'evershop',
-    user: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD || 'postgres',
+    host: defaults.host,
+    port: defaults.port,
+    database: defaults.database,
+    user: defaults.user,
+    password: defaults.password,
     ssl:
       process.env.DB_SSLMODE && process.env.DB_SSLMODE !== 'disable'
         ? { rejectUnauthorized: false }
@@ -596,9 +637,12 @@ export async function loginToAdmin(page: Page) {
   await page.getByLabel('Email').fill(adminEmail);
   await page.getByLabel('Parola').fill(adminPassword);
   await page.getByRole('button', { name: /Sign In|Autentificare/i }).click();
-  await expect(page).toHaveURL(/\/admin(?:\/dashboard)?(?:\?.*)?$/, {
-    timeout: 30000
-  });
+  const adminHeaderLogo = page.locator('.printel-admin-logo a').first();
+  await Promise.race([
+    page.waitForURL(/\/admin(?:\/dashboard)?(?:\?.*)?$/, { timeout: 30000 }),
+    adminHeaderLogo.waitFor({ state: 'visible', timeout: 30000 })
+  ]);
+  await expect(adminHeaderLogo).toBeVisible();
 }
 
 export async function dismissCookieBanner(page: Page) {

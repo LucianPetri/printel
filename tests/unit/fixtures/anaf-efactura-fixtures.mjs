@@ -1,0 +1,40 @@
+export const anafConnectionStateFixture = {
+  anaf_connection_state_id: 1,
+  company_tax_id: 'RO12345678',
+  environment: 'test',
+  encrypted_refresh_token: 'c2FuZGJveA==',
+  token_expires_at: null,
+  connected_by_admin_user_id: 1,
+  connected_at: new Date('2026-01-01T00:00:00.000Z'),
+  last_verified_at: null,
+  last_error_code: null,
+  last_error_message: null,
+  is_connected: true,
+  last_disconnect_reason: null,
+  created_at: new Date('2026-01-01T00:00:00.000Z'),
+  updated_at: new Date('2026-01-01T00:00:00.000Z')
+};
+
+export const anafComplianceFixture = {
+  order_anaf_compliance_id: 10,
+  order_id: 99,
+  environment: 'test',
+  submission_mode: 'automatic',
+  status: 'queued',
+  invoice_number: 'PRINTEL-100099',
+  invoice_hash: 'hash-100099',
+  invoice_xml: '<Invoice />',
+  upload_index: null,
+  download_id: null,
+  registration_code: null,
+  latest_failure_code: null,
+  latest_failure_message: null,
+  retry_count: 0,
+  next_retry_at: null,
+  approved_by_admin_user_id: null,
+  approved_at: null,
+  email_released_at: null,
+  manual_review_reason: null,
+  created_at: new Date('2026-01-01T00:00:00.000Z'),
+  updated_at: new Date('2026-01-01T00:00:00.000Z')
+};

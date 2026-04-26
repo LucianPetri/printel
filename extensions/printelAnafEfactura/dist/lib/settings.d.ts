@@ -1,0 +1,20 @@
+import { AnafEnvironment, AnafSubmissionMode } from './anafStatuses.js';
+export type EffectiveAnafSettings = {
+    enabled: boolean;
+    environment: AnafEnvironment;
+    environmentLocked: boolean;
+    submissionMode: AnafSubmissionMode;
+    companyLegalName: string | null;
+    companyTaxId: string | null;
+    companyTradeRegister: string | null;
+    companyRegisteredOffice: string | null;
+    storeName: string | null;
+    storeEmail: string | null;
+    storeAddress: string | null;
+    storeCity: string | null;
+    storeProvince: string | null;
+    storePostalCode: string | null;
+    storeCountry: string | null;
+};
+export declare function getEffectiveAnafSettings(): Promise<EffectiveAnafSettings>;
+export declare function getAnafRetryCronSchedule(): string;

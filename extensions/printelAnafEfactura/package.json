@@ -1,0 +1,8 @@
+{
+  "name": "@printel/anaf-efactura",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "compile": "rm -rf dist && tsc -p tsconfig.json && node -e \"const fs=require('fs');const path=require('path');const walk=(dir)=>fs.readdirSync(dir,{withFileTypes:true}).flatMap((entry)=>entry.isDirectory()?walk(path.join(dir,entry.name)):[path.join(dir,entry.name)]);for(const file of walk('src').filter((file)=>/\\.(graphql|json)$/.test(file))){const target=path.join('dist',file.slice(4));fs.mkdirSync(path.dirname(target),{recursive:true});fs.copyFileSync(file,target);}\""
+  }
+}

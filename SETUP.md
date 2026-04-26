@@ -189,6 +189,36 @@ Update `.env` for:
 - Application port
 - Third-party service credentials (AWS S3, etc.)
 
+### 6. Configure ANAF e-Factura / SPV
+
+1. Leave `anaf.enabled=false` in config until the store has been validated in sandbox.
+2. Add the optional ANAF environment variables to `.env`:
+
+```env
+ANAF_CLIENT_ID=your_anaf_client_id
+ANAF_CLIENT_SECRET=your_anaf_client_secret
+ANAF_REDIRECT_URI=http://127.0.0.1:3000/api/anaf/connect/callback
+ANAF_TOKEN_ENCRYPTION_KEY=replace-with-32-byte-secret
+```
+
+`ANAF_TOKEN_ENCRYPTION_KEY` is required; the integration now fails fast if it is missing. Only set `ANAF_SIMULATION_MODE` for local development or test doubles, never for the real ANAF sandbox/live flow.
+
+3. Open **Admin → Settings → Store** and review the **ANAF e-Factura / SPV** section.
+4. Start in **Sandbox / test**, connect the profile, and run a connection check before enabling automatic submissions. The administrator performing this step must have the registered SPV OAuth app details and the required ANAF certificate/token flow available on their machine.
+5. Reconnect after certificate renewal, token replacement, or redirect URI changes, then rerun **Check connection** to confirm the stored refresh token can be renewed correctly.
+6. Manual mode keeps orders in a pending-approval state until an administrator approves the ANAF submission from the order detail screen.
+7. Automatic retries run on the `anaf.retryCron` schedule. You can force a retry pass manually with:
+
+```bash
+node scripts/run-anaf-retry-worker.mjs
+```
+
+8. Optional sandbox Playwright coverage is disabled by default. Enable it explicitly only when sandbox credentials and infrastructure are available:
+
+```bash
+RUN_ANAF_E2E=true npm run test:e2e
+```
+
 ---
 
 ## Docker Setup for PostgreSQL

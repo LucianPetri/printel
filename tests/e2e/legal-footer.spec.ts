@@ -22,9 +22,12 @@ async function loginToAdmin(page) {
   await page.getByLabel('Email').fill(adminEmail);
   await page.getByLabel('Parola').fill(adminPassword);
   await page.getByRole('button', { name: /Sign In|Autentificare/i }).click();
-  await expect(page).toHaveURL(/\/admin(?:\/dashboard)?(?:\?.*)?$/, {
-    timeout: 15000
-  });
+  const adminHeaderLogo = page.locator('.printel-admin-logo a').first();
+  await Promise.race([
+    page.waitForURL(/\/admin(?:\/dashboard)?(?:\?.*)?$/, { timeout: 30000 }),
+    adminHeaderLogo.waitFor({ state: 'visible', timeout: 30000 })
+  ]);
+  await expect(adminHeaderLogo).toBeVisible();
 }
 
 test.describe.serial('Romanian legal footer', () => {
@@ -40,7 +43,7 @@ test.describe.serial('Romanian legal footer', () => {
 
     await page.locator('[name="companyLegalName"]').fill(companyData.companyLegalName);
     await page.locator('[name="companyLegalForm"]').fill(companyData.companyLegalForm);
-    await page.locator('[name="companyTaxId"]').fill(companyData.companyTaxId);
+    await page.locator('[name="companyTaxId"]').first().fill(companyData.companyTaxId);
     await page
       .locator('[name="companyTradeRegister"]')
       .fill(companyData.companyTradeRegister);

@@ -1,0 +1,41 @@
+type AnafStatusBadge {
+  code: String!
+  label: String!
+  badge: String!
+}
+
+type OrderAnafAttempt {
+  orderAnafAttemptId: Int!
+  triggeredBy: String!
+  adminUserId: Int
+  status: String!
+  requestHash: String
+  responsePayload: JSON
+  startedAt: DateTime!
+  finishedAt: DateTime
+}
+
+type OrderAnafCompliance {
+  orderId: Int!
+  status: AnafStatusBadge!
+  submissionMode: String!
+  environment: String!
+  invoiceNumber: String
+  invoiceHash: String
+  registrationCode: String
+  uploadIndex: String
+  downloadId: String
+  latestFailureCode: String
+  latestFailureMessage: String
+  retryCount: Int!
+  nextRetryAt: DateTime
+  approvedByAdminUserId: Int
+  approvedAt: DateTime
+  emailReleasedAt: DateTime
+  manualReviewReason: String
+  attempts: [OrderAnafAttempt!]!
+}
+
+extend type Order {
+  anafCompliance: OrderAnafCompliance
+}

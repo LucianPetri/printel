@@ -1,5 +1,8 @@
 services:
   app:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: ${APP_IMAGE:-printel-app}
     container_name: printel-app
     restart: unless-stopped
@@ -19,6 +22,8 @@ services:
       DB_SSLMODE: ${DB_SSLMODE:-disable}
       SHOP_URL: ${SHOP_URL:-https://dev.printel.ro}
       ADMIN_URL: ${ADMIN_URL:-https://dev.printel.ro/admin}
+      ANAF_FORCE_ENVIRONMENT: test
+      ANAF_ALLOW_ENVIRONMENT_OVERRIDE: "false"
     ports:
       - "3001:3000"
     volumes:

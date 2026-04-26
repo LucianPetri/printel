@@ -12,14 +12,14 @@
     "setup": "evershop install",
     "start": "evershop start",
     "build": "npm run build:extensions && evershop build",
-    "build:extensions": "npm --workspace @printel/theme run compile && npm --workspace @printel/legal-footer run compile && npm --workspace @printel/cookie-banner run compile && npm --workspace @printel/print-on-demand run compile",
+    "build:extensions": "npm --workspace @printel/theme run compile && npm --workspace @printel/legal-footer run compile && npm --workspace @printel/cookie-banner run compile && npm --workspace @printel/print-on-demand run compile && npm --workspace @printel/anaf-efactura run compile",
     "prebuild:ci": "docker compose config",
     "dev": "evershop dev",
     "postinstall": "patch-package",
     "seed": "evershop seed",
     "start:debug": "evershop start --debug",
     "ci:bootstrap": "node scripts/ci-bootstrap.mjs",
-    "typecheck": "tsc --noEmit -p extensions/printelTheme/tsconfig.json && tsc --noEmit -p extensions/printelLegalFooter/tsconfig.json && tsc --noEmit -p extensions/printelCookieBanner/tsconfig.json && tsc --noEmit -p extensions/printelPrintOnDemand/tsconfig.json",
+    "typecheck": "tsc --noEmit -p extensions/printelTheme/tsconfig.json && tsc --noEmit -p extensions/printelLegalFooter/tsconfig.json && tsc --noEmit -p extensions/printelCookieBanner/tsconfig.json && tsc --noEmit -p extensions/printelPrintOnDemand/tsconfig.json && tsc --noEmit -p extensions/printelAnafEfactura/tsconfig.json",
     "lint": "npm run typecheck",
     "test:unit": "npm run build:extensions && node --test tests/unit/*.test.mjs",
     "ensure:test-admin": "node scripts/ensure-playwright-admin.mjs",
@@ -30,7 +30,8 @@
     "user:changePassword": "evershop user:changePassword"
   },
   "dependencies": {
-    "@evershop/evershop": "2.1.2"
+    "@evershop/evershop": "2.1.2",
+    "@florinszilagyi/anaf-ts-sdk": "^1.1.1"
   },
   "devDependencies": {
     "@playwright/test": "1.55.0",

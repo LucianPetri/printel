@@ -1,0 +1,5 @@
+{
+  "methods": ["GET"],
+  "path": "/anaf/connect/callback",
+  "access": "public"
+}

@@ -69,6 +69,15 @@ npm run user:create      # Create admin user
 npm run user:changePassword  # Change password
 ```
 
+## ANAF e-Factura / SPV
+
+- The `printelAnafEfactura` extension delays the normal order confirmation email until the order reaches a registered ANAF state.
+- Default rollout is safe: `config/default.json` and `config/production.json` keep `anaf.enabled=false`, so the extension preserves immediate confirmation behavior until ANAF is explicitly enabled in store settings.
+- Operators can configure sandbox/live mode, automatic vs manual submission, and connection health from **Admin → Settings → Store**.
+- ANAF connection setup requires a registered SPV OAuth application plus the authorized administrator's certificate/token flow; after certificate renewal, token replacement, or redirect-URI changes, reconnect and run a connection check before resuming queued invoices.
+- The retry worker is registered on the cron schedule from `anaf.retryCron` and can also be run manually with `node scripts/run-anaf-retry-worker.mjs`.
+- Sandbox-only Playwright validation is opt-in through `RUN_ANAF_E2E=true` or `ANAF_SANDBOX_E2E=true`.
+
 ## Project Structure
 
 ```
@@ -178,7 +187,16 @@ PORT=3000
 AWS_ACCESS_KEY_ID=your_key
 AWS_SECRET_ACCESS_KEY=your_secret
 AWS_S3_BUCKET=your_bucket
+
+# Optional: ANAF / SPV
+ANAF_CLIENT_ID=your_anaf_client_id
+ANAF_CLIENT_SECRET=your_anaf_client_secret
+ANAF_REDIRECT_URI=http://127.0.0.1:3000/api/anaf/connect/callback
+ANAF_TOKEN_ENCRYPTION_KEY=replace-with-32-byte-secret
+RUN_ANAF_E2E=false
 ```
+
+`ANAF_TOKEN_ENCRYPTION_KEY` is mandatory anywhere the app stores or refreshes ANAF tokens. Use `ANAF_SIMULATION_MODE` only for local/unit-test style simulations, not for the real ANAF sandbox or live flow.
 
 Copy `.env.example` to `.env` and customize:
 ```bash
@@ -255,3 +273,4 @@ Made with ❤️ by the EverShop community
 [⭐ Star us on GitHub](https://github.com/evershopcommerce/evershop) | [Sponsor the project](https://opencollective.com/evershopcommerce)
 
 </div>
+`ANAF_TOKEN_ENCRYPTION_KEY` is mandatory in every environment that stores or refreshes ANAF tokens. `ANAF_SIMULATION_MODE` is optional and should be used only for local/unit-test style simulations, not for real sandbox or production operation.

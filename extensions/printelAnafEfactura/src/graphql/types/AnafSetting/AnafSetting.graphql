@@ -1,0 +1,20 @@
+type AnafConnectionState {
+  connected: Boolean!
+  environment: String!
+  label: String!
+  lastVerifiedAt: DateTime
+  lastErrorCode: String
+  lastErrorMessage: String
+}
+
+extend type Setting {
+  anafEnabled: Boolean!
+  anafEnvironment: String!
+  anafEnvironmentLocked: Boolean!
+  anafSubmissionMode: String!
+  anafConnectionState: AnafConnectionState
+  anafCompanyTaxId: String
+  anafConnectionCheckApi: String
+  anafConnectStartApi: String
+  anafDisconnectApi: String
+}

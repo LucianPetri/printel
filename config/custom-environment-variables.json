@@ -12,5 +12,9 @@
   },
   "admin": {
     "url": "ADMIN_URL"
+  },
+  "anaf": {
+    "forceEnvironment": "ANAF_FORCE_ENVIRONMENT",
+    "allowEnvironmentOverride": "ANAF_ALLOW_ENVIRONMENT_OVERRIDE"
   }
 }

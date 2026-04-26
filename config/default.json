@@ -46,8 +46,26 @@
         "resolve": "extensions/printelPrintOnDemand",
         "enabled": true,
         "priority": 15
+      },
+      {
+        "name": "printelAnafEfactura",
+        "resolve": "extensions/printelAnafEfactura",
+        "enabled": true,
+        "priority": 25
       }
-    ]
+    ],
+    "notification_emails": {
+      "order_confirmation": {
+        "enabled": false
+      }
+    }
+  },
+  "anaf": {
+    "enabled": false,
+    "environment": "test",
+    "submissionMode": "automatic",
+    "allowEnvironmentOverride": true,
+    "retryCron": "*/5 * * * *"
   },
   "security": {
     "enableHttps": false,
