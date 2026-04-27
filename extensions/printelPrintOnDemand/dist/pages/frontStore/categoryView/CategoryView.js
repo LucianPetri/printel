@@ -7,37 +7,58 @@ import { CategoryProductsPagination } from '@components/frontStore/catalog/Categ
 import { ProductSorting } from '@components/frontStore/catalog/ProductSorting.js';
 import React from 'react';
 export default function CategoryView({ category }) {
-    return (React.createElement(CategoryProvider, { category: category },
-        React.createElement(Area, { id: "categoryPageTop", className: "category__page__top" }),
-        React.createElement(CategoryInfo, null),
-        React.createElement("div", { className: "page-width grid grid-cols-1 md:grid-cols-4 gap-5" },
-            React.createElement(Area, { id: "categoryLeftColumn", className: "md:col-span-1", coreComponents: [
-                    {
-                        component: { default: React.createElement(CategoryProductsFilter, null) },
-                        sortOrder: 10,
-                        id: 'productFilter'
-                    }
-                ] }),
-            React.createElement(Area, { id: "categoryRightColumn", className: "md:col-span-3", coreComponents: [
-                    {
-                        component: {
-                            default: (React.createElement(ProductSorting, { className: "flex justify-start", count: category.products.total }))
-                        },
-                        sortOrder: 10,
-                        id: 'categoryProductsSorting'
-                    },
-                    {
-                        component: { default: React.createElement(CategoryProducts, null) },
-                        sortOrder: 20,
-                        id: 'categoryProducts'
-                    },
-                    {
-                        component: { default: React.createElement(CategoryProductsPagination, null) },
-                        sortOrder: 30,
-                        id: 'categoryProductsPagination'
-                    }
-                ] })),
-        React.createElement(Area, { id: "categoryPageBottom", className: "category__page__bottom" })));
+    return /*#__PURE__*/ React.createElement(CategoryProvider, {
+        category: category
+    }, /*#__PURE__*/ React.createElement(Area, {
+        id: "categoryPageTop",
+        className: "category__page__top"
+    }), /*#__PURE__*/ React.createElement(CategoryInfo, null), /*#__PURE__*/ React.createElement("div", {
+        className: "page-width grid grid-cols-1 md:grid-cols-4 gap-5"
+    }, /*#__PURE__*/ React.createElement(Area, {
+        id: "categoryLeftColumn",
+        className: "md:col-span-1",
+        coreComponents: [
+            {
+                component: {
+                    default: /*#__PURE__*/ React.createElement(CategoryProductsFilter, null)
+                },
+                sortOrder: 10,
+                id: 'productFilter'
+            }
+        ]
+    }), /*#__PURE__*/ React.createElement(Area, {
+        id: "categoryRightColumn",
+        className: "md:col-span-3",
+        coreComponents: [
+            {
+                component: {
+                    default: /*#__PURE__*/ React.createElement(ProductSorting, {
+                        className: "flex justify-start",
+                        count: category.products.total
+                    })
+                },
+                sortOrder: 10,
+                id: 'categoryProductsSorting'
+            },
+            {
+                component: {
+                    default: /*#__PURE__*/ React.createElement(CategoryProducts, null)
+                },
+                sortOrder: 20,
+                id: 'categoryProducts'
+            },
+            {
+                component: {
+                    default: /*#__PURE__*/ React.createElement(CategoryProductsPagination, null)
+                },
+                sortOrder: 30,
+                id: 'categoryProductsPagination'
+            }
+        ]
+    })), /*#__PURE__*/ React.createElement(Area, {
+        id: "categoryPageBottom",
+        className: "category__page__bottom"
+    }));
 }
 export const layout = {
     areaId: 'content',
@@ -123,4 +144,3 @@ export const fragments = `
     url
   }
 `;
-//# sourceMappingURL=CategoryView.js.map

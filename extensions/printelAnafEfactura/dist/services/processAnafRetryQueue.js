@@ -3,13 +3,11 @@ import { getQueuedComplianceItems } from '../lib/anafComplianceRepository.js';
 import { reconcileAnafSubmission } from './reconcileAnafSubmission.js';
 export default async function processAnafRetryQueue() {
     const queuedItems = await getQueuedComplianceItems(20);
-    await Promise.all(queuedItems.map(async (item) => {
+    await Promise.all(queuedItems.map(async (item)=>{
         try {
             await reconcileAnafSubmission(item.order_id, 'retry_cron');
-        }
-        catch (err) {
+        } catch (err) {
             error(err);
         }
     }));
 }
-//# sourceMappingURL=processAnafRetryQueue.js.map

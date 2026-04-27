@@ -16,7 +16,7 @@ export async function openAnafSettings(page: Page) {
 
 export async function expectAnafSettingsContent(page: Page) {
   await expect(
-    page.getByLabel(/Enable ANAF-controlled order confirmation/i)
+    page.getByRole('checkbox', { name: /Enable ANAF-controlled order confirmation/i })
   ).toBeVisible();
   await expect(page.getByLabel(/ANAF environment/i)).toBeVisible();
   await expect(page.getByLabel(/Submission policy/i)).toBeVisible();

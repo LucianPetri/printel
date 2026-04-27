@@ -8,8 +8,7 @@ function buildDeterministicRegistrationCode(seed) {
     return `RO-${crypto.createHash('sha1').update(seed).digest('hex').slice(0, 12).toUpperCase()}`;
 }
 function getSimulationMode() {
-    var _a;
-    return String((_a = process.env.ANAF_SIMULATION_MODE) !== null && _a !== void 0 ? _a : '').trim().toLowerCase();
+    return String(process.env.ANAF_SIMULATION_MODE ?? '').trim().toLowerCase();
 }
 function getAuthenticator(environment) {
     const clientId = process.env.ANAF_CLIENT_ID;
@@ -51,7 +50,10 @@ function buildBlockedAuthResult(environment, failureCode, failureMessage, raw, r
         outcome: 'blocked_auth',
         failureCode,
         failureMessage,
-        raw: { environment, ...raw },
+        raw: {
+            environment,
+            ...raw
+        },
         refreshedRefreshToken
     };
 }
@@ -60,7 +62,10 @@ function buildQueuedResult(environment, failureCode, failureMessage, raw, refres
         outcome: 'queued',
         failureCode,
         failureMessage,
-        raw: { environment, ...raw },
+        raw: {
+            environment,
+            ...raw
+        },
         refreshedRefreshToken
     };
 }
@@ -83,7 +88,7 @@ export async function exchangeAnafAuthorizationCode(environment, code) {
 }
 export async function checkAnafConnection({ environment, connectionState }) {
     const simulationMode = getSimulationMode();
-    if (!(connectionState === null || connectionState === void 0 ? void 0 : connectionState.encrypted_refresh_token)) {
+    if (!connectionState?.encrypted_refresh_token) {
         return {
             ok: false,
             code: 'missing_connection',
@@ -125,8 +130,7 @@ export async function checkAnafConnection({ environment, connectionState }) {
             environment,
             refreshedRefreshToken: tokenManager.getRefreshToken()
         };
-    }
-    catch (error) {
+    } catch (error) {
         const message = error instanceof Error ? error.message : 'ANAF connection check failed.';
         if (looksLikeAuthError(message)) {
             return {
@@ -145,21 +149,24 @@ export async function checkAnafConnection({ environment, connectionState }) {
     }
 }
 export async function submitInvoiceToAnaf({ invoiceXml, invoiceHash, environment, connectionState }) {
-    var _a, _b, _c, _d;
     const simulationMode = getSimulationMode();
-    if (!(connectionState === null || connectionState === void 0 ? void 0 : connectionState.encrypted_refresh_token)) {
+    if (!connectionState?.encrypted_refresh_token) {
         return {
             outcome: 'blocked_auth',
             failureCode: 'missing_connection',
             failureMessage: translate('ANAF is not connected for the selected legal entity.'),
-            raw: { environment }
+            raw: {
+                environment
+            }
         };
     }
     if (simulationMode === 'auth') {
         return buildBlockedAuthResult(environment, 'auth_failed', translate('The ANAF authorization must be renewed before retrying queued invoices.'), {});
     }
     if (simulationMode === 'outage' || simulationMode === 'delayed') {
-        return buildQueuedResult(environment, 'anaf_unavailable', translate('ANAF accepted the retry request later than the storefront timeout window.'), { uploadIndex: invoiceHash.slice(0, 12) });
+        return buildQueuedResult(environment, 'anaf_unavailable', translate('ANAF accepted the retry request later than the storefront timeout window.'), {
+            uploadIndex: invoiceHash.slice(0, 12)
+        });
     }
     if (simulationMode === 'duplicate') {
         return {
@@ -167,7 +174,10 @@ export async function submitInvoiceToAnaf({ invoiceXml, invoiceHash, environment
             registrationCode: buildDeterministicRegistrationCode(invoiceHash),
             uploadIndex: invoiceHash.slice(0, 12),
             downloadId: null,
-            raw: { environment, duplicate: true }
+            raw: {
+                environment,
+                duplicate: true
+            }
         };
     }
     const { tokenManager, client } = createSdkClients(connectionState, environment);
@@ -178,9 +188,11 @@ export async function submitInvoiceToAnaf({ invoiceXml, invoiceHash, environment
         });
         const refreshedRefreshToken = tokenManager.getRefreshToken();
         if (upload.executionStatus === ExecutionStatus.Error) {
-            const failureMessage = ((_a = upload.errors) === null || _a === void 0 ? void 0 : _a.join('; ')) || 'ANAF rejected the invoice upload.';
+            const failureMessage = upload.errors?.join('; ') || 'ANAF rejected the invoice upload.';
             if (looksLikeAuthError(failureMessage)) {
-                return buildBlockedAuthResult(environment, 'auth_failed', failureMessage, { upload }, refreshedRefreshToken);
+                return buildBlockedAuthResult(environment, 'auth_failed', failureMessage, {
+                    upload
+                }, refreshedRefreshToken);
             }
             if (looksLikeDuplicateError(failureMessage)) {
                 return {
@@ -188,39 +200,58 @@ export async function submitInvoiceToAnaf({ invoiceXml, invoiceHash, environment
                     registrationCode: upload.indexIncarcare || buildDeterministicRegistrationCode(invoiceHash),
                     uploadIndex: upload.indexIncarcare || invoiceHash.slice(0, 12),
                     downloadId: null,
-                    raw: { environment, upload },
+                    raw: {
+                        environment,
+                        upload
+                    },
                     refreshedRefreshToken
                 };
             }
-            return buildQueuedResult(environment, 'upload_rejected', failureMessage, { upload }, refreshedRefreshToken);
+            return buildQueuedResult(environment, 'upload_rejected', failureMessage, {
+                upload
+            }, refreshedRefreshToken);
         }
         const uploadIndex = upload.indexIncarcare;
         if (!uploadIndex) {
-            return buildQueuedResult(environment, 'missing_upload_index', translate('ANAF accepted the upload request but did not return an upload index.'), { upload }, refreshedRefreshToken);
+            return buildQueuedResult(environment, 'missing_upload_index', translate('ANAF accepted the upload request but did not return an upload index.'), {
+                upload
+            }, refreshedRefreshToken);
         }
         const status = await client.getUploadStatus(uploadIndex);
         if (status.stare === UploadStatusValue.InProgress) {
-            return buildQueuedResult(environment, 'processing', translate('ANAF is still processing the uploaded invoice.'), { upload, status }, refreshedRefreshToken);
+            return buildQueuedResult(environment, 'processing', translate('ANAF is still processing the uploaded invoice.'), {
+                upload,
+                status
+            }, refreshedRefreshToken);
         }
         if (status.stare === UploadStatusValue.Failed) {
-            const failureMessage = ((_b = status.errors) === null || _b === void 0 ? void 0 : _b.join('; ')) ||
-                translate('ANAF reported an error while processing the invoice.');
+            const failureMessage = status.errors?.join('; ') || translate('ANAF reported an error while processing the invoice.');
             if (looksLikeAuthError(failureMessage)) {
-                return buildBlockedAuthResult(environment, 'auth_failed', failureMessage, { upload, status }, refreshedRefreshToken);
+                return buildBlockedAuthResult(environment, 'auth_failed', failureMessage, {
+                    upload,
+                    status
+                }, refreshedRefreshToken);
             }
             if (looksLikeDuplicateError(failureMessage)) {
                 return {
                     outcome: 'duplicate',
                     registrationCode: uploadIndex,
                     uploadIndex,
-                    downloadId: (_c = status.idDescarcare) !== null && _c !== void 0 ? _c : null,
-                    raw: { environment, upload, status },
+                    downloadId: status.idDescarcare ?? null,
+                    raw: {
+                        environment,
+                        upload,
+                        status
+                    },
                     refreshedRefreshToken
                 };
             }
-            return buildQueuedResult(environment, 'processing_failed', failureMessage, { upload, status }, refreshedRefreshToken);
+            return buildQueuedResult(environment, 'processing_failed', failureMessage, {
+                upload,
+                status
+            }, refreshedRefreshToken);
         }
-        const downloadId = (_d = status.idDescarcare) !== null && _d !== void 0 ? _d : null;
+        const downloadId = status.idDescarcare ?? null;
         if (downloadId) {
             await client.downloadDocument(downloadId);
         }
@@ -229,11 +260,14 @@ export async function submitInvoiceToAnaf({ invoiceXml, invoiceHash, environment
             registrationCode: uploadIndex,
             uploadIndex,
             downloadId,
-            raw: { environment, upload, status },
+            raw: {
+                environment,
+                upload,
+                status
+            },
             refreshedRefreshToken
         };
-    }
-    catch (error) {
+    } catch (error) {
         const failureMessage = error instanceof Error ? error.message : 'ANAF submission failed.';
         const refreshedRefreshToken = tokenManager.getRefreshToken();
         if (looksLikeAuthError(failureMessage)) {
@@ -242,4 +276,3 @@ export async function submitInvoiceToAnaf({ invoiceXml, invoiceHash, environment
         return buildQueuedResult(environment, 'submission_failed', failureMessage, {}, refreshedRefreshToken);
     }
 }
-//# sourceMappingURL=tsAnafClient.js.map

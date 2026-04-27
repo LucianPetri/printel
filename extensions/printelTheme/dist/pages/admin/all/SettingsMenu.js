@@ -2,7 +2,15 @@ import { NavigationItemGroup } from '@components/admin/NavigationItemGroup.js';
 import { Settings } from 'lucide-react';
 import React from 'react';
 export default function SettingsMenu({ storeSetting }) {
-    return (React.createElement(NavigationItemGroup, { id: "printelSettingsMenuGroup", name: "Setari", Icon: () => React.createElement(Settings, { width: 15, height: 15 }), url: storeSetting }));
+    return /*#__PURE__*/ React.createElement(NavigationItemGroup, {
+        id: "printelSettingsMenuGroup",
+        name: "Setari",
+        Icon: ()=>/*#__PURE__*/ React.createElement(Settings, {
+                width: 15,
+                height: 15
+            }),
+        url: storeSetting
+    });
 }
 export const layout = {
     areaId: 'adminMenu',
@@ -13,4 +21,3 @@ export const query = `
     storeSetting: url(routeId:"storeSetting")
   }
 `;
-//# sourceMappingURL=SettingsMenu.js.map

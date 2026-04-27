@@ -9,6 +9,5 @@ export async function resolveAnafSubmissionPolicy() {
     };
 }
 export function canAdminApproveAnafSubmission(adminUser) {
-    return !!(adminUser === null || adminUser === void 0 ? void 0 : adminUser.admin_user_id);
+    return !!adminUser?.admin_user_id;
 }
-//# sourceMappingURL=resolveAnafSubmissionPolicy.js.map

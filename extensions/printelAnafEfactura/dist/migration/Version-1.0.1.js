@@ -103,4 +103,3 @@ export default async function migrate(connection) {
      FOR EACH ROW
      EXECUTE PROCEDURE printel_anaf_handle_order_address_changes();`);
 }
-//# sourceMappingURL=Version-1.0.1.js.map

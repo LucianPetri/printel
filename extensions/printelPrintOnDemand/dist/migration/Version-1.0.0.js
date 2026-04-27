@@ -49,4 +49,3 @@ export default async function migrate(connection) {
       FOR EACH ROW
       EXECUTE PROCEDURE reduce_product_stock_when_order_placed();`);
 }
-//# sourceMappingURL=Version-1.0.0.js.map

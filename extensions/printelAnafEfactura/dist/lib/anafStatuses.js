@@ -1,5 +1,11 @@
-export const ANAF_ENVIRONMENTS = ['test', 'prod'];
-export const ANAF_SUBMISSION_MODES = ['automatic', 'manual'];
+export const ANAF_ENVIRONMENTS = [
+    'test',
+    'prod'
+];
+export const ANAF_SUBMISSION_MODES = [
+    'automatic',
+    'manual'
+];
 export const ANAF_COMPLIANCE_STATUSES = [
     'pending_approval',
     'queued',
@@ -20,7 +26,13 @@ export const ANAF_TERMINAL_STATUSES = new Set([
     'registered',
     'manual_review'
 ]);
-export const ANAF_RETRY_BACKOFF_MINUTES = [5, 15, 30, 60, 360];
+export const ANAF_RETRY_BACKOFF_MINUTES = [
+    5,
+    15,
+    30,
+    60,
+    360
+];
 export function isAnafEnvironment(value) {
     return !!value && ANAF_ENVIRONMENTS.includes(value);
 }
@@ -29,17 +41,38 @@ export function isAnafSubmissionMode(value) {
 }
 export function getNextRetryAt(retryCount, now = new Date()) {
     const delayMinutes = ANAF_RETRY_BACKOFF_MINUTES[Math.min(Math.max(retryCount, 0), ANAF_RETRY_BACKOFF_MINUTES.length - 1)];
-    return new Date(now.getTime() + delayMinutes * 60000);
+    return new Date(now.getTime() + delayMinutes * 60_000);
 }
 export function getAnafStatusMeta(status) {
     const map = {
-        pending_approval: { badge: 'outline', label: 'Pending approval' },
-        queued: { badge: 'secondary', label: 'Queued for retry' },
-        submitting: { badge: 'default', label: 'Submitting to ANAF' },
-        registered: { badge: 'success', label: 'Registered' },
-        attention_required: { badge: 'destructive', label: 'Attention required' },
-        manual_review: { badge: 'warning', label: 'Manual review' },
-        blocked_auth: { badge: 'destructive', label: 'Blocked authentication' }
+        pending_approval: {
+            badge: 'outline',
+            label: 'Pending approval'
+        },
+        queued: {
+            badge: 'secondary',
+            label: 'Queued for retry'
+        },
+        submitting: {
+            badge: 'default',
+            label: 'Submitting to ANAF'
+        },
+        registered: {
+            badge: 'success',
+            label: 'Registered'
+        },
+        attention_required: {
+            badge: 'destructive',
+            label: 'Attention required'
+        },
+        manual_review: {
+            badge: 'warning',
+            label: 'Manual review'
+        },
+        blocked_auth: {
+            badge: 'destructive',
+            label: 'Blocked authentication'
+        }
     };
     return map[status];
 }
@@ -54,7 +87,6 @@ export function getAnafAttemptTriggerLabel(trigger) {
     return map[trigger];
 }
 export function getAnafAttemptStatusLabel(status) {
-    var _a;
     const map = {
         started: 'Started',
         registered: 'Registered',
@@ -62,6 +94,5 @@ export function getAnafAttemptStatusLabel(status) {
         queued: 'Queued for retry',
         blocked_auth: 'Blocked authentication'
     };
-    return (_a = map[status]) !== null && _a !== void 0 ? _a : status;
+    return map[status] ?? status;
 }
-//# sourceMappingURL=anafStatuses.js.map

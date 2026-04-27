@@ -86,23 +86,22 @@ function buildOrderConfirmationTemplate() {
 </html>`;
 }
 export async function sendDelayedOrderConfirmation(orderId, options = {}) {
-    var _a, _b, _c, _d;
     const compliance = await getOrderComplianceByOrderId(orderId);
     if (!options.skipAnafRegistrationRequirement && (!compliance || compliance.status !== 'registered')) {
         return false;
     }
-    const claimed = options.skipAnafRegistrationRequirement
-        ? true
-        : await claimOrderConfirmationEmail(orderId);
+    const claimed = options.skipAnafRegistrationRequirement ? true : await claimOrderConfirmationEmail(orderId);
     if (!claimed) {
         return false;
     }
     const orderResult = await pool.query(`SELECT order_id, order_number, customer_email, currency, grand_total, sub_total, tax_amount, no_shipping_required, shipping_address_id, billing_address_id
      FROM "order"
      WHERE order_id = $1
-     LIMIT 1`, [orderId]);
+     LIMIT 1`, [
+        orderId
+    ]);
     const order = orderResult.rows[0];
-    if (!(order === null || order === void 0 ? void 0 : order.customer_email)) {
+    if (!order?.customer_email) {
         return false;
     }
     try {
@@ -110,32 +109,40 @@ export async function sendDelayedOrderConfirmation(orderId, options = {}) {
             pool.query(`SELECT product_name, qty, line_total_incl_tax
          FROM order_item
          WHERE order_item_order_id = $1
-         ORDER BY order_item_id ASC`, [orderId]),
-            order.shipping_address_id
-                ? pool.query(`SELECT full_name, address_1, address_2, city, province, postcode, country_name
+         ORDER BY order_item_id ASC`, [
+                orderId
+            ]),
+            order.shipping_address_id ? pool.query(`SELECT full_name, address_1, address_2, city, province, postcode, country_name
              FROM order_address
              WHERE order_address_id = $1
-             LIMIT 1`, [order.shipping_address_id])
-                : Promise.resolve({ rows: [] }),
-            order.billing_address_id
-                ? pool.query(`SELECT full_name, address_1, address_2, city, province, postcode, country_name
+             LIMIT 1`, [
+                order.shipping_address_id
+            ]) : Promise.resolve({
+                rows: []
+            }),
+            order.billing_address_id ? pool.query(`SELECT full_name, address_1, address_2, city, province, postcode, country_name
              FROM order_address
              WHERE order_address_id = $1
-             LIMIT 1`, [order.billing_address_id])
-                : Promise.resolve({ rows: [] })
+             LIMIT 1`, [
+                order.billing_address_id
+            ]) : Promise.resolve({
+                rows: []
+            })
         ]);
-        const emailEnabled = ((_a = getConfig('system.notification_emails.order_confirmation', { enabled: true })) === null || _a === void 0 ? void 0 : _a.enabled) !== false;
+        const emailEnabled = getConfig('system.notification_emails.order_confirmation', {
+            enabled: true
+        })?.enabled !== false;
         if (!emailEnabled) {
-            // The ANAF extension owns confirmation timing; disabling the core sender must not suppress the delayed release.
+        // The ANAF extension owns confirmation timing; disabling the core sender must not suppress the delayed release.
         }
         const emailData = {
             order: {
                 ...order,
                 items: itemsResult.rows
             },
-            shippingAddress: (_b = shippingAddressResult.rows[0]) !== null && _b !== void 0 ? _b : null,
-            billingAddress: (_c = billingAddressResult.rows[0]) !== null && _c !== void 0 ? _c : null,
-            anafRegistrationCode: (_d = compliance === null || compliance === void 0 ? void 0 : compliance.registration_code) !== null && _d !== void 0 ? _d : null
+            shippingAddress: shippingAddressResult.rows[0] ?? null,
+            billingAddress: billingAddressResult.rows[0] ?? null,
+            anafRegistrationCode: compliance?.registration_code ?? null
         };
         const template = buildOrderConfirmationTemplate();
         const body = await buildEmailBodyFromTemplate(template, {
@@ -149,12 +156,10 @@ export async function sendDelayedOrderConfirmation(orderId, options = {}) {
             data: emailData
         });
         return true;
-    }
-    catch (error) {
+    } catch (error) {
         if (!options.skipAnafRegistrationRequirement) {
             await resetEmailReleaseClaim(orderId);
         }
         throw error;
     }
 }
-//# sourceMappingURL=sendDelayedOrderConfirmation.js.map

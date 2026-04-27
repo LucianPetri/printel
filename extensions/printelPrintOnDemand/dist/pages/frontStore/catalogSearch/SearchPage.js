@@ -4,12 +4,17 @@ import { SearchInfo } from '@components/frontStore/catalog/SearchInfo.js';
 import { SearchProducts } from '@components/frontStore/catalog/SearchProducts.js';
 import React from 'react';
 export default function SearchPage({ search }) {
-    return (React.createElement(SearchProvider, { searchData: search },
-        React.createElement(Area, { id: "searchPageTop", className: "search__page__top" }),
-        React.createElement("div", { className: "page-width grid grid-cols-1 " },
-            React.createElement(SearchInfo, null),
-            React.createElement(SearchProducts, null)),
-        React.createElement(Area, { id: "searchPageBottom", className: "search__page__bottom" })));
+    return /*#__PURE__*/ React.createElement(SearchProvider, {
+        searchData: search
+    }, /*#__PURE__*/ React.createElement(Area, {
+        id: "searchPageTop",
+        className: "search__page__top"
+    }), /*#__PURE__*/ React.createElement("div", {
+        className: "page-width grid grid-cols-1 "
+    }, /*#__PURE__*/ React.createElement(SearchInfo, null), /*#__PURE__*/ React.createElement(SearchProducts, null)), /*#__PURE__*/ React.createElement(Area, {
+        id: "searchPageBottom",
+        className: "search__page__bottom"
+    }));
 }
 export const layout = {
     areaId: 'content',
@@ -69,4 +74,3 @@ export const fragments = `
     url
   }
 `;
-//# sourceMappingURL=SearchPage.js.map

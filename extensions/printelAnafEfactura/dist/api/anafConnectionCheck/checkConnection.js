@@ -25,4 +25,3 @@ export default async function checkConnection(_request, response) {
         }
     });
 }
-//# sourceMappingURL=checkConnection.js.map

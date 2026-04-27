@@ -10,4 +10,3 @@ export default async function anafConnectStart(_request, response) {
         }
     });
 }
-//# sourceMappingURL=anafConnectStart.js.map

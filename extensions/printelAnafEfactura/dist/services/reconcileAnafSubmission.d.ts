@@ -1,1 +1,0 @@
-export declare function reconcileAnafSubmission(orderId: number, triggeredBy?: 'auto' | 'manual_approval' | 'retry_cron' | 'admin_retry' | 'reconcile', adminUserId?: number | null): Promise<import("../lib/anafComplianceRepository.js").AnafComplianceRecord | null>;

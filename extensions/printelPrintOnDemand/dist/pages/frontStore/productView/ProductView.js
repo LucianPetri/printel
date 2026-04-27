@@ -7,43 +7,70 @@ import { ProductSingleForm } from '@components/frontStore/catalog/ProductSingleF
 import { ProductSingleName } from '@components/frontStore/catalog/ProductSingleName.js';
 import React from 'react';
 export default function ProductView({ product }) {
-    return (React.createElement(ProductProvider, { product: product },
-        React.createElement("div", { className: "product__detail" },
-            React.createElement(Area, { id: "productPageTop", className: "product__page__top" }),
-            React.createElement("div", { className: "product__page__middle page-width" },
-                React.createElement("div", { className: "grid grid-cols-1 gap-7 md:grid-cols-2" },
-                    React.createElement(Area, { id: "productPageMiddleLeft", className: "product__detail__left", coreComponents: [
-                            {
-                                component: { default: React.createElement(Media, null) },
-                                sortOrder: 0,
-                                id: 'media'
-                            }
-                        ] }),
-                    React.createElement(Area, { id: "productPageMiddleRight", className: "product__detail__right", coreComponents: [
-                            {
-                                component: { default: React.createElement(ProductSingleName, null) },
-                                sortOrder: 10,
-                                id: 'name'
-                            },
-                            {
-                                component: { default: React.createElement(ProductSingleAttributes, null) },
-                                sortOrder: 20,
-                                id: 'attributes'
-                            },
-                            {
-                                component: { default: React.createElement(ProductSingleForm, null) },
-                                sortOrder: 30,
-                                id: 'productForm'
-                            }
-                        ] })),
-                React.createElement(Area, { id: "productSingleDescription", coreComponents: [
-                        {
-                            component: { default: React.createElement(ProductSingleDescription, null) },
-                            sortOrder: 10,
-                            id: 'productSingleDescription'
-                        }
-                    ] })),
-            React.createElement(Area, { id: "productPageBottom", className: "product__page__bottom" }))));
+    return /*#__PURE__*/ React.createElement(ProductProvider, {
+        product: product
+    }, /*#__PURE__*/ React.createElement("div", {
+        className: "product__detail"
+    }, /*#__PURE__*/ React.createElement(Area, {
+        id: "productPageTop",
+        className: "product__page__top"
+    }), /*#__PURE__*/ React.createElement("div", {
+        className: "product__page__middle page-width"
+    }, /*#__PURE__*/ React.createElement("div", {
+        className: "grid grid-cols-1 gap-7 md:grid-cols-2"
+    }, /*#__PURE__*/ React.createElement(Area, {
+        id: "productPageMiddleLeft",
+        className: "product__detail__left",
+        coreComponents: [
+            {
+                component: {
+                    default: /*#__PURE__*/ React.createElement(Media, null)
+                },
+                sortOrder: 0,
+                id: 'media'
+            }
+        ]
+    }), /*#__PURE__*/ React.createElement(Area, {
+        id: "productPageMiddleRight",
+        className: "product__detail__right",
+        coreComponents: [
+            {
+                component: {
+                    default: /*#__PURE__*/ React.createElement(ProductSingleName, null)
+                },
+                sortOrder: 10,
+                id: 'name'
+            },
+            {
+                component: {
+                    default: /*#__PURE__*/ React.createElement(ProductSingleAttributes, null)
+                },
+                sortOrder: 20,
+                id: 'attributes'
+            },
+            {
+                component: {
+                    default: /*#__PURE__*/ React.createElement(ProductSingleForm, null)
+                },
+                sortOrder: 30,
+                id: 'productForm'
+            }
+        ]
+    })), /*#__PURE__*/ React.createElement(Area, {
+        id: "productSingleDescription",
+        coreComponents: [
+            {
+                component: {
+                    default: /*#__PURE__*/ React.createElement(ProductSingleDescription, null)
+                },
+                sortOrder: 10,
+                id: 'productSingleDescription'
+            }
+        ]
+    })), /*#__PURE__*/ React.createElement(Area, {
+        id: "productPageBottom",
+        className: "product__page__bottom"
+    })));
 }
 export const layout = {
     areaId: 'content',
@@ -113,4 +140,3 @@ query Query {
       }
     }
 }`;
-//# sourceMappingURL=ProductView.js.map

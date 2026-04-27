@@ -5,7 +5,7 @@ import { getEffectiveAnafSettings } from './settings.js';
 const require = createRequire(import.meta.url);
 const { UblBuilder } = require('@florinszilagyi/anaf-ts-sdk');
 function normalizeText(value, fallback) {
-    const normalized = String(value !== null && value !== void 0 ? value : '').trim();
+    const normalized = String(value ?? '').trim();
     return normalized || fallback;
 }
 function normalizeVatNumber(value, fallback = 'RO00000000') {
@@ -13,16 +13,16 @@ function normalizeVatNumber(value, fallback = 'RO00000000') {
     return normalized.toUpperCase().startsWith('RO') ? normalized.toUpperCase() : `RO${normalized}`;
 }
 function buildPostalZone(value) {
-    const normalized = String(value !== null && value !== void 0 ? value : '').replace(/[^0-9]/g, '').trim();
+    const normalized = String(value ?? '').replace(/[^0-9]/g, '').trim();
     return normalized || '010000';
 }
 function buildAddress(source, fallbackStreet) {
     return {
-        street: normalizeText((source === null || source === void 0 ? void 0 : source.address_1) || (source === null || source === void 0 ? void 0 : source.address_2) || (source === null || source === void 0 ? void 0 : source.full_address), fallbackStreet),
-        city: normalizeText(source === null || source === void 0 ? void 0 : source.city, 'Bucharest'),
-        postalZone: buildPostalZone(source === null || source === void 0 ? void 0 : source.postcode),
-        county: normalizeText(source === null || source === void 0 ? void 0 : source.province, 'Bucharest'),
-        countryCode: normalizeText(source === null || source === void 0 ? void 0 : source.country, 'RO')
+        street: normalizeText(source?.address_1 || source?.address_2 || source?.full_address, fallbackStreet),
+        city: normalizeText(source?.city, 'Bucharest'),
+        postalZone: buildPostalZone(source?.postcode),
+        county: normalizeText(source?.province, 'Bucharest'),
+        countryCode: normalizeText(source?.country, 'RO')
     };
 }
 function buildSupplierAddress(settings) {
@@ -35,7 +35,6 @@ function buildSupplierAddress(settings) {
     };
 }
 export async function loadOrderSnapshot(orderId) {
-    var _a, _b;
     const orderResult = await pool.query(`SELECT * FROM "order" WHERE order_id = $1 LIMIT 1`, [
         orderId
     ]);
@@ -44,23 +43,25 @@ export async function loadOrderSnapshot(orderId) {
         throw new Error(`Order ${orderId} was not found`);
     }
     const [itemsResult, shippingAddressResult, billingAddressResult] = await Promise.all([
-        pool.query(`SELECT * FROM order_item WHERE order_item_order_id = $1 ORDER BY order_item_id ASC`, [orderId]),
-        order.shipping_address_id
-            ? pool.query(`SELECT * FROM order_address WHERE order_address_id = $1`, [
-                order.shipping_address_id
-            ])
-            : Promise.resolve({ rows: [] }),
-        order.billing_address_id
-            ? pool.query(`SELECT * FROM order_address WHERE order_address_id = $1`, [
-                order.billing_address_id
-            ])
-            : Promise.resolve({ rows: [] })
+        pool.query(`SELECT * FROM order_item WHERE order_item_order_id = $1 ORDER BY order_item_id ASC`, [
+            orderId
+        ]),
+        order.shipping_address_id ? pool.query(`SELECT * FROM order_address WHERE order_address_id = $1`, [
+            order.shipping_address_id
+        ]) : Promise.resolve({
+            rows: []
+        }),
+        order.billing_address_id ? pool.query(`SELECT * FROM order_address WHERE order_address_id = $1`, [
+            order.billing_address_id
+        ]) : Promise.resolve({
+            rows: []
+        })
     ]);
     return {
         order,
         items: itemsResult.rows,
-        shippingAddress: (_a = shippingAddressResult.rows[0]) !== null && _a !== void 0 ? _a : null,
-        billingAddress: (_b = billingAddressResult.rows[0]) !== null && _b !== void 0 ? _b : null
+        shippingAddress: shippingAddressResult.rows[0] ?? null,
+        billingAddress: billingAddressResult.rows[0] ?? null
     };
 }
 export async function buildAnafInvoicePayload(orderId) {
@@ -72,12 +73,8 @@ export async function buildAnafInvoicePayload(orderId) {
     const supplierAddress = buildSupplierAddress(settings);
     const customerAddressSource = snapshot.billingAddress || snapshot.shippingAddress;
     const customerAddress = buildAddress(customerAddressSource, 'Romania');
-    const customerName = normalizeText((customerAddressSource === null || customerAddressSource === void 0 ? void 0 : customerAddressSource.company_name) ||
-        (customerAddressSource === null || customerAddressSource === void 0 ? void 0 : customerAddressSource.full_name) ||
-        snapshot.order.customer_full_name, snapshot.order.customer_email || `Customer ${snapshot.order.order_number}`);
-    const customerCompanyId = normalizeText((customerAddressSource === null || customerAddressSource === void 0 ? void 0 : customerAddressSource.company_name) ||
-        (customerAddressSource === null || customerAddressSource === void 0 ? void 0 : customerAddressSource.vat_number) ||
-        (customerAddressSource === null || customerAddressSource === void 0 ? void 0 : customerAddressSource.telephone), `CUSTOMER-${snapshot.order.order_number}`);
+    const customerName = normalizeText(customerAddressSource?.company_name || customerAddressSource?.full_name || snapshot.order.customer_full_name, snapshot.order.customer_email || `Customer ${snapshot.order.order_number}`);
+    const customerCompanyId = normalizeText(customerAddressSource?.company_name || customerAddressSource?.vat_number || customerAddressSource?.telephone, `CUSTOMER-${snapshot.order.order_number}`);
     const payload = {
         orderId: snapshot.order.order_id,
         orderNumber: snapshot.order.order_number,
@@ -101,14 +98,14 @@ export async function buildAnafInvoicePayload(orderId) {
             taxAmount: snapshot.order.tax_amount,
             grandTotal: snapshot.order.grand_total
         },
-        items: snapshot.items.map((item) => ({
-            sku: item.product_sku,
-            name: item.product_name,
-            qty: item.qty,
-            taxPercent: item.tax_percent,
-            finalPrice: item.final_price,
-            total: item.line_total_incl_tax
-        }))
+        items: snapshot.items.map((item)=>({
+                sku: item.product_sku,
+                name: item.product_name,
+                qty: item.qty,
+                taxPercent: item.tax_percent,
+                finalPrice: item.final_price,
+                total: item.line_total_incl_tax
+            }))
     };
     const invoiceXml = builder.generateInvoiceXml({
         invoiceNumber,
@@ -125,23 +122,18 @@ export async function buildAnafInvoicePayload(orderId) {
         customer: {
             registrationName: customerName,
             companyId: customerCompanyId,
-            vatNumber: (customerAddressSource === null || customerAddressSource === void 0 ? void 0 : customerAddressSource.vat_number)
-                ? normalizeVatNumber(customerAddressSource.vat_number)
-                : undefined,
+            vatNumber: customerAddressSource?.vat_number ? normalizeVatNumber(customerAddressSource.vat_number) : undefined,
             address: customerAddress,
             email: snapshot.order.customer_email || undefined,
-            telephone: (customerAddressSource === null || customerAddressSource === void 0 ? void 0 : customerAddressSource.telephone) || undefined
+            telephone: customerAddressSource?.telephone || undefined
         },
-        lines: snapshot.items.map((item, index) => {
-            var _a, _b, _c, _d;
-            return ({
+        lines: snapshot.items.map((item, index)=>({
                 id: index + 1,
                 description: normalizeText(item.product_name, `Item ${index + 1}`),
-                quantity: Number((_a = item.qty) !== null && _a !== void 0 ? _a : 0) || 1,
-                unitPrice: Number((_c = (_b = item.final_price) !== null && _b !== void 0 ? _b : item.base_price) !== null && _c !== void 0 ? _c : 0) || 0,
-                taxPercent: Number((_d = item.tax_percent) !== null && _d !== void 0 ? _d : 0) || 0
-            });
-        }),
+                quantity: Number(item.qty ?? 0) || 1,
+                unitPrice: Number(item.final_price ?? item.base_price ?? 0) || 0,
+                taxPercent: Number(item.tax_percent ?? 0) || 0
+            })),
         isSupplierVatPayer: supplierVatNumber.startsWith('RO')
     });
     return {
@@ -151,4 +143,3 @@ export async function buildAnafInvoicePayload(orderId) {
         payload
     };
 }
-//# sourceMappingURL=buildAnafInvoicePayload.js.map

@@ -1,10 +1,6 @@
-const identityTranslate = (text, values = {}) => `${text}`.replace(/\${(.*?)}/g, (match, key) => values[key.trim()] !== undefined ? values[key.trim()] : match);
+const identityTranslate = (text, values = {})=>`${text}`.replace(/\${(.*?)}/g, (match, key)=>values[key.trim()] !== undefined ? values[key.trim()] : match);
 function coerceBoolean(value) {
-    return (value === true ||
-        value === 1 ||
-        value === '1' ||
-        value === 'true' ||
-        value === 'on');
+    return value === true || value === 1 || value === '1' || value === 'true' || value === 'on';
 }
 export function coerceInteger(value) {
     if (value === null || value === undefined || value === '') {
@@ -21,18 +17,15 @@ export function normalizePrintOnDemandUnit(value) {
         return null;
     }
     const normalizedValue = value.trim().toLowerCase();
-    return normalizedValue === 'days' || normalizedValue === 'weeks'
-        ? normalizedValue
-        : null;
+    return normalizedValue === 'days' || normalizedValue === 'weeks' ? normalizedValue : null;
 }
 export function normalizePrintOnDemandRange(value) {
-    var _a, _b, _c;
     if (!value) {
         return null;
     }
-    const min = coerceInteger((_a = value.min) !== null && _a !== void 0 ? _a : value.printOnDemandMin);
-    const max = coerceInteger((_b = value.max) !== null && _b !== void 0 ? _b : value.printOnDemandMax);
-    const unit = normalizePrintOnDemandUnit((_c = value.unit) !== null && _c !== void 0 ? _c : value.printOnDemandUnit);
+    const min = coerceInteger(value.min ?? value.printOnDemandMin);
+    const max = coerceInteger(value.max ?? value.printOnDemandMax);
+    const unit = normalizePrintOnDemandUnit(value.unit ?? value.printOnDemandUnit);
     if (min === null || max === null || unit === null || min <= 0 || max <= 0) {
         return null;
     }
@@ -43,18 +36,15 @@ export function normalizePrintOnDemandRange(value) {
         min,
         max,
         unit,
-        label: typeof value.label === 'string' && value.label.trim() !== ''
-            ? value.label
-            : undefined
+        label: typeof value.label === 'string' && value.label.trim() !== '' ? value.label : undefined
     };
 }
 export function normalizePrintOnDemandPolicy(value) {
-    var _a, _b, _c, _d, _e, _f;
-    const enabled = coerceBoolean((_b = (_a = value === null || value === void 0 ? void 0 : value.enabled) !== null && _a !== void 0 ? _a : value === null || value === void 0 ? void 0 : value.printOnDemandEnabled) !== null && _b !== void 0 ? _b : value === null || value === void 0 ? void 0 : value.print_on_demand_enabled);
-    const deliveryRange = normalizePrintOnDemandRange((_c = value === null || value === void 0 ? void 0 : value.deliveryRange) !== null && _c !== void 0 ? _c : {
-        min: (_d = value === null || value === void 0 ? void 0 : value.printOnDemandMin) !== null && _d !== void 0 ? _d : value === null || value === void 0 ? void 0 : value.print_on_demand_min,
-        max: (_e = value === null || value === void 0 ? void 0 : value.printOnDemandMax) !== null && _e !== void 0 ? _e : value === null || value === void 0 ? void 0 : value.print_on_demand_max,
-        unit: (_f = value === null || value === void 0 ? void 0 : value.printOnDemandUnit) !== null && _f !== void 0 ? _f : value === null || value === void 0 ? void 0 : value.print_on_demand_unit
+    const enabled = coerceBoolean(value?.enabled ?? value?.printOnDemandEnabled ?? value?.print_on_demand_enabled);
+    const deliveryRange = normalizePrintOnDemandRange(value?.deliveryRange ?? {
+        min: value?.printOnDemandMin ?? value?.print_on_demand_min,
+        max: value?.printOnDemandMax ?? value?.print_on_demand_max,
+        unit: value?.printOnDemandUnit ?? value?.print_on_demand_unit
     });
     return {
         enabled,
@@ -62,20 +52,19 @@ export function normalizePrintOnDemandPolicy(value) {
     };
 }
 export function hasValidPrintOnDemandPolicy(policy) {
-    return Boolean((policy === null || policy === void 0 ? void 0 : policy.enabled) && policy.deliveryRange);
+    return Boolean(policy?.enabled && policy.deliveryRange);
 }
 export function buildPrintOnDemandPayload(data, options = {}) {
-    var _a;
     const hasPodFields = [
         'print_on_demand_enabled',
         'print_on_demand_min',
         'print_on_demand_max',
         'print_on_demand_unit'
-    ].some((field) => Object.prototype.hasOwnProperty.call(data, field));
+    ].some((field)=>Object.prototype.hasOwnProperty.call(data, field));
     if (!hasPodFields && options.allowMissing) {
         return data;
     }
-    const translate = (_a = options.translate) !== null && _a !== void 0 ? _a : identityTranslate;
+    const translate = options.translate ?? identityTranslate;
     const enabled = coerceBoolean(data.print_on_demand_enabled);
     if (!enabled) {
         return {
@@ -110,17 +99,16 @@ export function buildPrintOnDemandPayload(data, options = {}) {
     };
 }
 export function isProductInStock(product) {
-    var _a, _b, _c;
-    if (typeof ((_a = product === null || product === void 0 ? void 0 : product.inventory) === null || _a === void 0 ? void 0 : _a.isInStock) === 'boolean') {
+    if (typeof product?.inventory?.isInStock === 'boolean') {
         return product.inventory.isInStock;
     }
-    const manageStock = coerceBoolean((_b = product === null || product === void 0 ? void 0 : product.manageStock) !== null && _b !== void 0 ? _b : product === null || product === void 0 ? void 0 : product.manage_stock);
+    const manageStock = coerceBoolean(product?.manageStock ?? product?.manage_stock);
     if (!manageStock) {
         return true;
     }
-    const stockAvailability = (_c = product === null || product === void 0 ? void 0 : product.stockAvailability) !== null && _c !== void 0 ? _c : product === null || product === void 0 ? void 0 : product.stock_availability;
-    const qty = coerceInteger(product === null || product === void 0 ? void 0 : product.qty);
-    return (qty !== null && qty !== void 0 ? qty : 0) > 0 && stockAvailability !== false && stockAvailability !== 0;
+    const stockAvailability = product?.stockAvailability ?? product?.stock_availability;
+    const qty = coerceInteger(product?.qty);
+    return (qty ?? 0) > 0 && stockAvailability !== false && stockAvailability !== 0;
 }
 export function formatPrintOnDemandUnitLabel(unit, value, translate = identityTranslate) {
     if (unit === 'days') {
@@ -145,17 +133,14 @@ export function formatPrintOnDemandRangeLabel(range, translate = identityTransla
     });
 }
 export function resolvePrintOnDemandPresentation(product, category) {
-    var _a, _b, _c, _d;
     const policy = normalizePrintOnDemandPolicy(category);
     const inStock = isProductInStock(product);
-    const sourceCategoryId = (_d = coerceInteger((_c = (_b = (_a = product === null || product === void 0 ? void 0 : product.categoryId) !== null && _a !== void 0 ? _a : product === null || product === void 0 ? void 0 : product.category_id) !== null && _b !== void 0 ? _b : category === null || category === void 0 ? void 0 : category.categoryId) !== null && _c !== void 0 ? _c : category === null || category === void 0 ? void 0 : category.category_id)) !== null && _d !== void 0 ? _d : null;
+    const sourceCategoryId = coerceInteger(product?.categoryId ?? product?.category_id ?? category?.categoryId ?? category?.category_id) ?? null;
     if (!inStock && hasValidPrintOnDemandPolicy(policy)) {
-        const deliveryRange = policy.deliveryRange
-            ? {
-                ...policy.deliveryRange,
-                label: formatPrintOnDemandRangeLabel(policy.deliveryRange) || undefined
-            }
-            : null;
+        const deliveryRange = policy.deliveryRange ? {
+            ...policy.deliveryRange,
+            label: formatPrintOnDemandRangeLabel(policy.deliveryRange) || undefined
+        } : null;
         return {
             applies: true,
             purchasable: true,
@@ -173,23 +158,17 @@ export function resolvePrintOnDemandPresentation(product, category) {
     };
 }
 export function normalizePrintOnDemandPresentation(value) {
-    var _a, _b;
-    const deliveryRange = normalizePrintOnDemandRange(value === null || value === void 0 ? void 0 : value.deliveryRange);
+    const deliveryRange = normalizePrintOnDemandRange(value?.deliveryRange);
     return {
-        applies: coerceBoolean(value === null || value === void 0 ? void 0 : value.applies),
-        purchasable: typeof (value === null || value === void 0 ? void 0 : value.purchasable) === 'boolean'
-            ? value.purchasable
-            : coerceBoolean(value === null || value === void 0 ? void 0 : value.purchasable),
-        ctaLabel: typeof (value === null || value === void 0 ? void 0 : value.ctaLabel) === 'string'
-            ? value.ctaLabel
-            : (value === null || value === void 0 ? void 0 : value.cta_label) || '',
-        sourceCategoryId: (_b = coerceInteger((_a = value === null || value === void 0 ? void 0 : value.sourceCategoryId) !== null && _a !== void 0 ? _a : value === null || value === void 0 ? void 0 : value.source_category_id)) !== null && _b !== void 0 ? _b : null,
+        applies: coerceBoolean(value?.applies),
+        purchasable: typeof value?.purchasable === 'boolean' ? value.purchasable : coerceBoolean(value?.purchasable),
+        ctaLabel: typeof value?.ctaLabel === 'string' ? value.ctaLabel : value?.cta_label || '',
+        sourceCategoryId: coerceInteger(value?.sourceCategoryId ?? value?.source_category_id) ?? null,
         deliveryRange
     };
 }
 export function getProductPrintOnDemandDisplay(product, translate = identityTranslate) {
-    var _a, _b, _c;
-    const presentation = normalizePrintOnDemandPresentation((_a = product === null || product === void 0 ? void 0 : product.printOnDemandPresentation) !== null && _a !== void 0 ? _a : product === null || product === void 0 ? void 0 : product.print_on_demand_presentation);
+    const presentation = normalizePrintOnDemandPresentation(product?.printOnDemandPresentation ?? product?.print_on_demand_presentation);
     if (!presentation.applies) {
         return {
             applies: false,
@@ -204,11 +183,10 @@ export function getProductPrintOnDemandDisplay(product, translate = identityTran
         applies: true,
         purchasable: presentation.purchasable,
         ctaLabel: translate('Print Now'),
-        deliveryLabel: (_c = (_b = formatPrintOnDemandRangeLabel(deliveryRange, translate)) !== null && _b !== void 0 ? _b : deliveryRange === null || deliveryRange === void 0 ? void 0 : deliveryRange.label) !== null && _c !== void 0 ? _c : null,
+        deliveryLabel: formatPrintOnDemandRangeLabel(deliveryRange, translate) ?? deliveryRange?.label ?? null,
         deliveryRange
     };
 }
 export function shouldSkipPrintOnDemandStockDecrement(product, category) {
     return resolvePrintOnDemandPresentation(product, category).applies;
 }
-//# sourceMappingURL=printOnDemandPresentation.js.map

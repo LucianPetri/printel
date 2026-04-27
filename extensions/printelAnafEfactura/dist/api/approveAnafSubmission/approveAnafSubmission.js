@@ -3,20 +3,29 @@ import { pool } from '@evershop/evershop/lib/postgres';
 import { canAdminApproveAnafSubmission } from '../../services/resolveAnafSubmissionPolicy.js';
 import { reconcileAnafSubmission } from '../../services/reconcileAnafSubmission.js';
 export default async function approveAnafSubmission(request, response) {
-    var _a, _b, _c, _d, _e;
-    const adminUser = (_d = (_b = (_a = request.getCurrentUser) === null || _a === void 0 ? void 0 : _a.call(request)) !== null && _b !== void 0 ? _b : (_c = request.locals) === null || _c === void 0 ? void 0 : _c.user) !== null && _d !== void 0 ? _d : null;
+    const adminUser = request.getCurrentUser?.() ?? request.locals?.user ?? null;
     if (!canAdminApproveAnafSubmission(adminUser)) {
         response.status(UNAUTHORIZED);
-        response.json({ error: { status: UNAUTHORIZED, message: 'Unauthorized' } });
+        response.json({
+            error: {
+                status: UNAUTHORIZED,
+                message: 'Unauthorized'
+            }
+        });
         return;
     }
     const orderResult = await pool.query(`SELECT order_id FROM "order" WHERE uuid = $1`, [
         request.params.uuid
     ]);
-    const orderId = (_e = orderResult.rows[0]) === null || _e === void 0 ? void 0 : _e.order_id;
+    const orderId = orderResult.rows[0]?.order_id;
     if (!orderId) {
         response.status(UNAUTHORIZED);
-        response.json({ error: { status: UNAUTHORIZED, message: 'Order not found' } });
+        response.json({
+            error: {
+                status: UNAUTHORIZED,
+                message: 'Order not found'
+            }
+        });
         return;
     }
     const compliance = await reconcileAnafSubmission(orderId, 'manual_approval', adminUser.admin_user_id);
@@ -25,4 +34,3 @@ export default async function approveAnafSubmission(request, response) {
         data: compliance
     });
 }
-//# sourceMappingURL=approveAnafSubmission.js.map

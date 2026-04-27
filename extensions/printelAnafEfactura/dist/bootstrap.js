@@ -49,15 +49,14 @@ function injectAnafRegistrationMarkup(template) {
     const index = template.indexOf(marker);
     return index === -1 ? template : `${template.slice(0, index)}${insertion}${template.slice(index)}`;
 }
-export default () => {
-    addProcessor('orderConfirmationEmailData', async (data) => {
-        var _a;
-        const orderId = Number.parseInt(String((_a = data === null || data === void 0 ? void 0 : data.order) === null || _a === void 0 ? void 0 : _a.order_id), 10);
+export default (()=>{
+    addProcessor('orderConfirmationEmailData', async (data)=>{
+        const orderId = Number.parseInt(String(data?.order?.order_id), 10);
         if (!orderId) {
             return data;
         }
         const compliance = await getOrderComplianceByOrderId(orderId);
-        if (!(compliance === null || compliance === void 0 ? void 0 : compliance.registration_code)) {
+        if (!compliance?.registration_code) {
             return data;
         }
         return {
@@ -65,9 +64,8 @@ export default () => {
             anafRegistrationCode: compliance.registration_code
         };
     });
-    addProcessor('orderConfirmationEmailArguments', (args) => {
-        var _a;
-        if (!((_a = args === null || args === void 0 ? void 0 : args.data) === null || _a === void 0 ? void 0 : _a.anafRegistrationCode)) {
+    addProcessor('orderConfirmationEmailArguments', (args)=>{
+        if (!args?.data?.anafRegistrationCode) {
             return args;
         }
         return {
@@ -75,36 +73,35 @@ export default () => {
             template: injectAnafRegistrationMarkup(args.template)
         };
     });
-    addProcessor('orderCollectionFilters', (filters) => [
-        ...filters,
-        {
-            key: 'anaf_status',
-            operation: ['eq'],
-            callback: (query, operation, value, currentFilters) => {
-                query.leftJoin('order_anaf_compliance', 'order_anaf_compliance', 'order_anaf_compliance.order_id', '=', 'order.order_id');
-                query.andWhere('order_anaf_compliance.status', '=', value);
-                currentFilters.push({
-                    key: 'anaf_status',
-                    operation,
-                    value
-                });
+    addProcessor('orderCollectionFilters', (filters)=>[
+            ...filters,
+            {
+                key: 'anaf_status',
+                operation: [
+                    'eq'
+                ],
+                callback: (query, operation, value, currentFilters)=>{
+                    query.leftJoin('order_anaf_compliance', 'order_anaf_compliance', 'order_anaf_compliance.order_id', '=', 'order.order_id');
+                    query.andWhere('order_anaf_compliance.status', '=', value);
+                    currentFilters.push({
+                        key: 'anaf_status',
+                        operation,
+                        value
+                    });
+                }
             }
-        }
-    ]);
+        ]);
     registerJob({
         name: 'printelAnafRetryWorker',
         resolve: path.join(__dirname, 'services/processAnafRetryQueue.js'),
         enabled: true,
         schedule: getAnafRetryCronSchedule()
     });
-    addProcessor('emailTemplateData', async (data) => {
+    addProcessor('emailTemplateData', async (data)=>{
         const connectionState = await getConnectionState();
         return {
             ...data,
-            anafConnectionLabel: connectionState
-                ? getConnectionLabel(connectionState.environment, connectionState.is_connected)
-                : 'Disconnected'
+            anafConnectionLabel: connectionState ? getConnectionLabel(connectionState.environment, connectionState.is_connected) : 'Disconnected'
         };
     });
-};
-//# sourceMappingURL=bootstrap.js.map
+});

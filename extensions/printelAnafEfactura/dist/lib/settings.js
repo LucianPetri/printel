@@ -11,22 +11,15 @@ export async function getEffectiveAnafSettings() {
     const anafEnabledSetting = await getSetting('anafEnabled', null);
     const anafEnvironmentSetting = await getSetting('anafEnvironment', null);
     const anafSubmissionModeSetting = await getSetting('anafSubmissionMode', null);
-    const environment = isAnafEnvironment(forcedEnvironment)
-        ? forcedEnvironment
-        : isAnafEnvironment(anafEnvironmentSetting)
-            ? anafEnvironmentSetting
-            : isAnafEnvironment(configuredEnvironment)
-                ? configuredEnvironment
-                : 'test';
-    const submissionMode = isAnafSubmissionMode(anafSubmissionModeSetting)
-        ? anafSubmissionModeSetting
-        : isAnafSubmissionMode(configuredSubmissionMode)
-            ? configuredSubmissionMode
-            : 'automatic';
+    const environment = isAnafEnvironment(forcedEnvironment) ? forcedEnvironment : isAnafEnvironment(anafEnvironmentSetting) ? anafEnvironmentSetting : isAnafEnvironment(configuredEnvironment) ? configuredEnvironment : 'test';
+    const submissionMode = isAnafSubmissionMode(anafSubmissionModeSetting) ? anafSubmissionModeSetting : isAnafSubmissionMode(configuredSubmissionMode) ? configuredSubmissionMode : 'automatic';
     return {
-        enabled: anafEnabledSetting === null
-            ? configuredEnabled
-            : ['1', 'true', 'yes', 'on'].includes(String(anafEnabledSetting).toLowerCase()),
+        enabled: anafEnabledSetting === null ? configuredEnabled : [
+            '1',
+            'true',
+            'yes',
+            'on'
+        ].includes(String(anafEnabledSetting).toLowerCase()),
         environment,
         environmentLocked: isAnafEnvironment(forcedEnvironment) || allowEnvironmentOverride === false,
         submissionMode,
@@ -46,4 +39,3 @@ export async function getEffectiveAnafSettings() {
 export function getAnafRetryCronSchedule() {
     return String(getConfig('anaf.retryCron', '*/5 * * * *'));
 }
-//# sourceMappingURL=settings.js.map

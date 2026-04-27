@@ -9,9 +9,16 @@ function getCipherKey() {
 export function encryptAnafToken(source) {
     const iv = crypto.randomBytes(12);
     const cipher = crypto.createCipheriv('aes-256-gcm', getCipherKey(), iv);
-    const encrypted = Buffer.concat([cipher.update(source, 'utf8'), cipher.final()]);
+    const encrypted = Buffer.concat([
+        cipher.update(source, 'utf8'),
+        cipher.final()
+    ]);
     const authTag = cipher.getAuthTag();
-    return [iv, authTag, encrypted].map((part) => part.toString('base64url')).join('.');
+    return [
+        iv,
+        authTag,
+        encrypted
+    ].map((part)=>part.toString('base64url')).join('.');
 }
 export function decryptAnafToken(payload) {
     const [ivPart, authTagPart, encryptedPart] = String(payload).split('.');
@@ -25,4 +32,3 @@ export function decryptAnafToken(payload) {
         decipher.final()
     ]).toString('utf8');
 }
-//# sourceMappingURL=tokenCipher.js.map

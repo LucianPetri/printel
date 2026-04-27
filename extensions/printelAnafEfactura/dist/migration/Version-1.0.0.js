@@ -7,17 +7,13 @@ const anafSettingKeys = [
     'anafConnectionLabel'
 ];
 export default async function migrate(connection) {
-    await Promise.all(anafSettingKeys.map((name) => insertOnUpdate('setting', ['name'])
-        .given({
-        name,
-        value: name === 'anafEnvironment'
-            ? 'test'
-            : name === 'anafSubmissionMode'
-                ? 'automatic'
-                : '',
-        is_json: 0
-    })
-        .execute(connection, false)));
+    await Promise.all(anafSettingKeys.map((name)=>insertOnUpdate('setting', [
+            'name'
+        ]).given({
+            name,
+            value: name === 'anafEnvironment' ? 'test' : name === 'anafSubmissionMode' ? 'automatic' : '',
+            is_json: 0
+        }).execute(connection, false)));
     await execute(connection, `CREATE TABLE IF NOT EXISTS anaf_connection_state (
       anaf_connection_state_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
       company_tax_id TEXT,
@@ -75,4 +71,3 @@ export default async function migrate(connection) {
     await execute(connection, `CREATE INDEX IF NOT EXISTS idx_order_anaf_compliance_status_retry
      ON order_anaf_compliance (status, next_retry_at);`);
 }
-//# sourceMappingURL=Version-1.0.0.js.map

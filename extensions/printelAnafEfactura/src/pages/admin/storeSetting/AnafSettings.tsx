@@ -86,7 +86,7 @@ export default function AnafSettings({ setting }: Props) {
           name="anafEnabled"
           label={_('Enable ANAF-controlled order confirmation')}
           value="true"
-          checked={Boolean(setting?.anafEnabled)}
+          defaultValue={Boolean(setting?.anafEnabled)}
         />
         <SelectField
           name="anafEnvironment"

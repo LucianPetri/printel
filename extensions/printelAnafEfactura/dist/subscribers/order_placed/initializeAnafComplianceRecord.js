@@ -17,4 +17,3 @@ export default async function initializeAnafComplianceRecord(data) {
         invoiceXml: payload.invoiceXml
     });
 }
-//# sourceMappingURL=initializeAnafComplianceRecord.js.map

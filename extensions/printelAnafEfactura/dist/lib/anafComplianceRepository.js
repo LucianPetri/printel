@@ -7,8 +7,7 @@ function parseJson(value) {
     }
     try {
         return JSON.parse(value);
-    }
-    catch (_a) {
+    } catch  {
         return null;
     }
 }
@@ -16,21 +15,23 @@ function hashValue(value) {
     return crypto.createHash('sha256').update(value).digest('hex');
 }
 export async function getOrderComplianceByOrderId(orderId) {
-    var _a;
     const result = await pool.query(`SELECT *
      FROM order_anaf_compliance
      WHERE order_id = $1
-     LIMIT 1`, [orderId]);
-    return (_a = result.rows[0]) !== null && _a !== void 0 ? _a : null;
+     LIMIT 1`, [
+        orderId
+    ]);
+    return result.rows[0] ?? null;
 }
 export async function getOrderComplianceByUuid(orderUuid) {
-    var _a;
     const result = await pool.query(`SELECT compliance.*
      FROM order_anaf_compliance compliance
      INNER JOIN "order" o ON o.order_id = compliance.order_id
      WHERE o.uuid = $1
-     LIMIT 1`, [orderUuid]);
-    return (_a = result.rows[0]) !== null && _a !== void 0 ? _a : null;
+     LIMIT 1`, [
+        orderUuid
+    ]);
+    return result.rows[0] ?? null;
 }
 export async function ensureOrderComplianceRecord({ orderId, environment, submissionMode, status, invoiceNumber, invoiceHash, invoiceXml }) {
     await pool.query(`INSERT INTO order_anaf_compliance (
@@ -49,7 +50,15 @@ export async function ensureOrderComplianceRecord({ orderId, environment, submis
         invoice_number = COALESCE(order_anaf_compliance.invoice_number, EXCLUDED.invoice_number),
         invoice_hash = COALESCE(order_anaf_compliance.invoice_hash, EXCLUDED.invoice_hash),
         invoice_xml = COALESCE(order_anaf_compliance.invoice_xml, EXCLUDED.invoice_xml),
-        updated_at = NOW()`, [orderId, environment, submissionMode, status, invoiceNumber, invoiceHash, invoiceXml]);
+        updated_at = NOW()`, [
+        orderId,
+        environment,
+        submissionMode,
+        status,
+        invoiceNumber,
+        invoiceHash,
+        invoiceXml
+    ]);
     const compliance = await getOrderComplianceByOrderId(orderId);
     if (!compliance) {
         throw new Error(`Unable to initialize ANAF compliance row for order ${orderId}`);
@@ -57,10 +66,9 @@ export async function ensureOrderComplianceRecord({ orderId, environment, submis
     return compliance;
 }
 export async function updateComplianceState(orderId, state) {
-    var _a;
     const assignments = [];
     const values = [];
-    Object.entries(state).forEach(([key, value], index) => {
+    Object.entries(state).forEach(([key, value], index)=>{
         assignments.push(`${key} = $${index + 2}`);
         values.push(value);
     });
@@ -70,8 +78,11 @@ export async function updateComplianceState(orderId, state) {
     const result = await pool.query(`UPDATE order_anaf_compliance
      SET ${assignments.join(', ')}, updated_at = NOW()
      WHERE order_id = $1
-     RETURNING *`, [orderId, ...values]);
-    return (_a = result.rows[0]) !== null && _a !== void 0 ? _a : null;
+     RETURNING *`, [
+        orderId,
+        ...values
+    ]);
+    return result.rows[0] ?? null;
 }
 export async function recordAnafAttempt({ orderId, triggeredBy, adminUserId = null, status, requestHash = null, responsePayload = null, finished = false }) {
     const result = await pool.query(`INSERT INTO order_anaf_attempt (
@@ -97,37 +108,45 @@ export async function recordAnafAttempt({ orderId, triggeredBy, adminUserId = nu
     return result.rows[0];
 }
 export async function finishAnafAttempt(attemptId, status, responsePayload) {
-    var _a;
     const result = await pool.query(`UPDATE order_anaf_attempt
      SET status = $2,
          response_payload = $3,
          finished_at = NOW()
      WHERE order_anaf_attempt_id = $1
-     RETURNING *`, [attemptId, status, responsePayload ? JSON.stringify(responsePayload) : null]);
-    return (_a = result.rows[0]) !== null && _a !== void 0 ? _a : null;
+     RETURNING *`, [
+        attemptId,
+        status,
+        responsePayload ? JSON.stringify(responsePayload) : null
+    ]);
+    return result.rows[0] ?? null;
 }
 export async function listAnafAttempts(orderId) {
     const result = await pool.query(`SELECT *
      FROM order_anaf_attempt
      WHERE order_id = $1
-     ORDER BY started_at DESC, order_anaf_attempt_id DESC`, [orderId]);
+     ORDER BY started_at DESC, order_anaf_attempt_id DESC`, [
+        orderId
+    ]);
     return result.rows;
 }
 export async function claimOrderConfirmationEmail(orderId) {
-    var _a;
     const result = await pool.query(`UPDATE order_anaf_compliance
      SET email_released_at = NOW(),
          updated_at = NOW()
      WHERE order_id = $1
        AND email_released_at IS NULL
-       AND status = 'registered'`, [orderId]);
-    return ((_a = result.rowCount) !== null && _a !== void 0 ? _a : 0) > 0;
+       AND status = 'registered'`, [
+        orderId
+    ]);
+    return (result.rowCount ?? 0) > 0;
 }
 export async function resetEmailReleaseClaim(orderId) {
     await pool.query(`UPDATE order_anaf_compliance
      SET email_released_at = NULL,
          updated_at = NOW()
-     WHERE order_id = $1`, [orderId]);
+     WHERE order_id = $1`, [
+        orderId
+    ]);
 }
 export async function queueComplianceRetry(orderId, retryCount, failureCode, failureMessage) {
     return await updateComplianceState(orderId, {
@@ -144,7 +163,9 @@ export async function getQueuedComplianceItems(limit = 25) {
      WHERE status IN ('queued', 'submitting')
        AND (next_retry_at IS NULL OR next_retry_at <= NOW())
      ORDER BY COALESCE(next_retry_at, created_at) ASC
-     LIMIT $1`, [limit]);
+     LIMIT $1`, [
+        limit
+    ]);
     return result.rows;
 }
 export async function markComplianceAsRegistered(orderId, registrationCode, uploadIndex, downloadId) {
@@ -179,16 +200,20 @@ export async function listOrderComplianceSummariesForOrderIds(orderIds) {
     }
     const result = await pool.query(`SELECT *
      FROM order_anaf_compliance
-     WHERE order_id = ANY($1::int[])`, [orderIds]);
-    return new Map(result.rows.map((row) => [row.order_id, row]));
+     WHERE order_id = ANY($1::int[])`, [
+        orderIds
+    ]);
+    return new Map(result.rows.map((row)=>[
+            row.order_id,
+            row
+        ]));
 }
 export async function getConnectionState() {
-    var _a;
     const result = await pool.query(`SELECT *
      FROM anaf_connection_state
      ORDER BY anaf_connection_state_id DESC
      LIMIT 1`);
-    return (_a = result.rows[0]) !== null && _a !== void 0 ? _a : null;
+    return result.rows[0] ?? null;
 }
 export async function saveConnectionState({ companyTaxId, environment, encryptedRefreshToken, tokenExpiresAt, connectedByAdminUserId, isConnected, lastErrorCode = null, lastErrorMessage = null, lastDisconnectReason = null }) {
     await pool.query(`INSERT INTO anaf_connection_state (
@@ -208,8 +233,8 @@ export async function saveConnectionState({ companyTaxId, environment, encrypted
         companyTaxId,
         environment,
         encryptedRefreshToken,
-        tokenExpiresAt !== null && tokenExpiresAt !== void 0 ? tokenExpiresAt : null,
-        connectedByAdminUserId !== null && connectedByAdminUserId !== void 0 ? connectedByAdminUserId : null,
+        tokenExpiresAt ?? null,
+        connectedByAdminUserId ?? null,
         isConnected,
         lastErrorCode,
         lastErrorMessage,
@@ -218,7 +243,6 @@ export async function saveConnectionState({ companyTaxId, environment, encrypted
     return await getConnectionState();
 }
 export async function markConnectionVerified(isConnected, failureCode, failureMessage) {
-    var _a;
     const current = await getConnectionState();
     if (!current) {
         return null;
@@ -230,11 +254,15 @@ export async function markConnectionVerified(isConnected, failureCode, failureMe
          last_error_message = $4,
          updated_at = NOW()
      WHERE anaf_connection_state_id = $1
-     RETURNING *`, [current.anaf_connection_state_id, isConnected, failureCode, failureMessage]);
-    return (_a = result.rows[0]) !== null && _a !== void 0 ? _a : null;
+     RETURNING *`, [
+        current.anaf_connection_state_id,
+        isConnected,
+        failureCode,
+        failureMessage
+    ]);
+    return result.rows[0] ?? null;
 }
 export async function updateConnectionTokenState({ encryptedRefreshToken, tokenExpiresAt = null, failureCode = null, failureMessage = null, isConnected = true }) {
-    var _a;
     const current = await getConnectionState();
     if (!current) {
         return null;
@@ -256,10 +284,9 @@ export async function updateConnectionTokenState({ encryptedRefreshToken, tokenE
         failureCode,
         failureMessage
     ]);
-    return (_a = result.rows[0]) !== null && _a !== void 0 ? _a : null;
+    return result.rows[0] ?? null;
 }
 export async function disconnectConnection(reason, adminUserId) {
-    var _a;
     const current = await getConnectionState();
     if (!current) {
         return null;
@@ -272,11 +299,15 @@ export async function disconnectConnection(reason, adminUserId) {
          connected_by_admin_user_id = COALESCE($3, connected_by_admin_user_id),
          updated_at = NOW()
      WHERE anaf_connection_state_id = $1
-     RETURNING *`, [current.anaf_connection_state_id, reason, adminUserId !== null && adminUserId !== void 0 ? adminUserId : null]);
-    return (_a = result.rows[0]) !== null && _a !== void 0 ? _a : null;
+     RETURNING *`, [
+        current.anaf_connection_state_id,
+        reason,
+        adminUserId ?? null
+    ]);
+    return result.rows[0] ?? null;
 }
 export function buildResponsePreview(payload) {
-    return hashValue(JSON.stringify(payload !== null && payload !== void 0 ? payload : null));
+    return hashValue(JSON.stringify(payload ?? null));
 }
 export function mapComplianceForAdmin(compliance, attempts = []) {
     if (!compliance) {
@@ -305,18 +336,17 @@ export function mapComplianceForAdmin(compliance, attempts = []) {
         approvedAt: compliance.approved_at,
         emailReleasedAt: compliance.email_released_at,
         manualReviewReason: compliance.manual_review_reason,
-        attempts: attempts.map((attempt) => ({
-            orderAnafAttemptId: attempt.order_anaf_attempt_id,
-            triggeredBy: attempt.triggered_by,
-            triggeredByLabel: getAnafAttemptTriggerLabel(attempt.triggered_by),
-            adminUserId: attempt.admin_user_id,
-            status: attempt.status,
-            statusLabel: getAnafAttemptStatusLabel(attempt.status),
-            requestHash: attempt.request_hash,
-            responsePayload: parseJson(attempt.response_payload),
-            startedAt: attempt.started_at,
-            finishedAt: attempt.finished_at
-        }))
+        attempts: attempts.map((attempt)=>({
+                orderAnafAttemptId: attempt.order_anaf_attempt_id,
+                triggeredBy: attempt.triggered_by,
+                triggeredByLabel: getAnafAttemptTriggerLabel(attempt.triggered_by),
+                adminUserId: attempt.admin_user_id,
+                status: attempt.status,
+                statusLabel: getAnafAttemptStatusLabel(attempt.status),
+                requestHash: attempt.request_hash,
+                responsePayload: parseJson(attempt.response_payload),
+                startedAt: attempt.started_at,
+                finishedAt: attempt.finished_at
+            }))
     };
 }
-//# sourceMappingURL=anafComplianceRepository.js.map

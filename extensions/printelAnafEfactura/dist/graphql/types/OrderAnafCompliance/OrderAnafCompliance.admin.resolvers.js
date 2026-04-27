@@ -7,8 +7,7 @@ async function loadCompliance(orderId, context) {
         const compliance = await getOrderComplianceByOrderId(orderId);
         if (!compliance) {
             context.orderAnafComplianceCache.set(orderId, null);
-        }
-        else {
+        } else {
             const attempts = await listAnafAttempts(orderId);
             context.orderAnafComplianceCache.set(orderId, mapComplianceForAdmin(compliance, attempts));
         }
@@ -17,11 +16,9 @@ async function loadCompliance(orderId, context) {
 }
 export default {
     Order: {
-        anafCompliance: async (order, _, context) => {
-            var _a;
-            const orderId = Number.parseInt(String((_a = order.orderId) !== null && _a !== void 0 ? _a : order.order_id), 10);
+        anafCompliance: async (order, _, context)=>{
+            const orderId = Number.parseInt(String(order.orderId ?? order.order_id), 10);
             return await loadCompliance(orderId, context);
         }
     }
 };
-//# sourceMappingURL=OrderAnafCompliance.admin.resolvers.js.map
